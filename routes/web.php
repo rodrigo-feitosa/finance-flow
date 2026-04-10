@@ -12,3 +12,4 @@ Route::livewire('/register', 'pages::auth.register')->name('register');
 Route::livewire('/expenses', 'pages::expenses')->name('expenses');
 Route::livewire('/revenues', 'pages::revenues')->name('revenues');
 Route::livewire('/cash-flow', 'pages::cash-flow')->name('cash-flow');
+Route::livewire('/investments', 'pages::investiments')->name('investments');
