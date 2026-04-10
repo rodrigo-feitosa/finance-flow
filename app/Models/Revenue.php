@@ -9,7 +9,7 @@ class Revenue extends Model
     public $table = 'revenues';
     public $fillable = [
         'user',
-        'data',
+        'date',
         'description',
         'value',
         'status',

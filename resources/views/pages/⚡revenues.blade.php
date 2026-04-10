@@ -14,7 +14,7 @@ new class extends Component
     public $modalAdd = false;
     public $modalImport = false;
 
-    public $data;
+    public $date;
     public $description;
     public $value;
     public $status;
@@ -39,14 +39,14 @@ new class extends Component
         }
 
         if ($this->filterDateStart) {
-            $query->whereDate('data', '>=', $this->filterDateStart);
+            $query->whereDate('date', '>=', $this->filterDateStart);
         }
 
         if ($this->filterDateEnd) {
-            $query->whereDate('data', '<=', $this->filterDateEnd);
+            $query->whereDate('date', '<=', $this->filterDateEnd);
         }
 
-        return $query->orderBy('data', 'asc')->paginate(20);
+        return $query->orderBy('date', 'asc')->paginate(20);
     }
 
     public function applyFilters()
@@ -94,7 +94,7 @@ new class extends Component
 
         Revenue::create([
             'user' => auth()->id(),
-            'data' => $this->data,
+            'date' => $this->date,
             'description' => $this->description,
             'value' => $this->value,
             'status' => $this->status,
@@ -119,7 +119,7 @@ new class extends Component
 
         while (($row = fgetcsv($file, 0, ',')) !== false) {
             $row = array_map(fn($item) => mb_convert_encoding($item, 'UTF-8', 'auto'), $row);
-            $data = \Carbon\Carbon::createFromFormat('d/m/Y', $row[0])->format('Y-m-d');
+            $date = \Carbon\Carbon::createFromFormat('d/m/Y', $row[0])->format('Y-m-d');
 
             if (count($row) < 4 || empty($row[3])) {
                 continue;
@@ -127,7 +127,7 @@ new class extends Component
 
             Revenue::create([
                 'user' => auth()->id(),
-                'data' => $data,
+                'date' => $date,
                 'description' => $row[1],
                 'value' => $row[2],
                 'status' => $row[3],
@@ -202,7 +202,7 @@ new class extends Component
                 <tbody class="border-collapse">
                     @foreach ($this->getRevenues() as $revenue)
                     <tr class="odd:bg-gray-300 even:bg-white">
-                        <td class="border p-2">{{ \Carbon\Carbon::parse($revenue->data)->format('d/m/Y') }}</td>
+                        <td class="border p-2">{{ \Carbon\Carbon::parse($revenue->date)->format('d/m/Y') }}</td>
                         <td class="border p-2">{{ $revenue->description }}</td>
                         <td class="border p-2">R$ {{ number_format($revenue->value, 2, ',', '.') }}</td>
                         <td class="border p-2">

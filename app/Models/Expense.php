@@ -9,7 +9,7 @@ class Expense extends Model
     public $table = 'expenses';
     public $fillable = [
         'user',
-        'data',
+        'date',
         'description',
         'value',
         'type',
