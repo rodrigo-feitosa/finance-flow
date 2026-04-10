@@ -230,6 +230,10 @@ new class extends Component
                 <h2 class="font-bold pb-5">Adicionar Receita</h2>
                 <form wire:submit.prevent="addRevenue" class="space-y-4">
                     <div>
+                        <label class="block text-sm font-medium mb-1">Data</label>
+                        <input type="date" wire:model="date" class="w-full border rounded px-2 py-2">
+                    </div>
+                    <div>
                         <label class="block text-sm font-medium mb-1">Descrição</label>
                         <input type="text" wire:model="description" class="w-full border rounded px-2 py-2">
                     </div>
@@ -264,3 +268,4 @@ new class extends Component
         </div>
         @endif
     </div>
+</div>
