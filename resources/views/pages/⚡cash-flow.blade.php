@@ -3,6 +3,7 @@
 use Livewire\Component;
 use App\Models\Revenue;
 use App\Models\Expense;
+use App\Models\Investment;
 use Livewire\WithPagination;
 
 new class extends Component
@@ -30,10 +31,19 @@ new class extends Component
             ->whereBetween('date', [$this->startDate, $this->endDate])
             ->sum('value');
 
+        $expenses = Expense::where('user', $userId)
+            ->whereBetween('date', [$this->startDate, $this->endDate])
+            ->sum('value');
+
+        $investments = Investment::where('user', $userId)
+            ->whereBetween('date', [$this->startDate, $this->endDate])
+            ->sum('value');
+
         return [
             'revenues' => $revenues,
             'expenses' => $expenses,
-            'balance' => $revenues - $expenses,
+            'investments' => $investments,
+            'balance' => $revenues - $expenses - $investments,
         ];
     }
 
@@ -70,6 +80,42 @@ new class extends Component
             'a pagar' => 'bg-red-300 text-red-900',
         };
     }
+
+    public function getMonthlyProjection()
+    {
+        $userId = auth()->id();
+
+        $revenues = Revenue::where('user', $userId)
+            ->get()
+            ->groupBy(fn($item) => \Carbon\Carbon::parse($item->date)->format('Y-m'));
+
+        $expenses = Expense::where('user', $userId)
+            ->get()
+            ->groupBy(fn($item) => \Carbon\Carbon::parse($item->date)->format('Y-m'));
+
+        $months = collect();
+
+        foreach ($revenues as $month => $items) {
+            $months->put($month, [
+                'received_revenues' => $items->where('status', 'recebida')->sum('value'),
+                'pending_revenues' => $items->where('status', 'a receber')->sum('value'),
+            ]);
+        }
+
+        foreach ($expenses as $month => $items) {
+            $existing = $months->get($month, [
+                'received_revenues' => 0,
+                'pending_revenues' => 0,
+            ]);
+
+            $months->put($month, array_merge($existing, [
+                'paid_expenses' => $items->where('status', 'paga')->sum('value'),
+                'pending_expenses' => $items->where('status', 'a pagar')->sum('value'),
+            ]));
+        }
+
+        return $months->sortKeys();
+    }
 };
 ?>
 
@@ -81,22 +127,29 @@ new class extends Component
         <input type="date" wire:model.live="endDate" class="border p-2 rounded">
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-        <div class="bg-green-500 text-white p-4 rounded shadow text-center">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+        <div class="bg-green-500 text-white p-4 rounded shadow-lg text-center">
             <p>Receitas</p>
             <h2 class="text-2xl font-bold">
                 R$ {{ number_format($this->getSummary()['revenues'], 2, ',', '.') }}
             </h2>
         </div>
 
-        <div class="bg-red-500 text-white p-4 rounded shadow text-center">
+        <div class="bg-yellow-500 text-white p-4 rounded shadow-lg text-center">
+            <p>Investimentos</p>
+            <h2 class="text-2xl font-bold">
+                R$ {{ number_format($this->getSummary()['investments'], 2, ',', '.') }}
+            </h2>
+        </div>
+
+        <div class="bg-red-500 text-white p-4 rounded shadow-lg text-center">
             <p>Despesas</p>
             <h2 class="text-2xl font-bold">
                 R$ {{ number_format($this->getSummary()['expenses'], 2, ',', '.') }}
             </h2>
         </div>
 
-        <div class="{{ $this->getSummary()['balance'] >= 0 ? 'bg-blue-500' : 'bg-gray-800' }} text-white p-4 rounded shadow text-center">
+        <div class="{{ $this->getSummary()['balance'] >= 0 ? 'bg-blue-500' : 'bg-gray-800' }} text-white p-4 rounded shadow-lg text-center">
             <p>Saldo</p>
             <h2 class="text-2xl font-bold">
                 R$ {{ number_format($this->getSummary()['balance'], 2, ',', '.') }}
@@ -223,30 +276,60 @@ new class extends Component
         </div>
     </div>
 
-    <div class="bg-white p-4 rounded shadow">
-        <h2 class="text-xl font-bold mb-4">Últimas movimentações</h2>
+    <div class="bg-white p-4 rounded shadow mb-8">
+        <h2 class="text-xl font-bold mb-4">📅 Fluxo mensal</h2>
 
-        <table class="w-full text-xs">
+        <table class="w-full text-sm text-center">
             <thead>
                 <tr class="bg-gray-200">
-                    <th class="p-2">Data</th>
-                    <th class="p-2">Descrição</th>
-                    <th class="p-2">Tipo</th>
-                    <th class="p-2">Valor</th>
+                    <th class="p-2">Mês</th>
+                    <th class="p-2">Recebidas</th>
+                    <th class="p-2">A receber</th>
+                    <th class="p-2">Pagas</th>
+                    <th class="p-2">A pagar</th>
+                    <th class="p-2">Saldo real</th>
+                    <th class="p-2">Saldo projetado</th>
                 </tr>
             </thead>
             <tbody>
-                @foreach ($this->getLatestMovements() as $mov)
+                @foreach ($this->getMonthlyProjection() as $month => $data)
+                @php
+                $received = $data['received_revenues'] ?? 0;
+                $pendingR = $data['pending_revenues'] ?? 0;
+                $paid = $data['paid_expenses'] ?? 0;
+                $pendingE = $data['pending_expenses'] ?? 0;
+
+                $real = $received - $paid;
+                $projected = ($received + $pendingR) - ($paid + $pendingE);
+                @endphp
+
                 <tr class="border-b">
-                    <td class="p-2">{{ \Carbon\Carbon::parse($mov->date)->format('d/m/Y') }}</td>
-                    <td class="p-2">{{ $mov->description }}</td>
-                    <td class="p-2">
-                        <span class="{{ $mov->tipo === 'receita' ? 'text-green-600' : 'text-red-600' }}">
-                            {{ ucfirst($mov->tipo) }}
-                        </span>
-                    </td>
                     <td class="p-2 font-bold">
-                        R$ {{ number_format($mov->value, 2, ',', '.') }}
+                        {{ \Carbon\Carbon::createFromFormat('Y-m', $month)->format('m/Y') }}
+                    </td>
+
+                    <td class="p-2 text-green-600">
+                        R$ {{ number_format($received, 2, ',', '.') }}
+                    </td>
+
+                    <td class="p-2 text-green-400">
+                        R$ {{ number_format($pendingR, 2, ',', '.') }}
+                    </td>
+
+                    <td class="p-2 text-red-600">
+                        R$ {{ number_format($paid, 2, ',', '.') }}
+                    </td>
+
+                    <td class="p-2 text-red-400">
+                        R$ {{ number_format($pendingE, 2, ',', '.') }}
+                    </td>
+
+                    <td class="p-2 font-bold {{ $real >= 0 ? 'text-blue-600' : 'text-red-600' }}">
+                        R$ {{ number_format($real, 2, ',', '.') }}
+                    </td>
+
+                    <td class="p-2 font-bold {{ $projected >= 0 ? 'text-blue-800' : 'text-red-800' }}">
+                        R$ {{ number_format($projected, 2, ',', '.') }}
                     </td>
                 </tr>
                 @endforeach
