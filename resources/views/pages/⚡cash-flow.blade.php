@@ -18,17 +18,16 @@ new class extends Component
         $this->endDate = now()->endOfMonth()->format('Y-m-d');
     }
 
-    // 🔹 RESUMO
-    public function getSummaryProperty()
+    public function getSummary()
     {
         $userId = auth()->id();
 
         $revenues = Revenue::where('user', $userId)
-            ->whereBetween('data', [$this->startDate, $this->endDate])
+            ->whereBetween('date', [$this->startDate, $this->endDate])
             ->sum('value');
 
         $expenses = Expense::where('user', $userId)
-            ->whereBetween('data', [$this->startDate, $this->endDate])
+            ->whereBetween('date', [$this->startDate, $this->endDate])
             ->sum('value');
 
         return [
@@ -38,32 +37,38 @@ new class extends Component
         ];
     }
 
-    // 🔹 GASTOS POR TIPO
-    public function getExpensesByTypeProperty()
+    public function getExpenses($filterStatus)
     {
-        return Expense::selectRaw('type, SUM(value) as total')
-            ->where('user', auth()->id())
-            ->whereBetween('data', [$this->startDate, $this->endDate])
-            ->groupBy('type')
-            ->get();
+        return Expense::where('user', auth()->id())
+            ->where('type', $filterStatus)
+            ->whereBetween('date', [$this->startDate, $this->endDate])
+            ->orderBy('date', 'asc')
+            ->paginate(20);
     }
 
-    // 🔹 ÚLTIMAS MOVIMENTAÇÕES
-    public function getLatestMovementsProperty()
+    public function getLatestMovements()
     {
         $revenues = Revenue::where('user', auth()->id())
-            ->select('data', 'description', 'value', \DB::raw("'receita' as tipo"))
-            ->whereBetween('data', [$this->startDate, $this->endDate]);
+            ->select('date', 'description', 'value', \DB::raw("'receita' as tipo"))
+            ->whereBetween('date', [$this->startDate, $this->endDate]);
 
         $expenses = Expense::where('user', auth()->id())
-            ->select('data', 'description', 'value', \DB::raw("'despesa' as tipo"))
-            ->whereBetween('data', [$this->startDate, $this->endDate]);
+            ->select('date', 'description', 'value', \DB::raw("'despesa' as tipo"))
+            ->whereBetween('date', [$this->startDate, $this->endDate]);
 
         return $revenues
             ->unionAll($expenses)
-            ->orderBy('data', 'desc')
+            ->orderBy('date', 'desc')
             ->limit(10)
             ->get();
+    }
+
+    public function getStatusColor($status)
+    {
+        return match ($status) {
+            'paga' => 'bg-green-300 text-green-900',
+            'a pagar' => 'bg-red-300 text-red-900',
+        };
     }
 };
 ?>
@@ -71,54 +76,157 @@ new class extends Component
 <div class="p-6 bg-gray-100 min-h-screen">
     <h1 class="text-3xl font-bold text-center mb-6">📊 Balanço Financeiro</h1>
 
-    {{-- 🔹 FILTRO --}}
     <div class="flex gap-2 justify-center mb-6">
         <input type="date" wire:model.live="startDate" class="border p-2 rounded">
         <input type="date" wire:model.live="endDate" class="border p-2 rounded">
     </div>
 
-    {{-- 🔹 CARDS --}}
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-
         <div class="bg-green-500 text-white p-4 rounded shadow text-center">
             <p>Receitas</p>
             <h2 class="text-2xl font-bold">
-                R$ {{ number_format($this->summary['revenues'], 2, ',', '.') }}
+                R$ {{ number_format($this->getSummary()['revenues'], 2, ',', '.') }}
             </h2>
         </div>
 
         <div class="bg-red-500 text-white p-4 rounded shadow text-center">
             <p>Despesas</p>
             <h2 class="text-2xl font-bold">
-                R$ {{ number_format($this->summary['expenses'], 2, ',', '.') }}
+                R$ {{ number_format($this->getSummary()['expenses'], 2, ',', '.') }}
             </h2>
         </div>
 
-        <div class="{{ $this->summary['balance'] >= 0 ? 'bg-blue-500' : 'bg-gray-800' }} text-white p-4 rounded shadow text-center">
+        <div class="{{ $this->getSummary()['balance'] >= 0 ? 'bg-blue-500' : 'bg-gray-800' }} text-white p-4 rounded shadow text-center">
             <p>Saldo</p>
             <h2 class="text-2xl font-bold">
-                R$ {{ number_format($this->summary['balance'], 2, ',', '.') }}
+                R$ {{ number_format($this->getSummary()['balance'], 2, ',', '.') }}
             </h2>
         </div>
     </div>
 
-    {{-- 🔹 GASTOS POR TIPO --}}
-    <div class="bg-white p-4 rounded shadow mb-8">
-        <h2 class="text-xl font-bold mb-4">Gastos por tipo</h2>
+    <div class="flex gap-1">
+        <div class="w-1/2 bg-white p-2 rounded shadow">
+            <h2 class="text-xl font-bold mb-4">Despesas variáveis</h2>
 
-        @foreach ($this->expensesByType as $item)
-        <div class="flex justify-between border-b py-2">
-            <span>{{ ucfirst($item->type) }}</span>
-            <span>R$ {{ number_format($item->total, 2, ',', '.') }}</span>
+            <table class="w-full text-xs">
+                <thead>
+                    <tr class="bg-gray-200">
+                        <th class="p-2 w-1/6">Data</th>
+                        <th class="p-2 w-2/6">Descrição</th>
+                        <th class="p-2 w-1/6">Valor</th>
+                        <th class="p-2 w-1/6">Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($this->getExpenses('variavel') as $item)
+                    <tr class="border-b">
+                        <td class="p-2">
+                            {{ \Carbon\Carbon::parse($item->date)->format('d/m/Y') }}
+                        </td>
+                        <td class="p-2">
+                            {{ $item->description }}
+                        </td>
+                        <td class="p-2 font-bold text-red-600">
+                            R$ {{ number_format($item->value, 2, ',', '.') }}
+                        </td>
+                        <td class="p-2">
+                            <span class="px-2 py-1 rounded text-white {{ $this->getStatusColor($item->status) }}">
+                                {{ $item->status }}
+                            </span>
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+
+            <div class="mt-4">
+                {{ $this->getExpenses('variavel')->links() }}
+            </div>
         </div>
-        @endforeach
+
+        <div class="w-1/2 bg-white p-2 rounded shadow">
+            <h2 class="text-xl font-bold mb-4">Despesas fixas</h2>
+
+            <table class="w-full text-xs">
+                <thead>
+                    <tr class="bg-gray-200">
+                        <th class="p-2 w-1/6">Data</th>
+                        <th class="p-2 w-2/6">Descrição</th>
+                        <th class="p-2 w-1/6">Valor</th>
+                        <th class="p-2 w-1/6">Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($this->getExpenses('fixa') as $item)
+                    <tr class="border-b">
+                        <td class="p-2">
+                            {{ \Carbon\Carbon::parse($item->date)->format('d/m/Y') }}
+                        </td>
+                        <td class="p-2">
+                            {{ $item->description }}
+                        </td>
+                        <td class="p-2 font-bold text-red-600">
+                            R$ {{ number_format($item->value, 2, ',', '.') }}
+                        </td>
+                        <td class="p-2">
+                            <span class="px-2 py-1 rounded text-white {{ $this->getStatusColor($item->status) }}">
+                                {{ $item->status }}
+                            </span>
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+
+            <div class="mt-4">
+                {{ $this->getExpenses('fixa')->links() }}
+            </div>
+        </div>
+
+        <div class="w-1/2 bg-white p-2 rounded shadow">
+            <h2 class="text-xl font-bold mb-4">Despesas parceladas</h2>
+
+            <table class="w-full text-xs">
+                <thead>
+                    <tr class="bg-gray-200">
+                        <th class="p-2 w-1/6">Data</th>
+                        <th class="p-2 w-2/6">Descrição</th>
+                        <th class="p-2 w-1/6">Valor</th>
+                        <th class="p-2 w-1/6">Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($this->getExpenses('parcelada') as $item)
+                    <tr class="border-b">
+                        <td class="p-2">
+                            {{ \Carbon\Carbon::parse($item->date)->format('d/m/Y') }}
+                        </td>
+                        <td class="p-2">
+                            {{ $item->description }}
+                        </td>
+                        <td class="p-2 font-bold text-red-600">
+                            R$ {{ number_format($item->value, 2, ',', '.') }}
+                        </td>
+                        <td class="p-2">
+                            <span class="px-2 py-1 rounded text-white {{ $this->getStatusColor($item->status) }}">
+                                {{ $item->status }}
+                            </span>
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+
+            <div class="mt-4">
+                {{ $this->getExpenses('variavel')->links() }}
+            </div>
+        </div>
     </div>
 
-    {{-- 🔹 ÚLTIMAS MOVIMENTAÇÕES --}}
     <div class="bg-white p-4 rounded shadow">
         <h2 class="text-xl font-bold mb-4">Últimas movimentações</h2>
 
-        <table class="w-full text-sm">
+        <table class="w-full text-xs">
             <thead>
                 <tr class="bg-gray-200">
                     <th class="p-2">Data</th>
@@ -128,9 +236,9 @@ new class extends Component
                 </tr>
             </thead>
             <tbody>
-                @foreach ($this->latestMovements as $mov)
+                @foreach ($this->getLatestMovements() as $mov)
                 <tr class="border-b">
-                    <td class="p-2">{{ \Carbon\Carbon::parse($mov->data)->format('d/m/Y') }}</td>
+                    <td class="p-2">{{ \Carbon\Carbon::parse($mov->date)->format('d/m/Y') }}</td>
                     <td class="p-2">{{ $mov->description }}</td>
                     <td class="p-2">
                         <span class="{{ $mov->tipo === 'receita' ? 'text-green-600' : 'text-red-600' }}">
