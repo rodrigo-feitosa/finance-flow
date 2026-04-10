@@ -39,11 +39,16 @@ new class extends Component
             ->whereBetween('date', [$this->startDate, $this->endDate])
             ->sum('value');
 
+        $investmentsBalanced = Investment::where('user', $userId)
+            ->whereBetween('date', [$this->startDate, $this->endDate])
+            ->where('is_initial', false)
+            ->sum('value');
+
         return [
             'revenues' => $revenues,
             'expenses' => $expenses,
             'investments' => $investments,
-            'balance' => $revenues - $expenses - $investments,
+            'balance' => $revenues - $expenses - $investmentsBalanced,
         ];
     }
 
@@ -56,28 +61,11 @@ new class extends Component
             ->paginate(20);
     }
 
-    public function getLatestMovements()
-    {
-        $revenues = Revenue::where('user', auth()->id())
-            ->select('date', 'description', 'value', \DB::raw("'receita' as tipo"))
-            ->whereBetween('date', [$this->startDate, $this->endDate]);
-
-        $expenses = Expense::where('user', auth()->id())
-            ->select('date', 'description', 'value', \DB::raw("'despesa' as tipo"))
-            ->whereBetween('date', [$this->startDate, $this->endDate]);
-
-        return $revenues
-            ->unionAll($expenses)
-            ->orderBy('date', 'desc')
-            ->limit(10)
-            ->get();
-    }
-
     public function getStatusColor($status)
     {
         return match ($status) {
-            'paga' => 'bg-green-300 text-green-900',
-            'a pagar' => 'bg-red-300 text-red-900',
+            'paga' => 'bg-green-600 text-white-900',
+            'a pagar' => 'bg-red-600 text-white-900',
         };
     }
 
@@ -90,6 +78,10 @@ new class extends Component
             ->groupBy(fn($item) => \Carbon\Carbon::parse($item->date)->format('Y-m'));
 
         $expenses = Expense::where('user', $userId)
+            ->get()
+            ->groupBy(fn($item) => \Carbon\Carbon::parse($item->date)->format('Y-m'));
+
+        $investments = Investment::where('user', $userId)
             ->get()
             ->groupBy(fn($item) => \Carbon\Carbon::parse($item->date)->format('Y-m'));
 
@@ -114,12 +106,25 @@ new class extends Component
             ]));
         }
 
+        foreach ($investments as $month => $items) {
+            $existing = $months->get($month, [
+                'received_revenues' => 0,
+                'pending_revenues' => 0,
+                'paid_expenses' => 0,
+                'pending_expenses' => 0,
+            ]);
+
+            $months->put($month, array_merge($existing, [
+                'investments' => $items->sum('value'),
+            ]));
+        }
+
         return $months->sortKeys();
     }
 };
 ?>
 
-<div class="p-6 bg-gray-100 min-h-screen">
+<div class="p-6 bg-gray-300 min-h-screen">
     <h1 class="text-3xl font-bold text-center mb-6">📊 Balanço Financeiro</h1>
 
     <div class="flex gap-2 justify-center mb-6">
@@ -128,7 +133,7 @@ new class extends Component
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-        <div class="bg-green-500 text-white p-4 rounded shadow-lg text-center">
+        <div class="bg-green-600 text-white p-4 rounded shadow-lg text-center">
             <p>Receitas</p>
             <h2 class="text-2xl font-bold">
                 R$ {{ number_format($this->getSummary()['revenues'], 2, ',', '.') }}
@@ -142,14 +147,14 @@ new class extends Component
             </h2>
         </div>
 
-        <div class="bg-red-500 text-white p-4 rounded shadow-lg text-center">
+        <div class="bg-red-600 text-white p-4 rounded shadow-lg text-center">
             <p>Despesas</p>
             <h2 class="text-2xl font-bold">
                 R$ {{ number_format($this->getSummary()['expenses'], 2, ',', '.') }}
             </h2>
         </div>
 
-        <div class="{{ $this->getSummary()['balance'] >= 0 ? 'bg-blue-500' : 'bg-gray-800' }} text-white p-4 rounded shadow-lg text-center">
+        <div class="{{ $this->getSummary()['balance'] >= 0 ? 'bg-blue-600' : 'bg-red-800' }} text-white p-4 rounded shadow-lg text-center">
             <p>Saldo</p>
             <h2 class="text-2xl font-bold">
                 R$ {{ number_format($this->getSummary()['balance'], 2, ',', '.') }}
@@ -157,15 +162,15 @@ new class extends Component
         </div>
     </div>
 
-    <div class="flex gap-1">
+    <div class="flex gap-2">
         <div class="w-1/2 bg-white p-2 rounded shadow">
             <h2 class="text-xl font-bold mb-4">Despesas variáveis</h2>
 
-            <table class="w-full text-xs">
-                <thead>
-                    <tr class="bg-gray-200">
-                        <th class="p-2 w-1/6">Data</th>
+            <table class="w-full text-xs rounded-lg overflow-hidden">
+                <thead class="bg-violet-800 text-white">
+                    <tr>
                         <th class="p-2 w-2/6">Descrição</th>
+                        <th class="p-2 w-1/6">Data</th>
                         <th class="p-2 w-1/6">Valor</th>
                         <th class="p-2 w-1/6">Status</th>
                     </tr>
@@ -200,9 +205,9 @@ new class extends Component
         <div class="w-1/2 bg-white p-2 rounded shadow">
             <h2 class="text-xl font-bold mb-4">Despesas fixas</h2>
 
-            <table class="w-full text-xs">
-                <thead>
-                    <tr class="bg-gray-200">
+            <table class="w-full text-xs rounded-lg overflow-hidden">
+                <thead class="bg-violet-800 text-white">
+                    <tr>
                         <th class="p-2 w-1/6">Data</th>
                         <th class="p-2 w-2/6">Descrição</th>
                         <th class="p-2 w-1/6">Valor</th>
@@ -239,9 +244,9 @@ new class extends Component
         <div class="w-1/2 bg-white p-2 rounded shadow">
             <h2 class="text-xl font-bold mb-4">Despesas parceladas</h2>
 
-            <table class="w-full text-xs">
-                <thead>
-                    <tr class="bg-gray-200">
+            <table class="w-full text-xs rounded-lg overflow-hidden">
+                <thead class="bg-violet-800 text-white">
+                    <tr>
                         <th class="p-2 w-1/6">Data</th>
                         <th class="p-2 w-2/6">Descrição</th>
                         <th class="p-2 w-1/6">Valor</th>
@@ -276,17 +281,18 @@ new class extends Component
         </div>
     </div>
 
-    <div class="bg-white p-4 rounded shadow mb-8">
+    <div class="mt-4 bg-white p-4 rounded shadow mb-8">
         <h2 class="text-xl font-bold mb-4">📅 Fluxo mensal</h2>
 
-        <table class="w-full text-sm text-center">
-            <thead>
-                <tr class="bg-gray-200">
+        <table class="w-full text-sm text-center rounded-lg overflow-hidden">
+            <thead class="bg-violet-800 text-white">
+                <tr>
                     <th class="p-2">Mês</th>
                     <th class="p-2">Recebidas</th>
                     <th class="p-2">A receber</th>
                     <th class="p-2">Pagas</th>
                     <th class="p-2">A pagar</th>
+                    <th class="p-2">Investimento</th>
                     <th class="p-2">Saldo real</th>
                     <th class="p-2">Saldo projetado</th>
                 </tr>
@@ -298,30 +304,35 @@ new class extends Component
                 $pendingR = $data['pending_revenues'] ?? 0;
                 $paid = $data['paid_expenses'] ?? 0;
                 $pendingE = $data['pending_expenses'] ?? 0;
+                $investments = $data['investments'] ?? 0;
 
                 $real = $received - $paid;
-                $projected = ($received + $pendingR) - ($paid + $pendingE);
+                $projected = ($received + $pendingR) - ($paid + $pendingE + $investments);
                 @endphp
 
-                <tr class="border-b">
+                <tr class="border-b odd:bg-white even:bg-gray-100 hover:bg-violet-200 transition">
                     <td class="p-2 font-bold">
                         {{ \Carbon\Carbon::createFromFormat('Y-m', $month)->format('m/Y') }}
                     </td>
 
-                    <td class="p-2 text-green-600">
+                    <td class="p-2 text-green-600 font-bold">
                         R$ {{ number_format($received, 2, ',', '.') }}
                     </td>
 
-                    <td class="p-2 text-green-400">
+                    <td class="p-2 text-green-400 font-bold">
                         R$ {{ number_format($pendingR, 2, ',', '.') }}
                     </td>
 
-                    <td class="p-2 text-red-600">
+                    <td class="p-2 text-red-600 font-bold">
                         R$ {{ number_format($paid, 2, ',', '.') }}
                     </td>
 
-                    <td class="p-2 text-red-400">
+                    <td class="p-2 text-red-400 font-bold">
                         R$ {{ number_format($pendingE, 2, ',', '.') }}
+                    </td>
+
+                    <td class="p-2 text-yellow-700 font-bold">
+                        R$ {{ number_format($investments, 2, ',', '.') }}
                     </td>
 
                     <td class="p-2 font-bold {{ $real >= 0 ? 'text-blue-600' : 'text-red-600' }}">
