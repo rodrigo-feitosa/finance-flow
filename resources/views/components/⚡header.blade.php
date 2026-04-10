@@ -20,18 +20,18 @@ new class extends Component
 };
 ?>
 
-<header class="bg-gray-900 text-white">
+<header class="mt-2 mx-2 bg-gray-900 text-white rounded-xl">
     <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
         <a href="/">
-            <h1 class="text-2xl font-bold">FinanceFlow</h1>
+            <img src="/images/logo.png" alt="Logo" class="w-50 h-auto">
         </a>
 
         <nav class="space-x-3 relative">
-            <a href="/" class="rounded bg-blue-500 hover:bg-blue-600 p-2">Home</a>
-            <a href="/expenses" class="rounded bg-purple-500 hover:bg-purple-700 p-2">Despesas</a>
-            <a href="/revenues" class="rounded bg-green-500 hover:bg-green-700 p-2">Receitas</a>
-            <a href="/investments" class="rounded bg-yellow-500 hover:bg-yellow-900 p-2">Investimentos</a>
-            <a href="/cash-flow" class="rounded bg-cyan-500 hover:bg-cyan-700 p-2">Fluxo Financeiro</a>
+            <a href="{{ route('index') }}" class="rounded bg-blue-500 hover:bg-blue-600 p-2">Home</a>
+            <a href="{{ route('expenses') }}" class="rounded bg-purple-500 hover:bg-purple-700 p-2">Despesas</a>
+            <a href="{{ route('revenues') }}" class="rounded bg-green-500 hover:bg-green-700 p-2">Receitas</a>
+            <a href="{{ route('investments') }}" class="rounded bg-yellow-500 hover:bg-yellow-900 p-2">Investimentos</a>
+            <a href="{{ route('cash-flow') }}" class="rounded bg-cyan-500 hover:bg-cyan-700 p-2">Fluxo Financeiro</a>
             <div class="relative inline-block">
                 <button wire:click="toggleMenu" class="hover:text-gray-300 cursor-pointer">
                     <i class="fa-solid fa-user"></i>
