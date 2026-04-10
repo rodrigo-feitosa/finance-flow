@@ -13,6 +13,7 @@ new class extends Component
 
     public $modalAdd = false;
     public $modalImport = false;
+    public $modalEdit = false;
 
     public $date;
     public $description;
@@ -23,16 +24,18 @@ new class extends Component
     public $filterDateStart;
     public $filterDateEnd;
 
+    public $editingRevenueId;
+
     public function getRevenues(
         $filterStatus = null,
         $filterDateStart = null,
         $filterDateEnd = null
-    ){
+    ) {
         if (!auth()->check()) {
             return [];
         }
 
-       $query = Revenue::where('user', auth()->id());
+        $query = Revenue::where('user', auth()->id());
 
         if ($this->filterStatus) {
             $query->where('status', $this->filterStatus);
@@ -84,6 +87,30 @@ new class extends Component
     public function closeImport()
     {
         $this->modalImport = false;
+    }
+
+
+    public function showEditModal($idRevenue)
+    {
+        if (!auth()->check()) {
+            return redirect()->route('login');
+        }
+
+        $this->modalEdit = true;
+
+        $revenue = Revenue::where('id', $idRevenue)->first();
+
+        $this->editingRevenueId = $revenue->id;
+
+        $this->date = $revenue->date;
+        $this->description = $revenue->description;
+        $this->value = $revenue->value;
+        $this->status = $revenue->status;
+    }
+
+    public function closeEditModal()
+    {
+        $this->modalEdit = false;
     }
 
     public function addRevenue()
@@ -148,11 +175,23 @@ new class extends Component
         Revenue::where('id', $id)->delete();
     }
 
+    public function editRevenue()
+    {
+        Revenue::where('id', $this->editingRevenueId)->update([
+            'date' => $this->date,
+            'description' => $this->description,
+            'value' => $this->value,
+            'status' => $this->status,
+        ]);
+
+        $this->closeEditModal();
+    }
+
     public function getStatusColor($status)
     {
         return match ($status) {
-            'recebida' => 'bg-green-300 text-green-900',
-            'a receber' => 'bg-red-300 text-red-900',
+            'recebida' => 'bg-green-300 text-green-900 shadow-sm outline-1 outline-green-400',
+            'a receber' => 'bg-red-300 text-red-900 shadow-sm outline-1 outline-red-400',
         };
     }
 };
@@ -172,7 +211,7 @@ new class extends Component
         <button wire:click="showImport" class="btn text-white bg-blue-800 rounded p-1 hover:bg-blue-600 cursor-pointer">Importar</button>
     </div>
 
-    <div class="mx-5 flex justify-center">
+    <div class="mx-auto max-w-5xl px-4">
         @if ($this->getRevenues()->isEmpty())
         <p class="mt-6 text-gray-600">Nenhuma receita registrada. Adicione uma nova receita para começar a gerenciar suas finanças.</p>
         @else
@@ -189,19 +228,19 @@ new class extends Component
 
                 <button wire:click="applyFilters" class="btn w-24 text-white bg-yellow-600 rounded p-1 hover:bg-yellow-800 cursor-pointer">Filtrar</button>
             </div>
-            <table class="min-w-full text-sm mt-6 border-collapse rounded-sm overflow-hidden">
-                <thead>
-                    <tr class="bg-purple-800 text-white">
-                        <th class="border border-black p-2">Data</th>
-                        <th class="border border-black p-2">Descrição</th>
-                        <th class="border border-black p-2">Valor</th>
-                        <th class="border border-black p-2">Status</th>
-                        <th class="border border-black p-2"></th>
+            <table class="min-w-full text-sm mt-6 border border-gray-200 rounded-lg overflow-hidden shadow-xl shadow-purple-600">
+                <thead class="bg-violet-800 text-white">
+                    <tr>
+                        <th class="border border-black p-2 w-1/9">Data</th>
+                        <th class="border border-black p-2 w-1/2">Descrição</th>
+                        <th class="border border-black p-2 w-1/6">Valor</th>
+                        <th class="border border-black p-2 w-1/9">Status</th>
+                        <th class="border border-black p-2 w-1/12"></th>
                     </tr>
                 </thead>
-                <tbody class="border-collapse">
+                <tbody class="divide-y divide-gray-100">
                     @foreach ($this->getRevenues() as $revenue)
-                    <tr class="odd:bg-gray-300 even:bg-white">
+                    <tr wire:click="showEditModal({{ $revenue->id }})" class="odd:bg-white even:bg-gray-100 hover:bg-violet-200 transition cursor-pointer">
                         <td class="border p-2">{{ \Carbon\Carbon::parse($revenue->date)->format('d/m/Y') }}</td>
                         <td class="border p-2">{{ $revenue->description }}</td>
                         <td class="border p-2">R$ {{ number_format($revenue->value, 2, ',', '.') }}</td>
@@ -211,7 +250,6 @@ new class extends Component
                             </p>
                         </td>
                         <td class="border p-2">
-                            <button class="btn text-white bg-yellow-800 rounded p-1 hover:bg-yellow-600 cursor-pointer">Editar</button>
                             <button wire:click="removeRevenue({{ $revenue->id }})" class="btn text-white bg-red-800 rounded p-1 hover:bg-red-600 cursor-pointer">Excluir</button>
                         </td>
                     </tr>
@@ -239,11 +277,15 @@ new class extends Component
                     </div>
                     <div>
                         <label class="block text-sm font-medium mb-1">Valor</label>
-                        <input type="number" wire:model="value" class="w-full border rounded px-2 py-2">
+                        <input type="number" step="0.01" wire:model="value" class="w-full border rounded px-2 py-2">
                     </div>
                     <div>
                         <label class="block text-sm font-medium mb-1">Status</label>
-                        <input type="text" wire:model="status" class="w-full border rounded px-2 py-2">
+                        <select name="status" id="status" wire:model="status" class="w-full border rounded px-2 py-2">
+                            <option value="">Selecione um status</option>
+                            <option value="recebida">Recebida</option>
+                            <option value="a receber">À receber</option>
+                        </select>
                     </div>
 
                     <div>
@@ -264,6 +306,39 @@ new class extends Component
                     class="btn text-white bg-green-800 rounded p-1 hover:bg-green-600">
                     Confirmar Importação
                 </button>
+                <button type="button" wire:click="closeImport" class="btn text-white p-1 rounded bg-gray-600 hover:bg-gray-400 cursor-pointer">Cancelar</button>
+            </div>
+        </div>
+        @endif
+
+
+        @if ($modalEdit)
+        <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+            <div class="bg-white p-6 rounded shadow-lg w-96">
+                <h2 class="font-bold pb-5">Editar receita</h2>
+                <form wire:submit.prevent="editRevenue" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Data</label>
+                        <input type="date" wire:model="date" class="w-full border rounded px-2 py-2">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Descrição</label>
+                        <input type="text" wire:model="description" class="w-full border rounded px-2 py-2">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Valor</label>
+                        <input type="number" step="0.01" wire:model="value" class="w-full border rounded px-2 py-2">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Status</label>
+                        <input type="text" wire:model="status" class="w-full border rounded px-2 py-2">
+                    </div>
+
+                    <div>
+                        <button type="submit" class="btn text-white p-1 rounded bg-purple-900 hover:bg-purple-600 cursor-pointer">Salvar</button>
+                        <button type="button" wire:click="closeEditModal" class="btn text-white p-1 rounded bg-gray-600 hover:bg-gray-400 cursor-pointer">Cancelar</button>
+                    </div>
+                </form>
             </div>
         </div>
         @endif

@@ -3,7 +3,7 @@
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use Livewire\WithPagination;
-use App\Models\Investments;
+use App\Models\Investment;
 
 new class extends Component
 {
@@ -13,6 +13,7 @@ new class extends Component
 
     public $modalAdd = false;
     public $modalImport = false;
+    public $modalEdit = false;
 
     public $date;
     public $description;
@@ -21,6 +22,7 @@ new class extends Component
     public $category;
     public $institution;
     public $status;
+    public $is_initial;
 
     public $filterType;
     public $filterInstitution;
@@ -28,6 +30,8 @@ new class extends Component
     public $filterCategory;
     public $filterDateStart;
     public $filterDateEnd;
+
+    public $editingInvestmentId;
 
     public function updated()
     {
@@ -46,7 +50,7 @@ new class extends Component
             return [];
         }
 
-        $query = Investments::where('user', auth()->id());
+        $query = Investment::where('user', auth()->id());
 
         if ($this->filterType) {
             $query->where('type', $this->filterType);
@@ -115,13 +119,40 @@ new class extends Component
         $this->modalImport = false;
     }
 
+    public function showEditModal($idInvestment)
+    {
+        if (!auth()->check()) {
+            return redirect()->route('login');
+        }
+
+        $this->modalEdit = true;
+
+        $investment = Investment::where('id', $idInvestment)->first();
+
+        $this->editingInvestmentId = $investment->id;
+
+        $this->date = $investment->date;
+        $this->description = $investment->description;
+        $this->value = $investment->value;
+        $this->type = $investment->type;
+        $this->category = $investment->category;
+        $this->institution = $investment->institution;
+        $this->status = $investment->status;
+        $this->is_initial = $investment->is_initial;
+    }
+
+    public function closeEditModal()
+    {
+        $this->modalEdit = false;
+    }
+
     public function addInvestment()
     {
         // if (!auth()->check()) {
         //     return redirect()->route('login');
         // }
 
-        Investments::create([
+        Investment::create([
             'user' => auth()->id(),
             'date' => $this->date,
             'description' => $this->description,
@@ -129,6 +160,7 @@ new class extends Component
             'type' => $this->type,
             'institution' => $this->institution,
             'status' => $this->status,
+            'is_initial' => $this->is_initial,
         ]);
 
         $this->closeAddInvestment();
@@ -156,7 +188,7 @@ new class extends Component
                 continue;
             }
 
-            Investments::create([
+            Investment::create([
                 'user' => auth()->id(),
                 'date' => $date,
                 'description' => $row[1],
@@ -178,33 +210,49 @@ new class extends Component
 
     public function removeInvestment($id)
     {
-        Investments::where('id', $id)->delete();
+        Investment::where('id', $id)->delete();
+    }
+
+    public function editInvestment()
+    {
+        Investment::where('id', $this->editingInvestmentId)->update([
+            'date' => $this->date,
+            'description' => $this->description,
+            'value' => $this->value,
+            'type' => $this->type,
+            'category' => $this->category,
+            'institution' => $this->institution,
+            'status' => $this->status,
+            'is_initial' => $this->is_initial,
+        ]);
+
+        $this->closeEditModal();
     }
 
     public function getTypeColor($type)
     {
         return match ($type) {
-            'renda fixa' => 'bg-purple-300 text-purple-900',
-            'renda variavel' => 'bg-yellow-300 text-yellow-900',
-            'cripto' => 'bg-blue-300 text-gray-800',
+            'renda fixa' => 'bg-purple-300 text-purple-900 shadow-sm outline-1 outline-purple-400',
+            'renda variavel' => 'bg-yellow-300 text-yellow-900 shadow-sm outline-1 outline-yellow-400',
+            'cripto' => 'bg-rose-300 text-rose-800 shadow-sm outline-1 outline-rose-400',
         };
     }
 
     public function getCategoryColor($category)
     {
         return match ($category) {
-            'tesouro' => 'bg-blue-300 text-blue-900',
-            'CDB' => 'bg-green-300 text-green-900',
-            'ações' => 'bg-emerald-300 text-emerald-900',
-            'FII' => 'bg-yellow-300 text-gray-800',
+            'tesouro' => 'bg-blue-300 text-blue-900 shadow-sm outline-1 outline-blue-400',
+            'CDB' => 'bg-green-300 text-green-900 shadow-sm outline-1 outline-green-400',
+            'ações' => 'bg-emerald-300 text-emerald-900 shadow-sm outline-1 outline-emerald-400',
+            'FII' => 'bg-yellow-300 text-gray-800 shadow-sm outline-1 outline-yellow-400',
         };
     }
 
     public function getStatusColor($status)
     {
         return match ($status) {
-            'ativo' => 'bg-green-300 text-green-900',
-            'inativo' => 'bg-red-300 text-red-900',
+            'ativo' => 'bg-green-300 text-green-900 shadow-sm outline-1 outline-green-400',
+            'inativo' => 'bg-red-300 text-red-900 shadow-sm outline-1 outline-red-400',
         };
     }
 };
@@ -224,7 +272,7 @@ new class extends Component
         <button wire:click="showImport" class="btn w-24 text-white bg-blue-800 rounded p-1 hover:bg-blue-600 cursor-pointer">Importar</button>
     </div>
 
-    <div class="mx-5 flex justify-center">
+    <div class="mx-auto max-w-5xl px-4">
         @if ($this->getInvestments()->isEmpty())
         <p class="mt-6 text-gray-600">Nenhum investimento registrada. Adicione um novo investimento para começar a gerenciar suas finanças.</p>
         @else
@@ -257,21 +305,22 @@ new class extends Component
                 <button wire:click="applyFilters" class="btn w-24 text-white bg-yellow-600 rounded p-1 hover:bg-yellow-800 cursor-pointer">Filtrar</button>
             </div>
 
-            <table class="min-w-full text-sm mt-6 border-collapse rounded-sm overflow-hidden">
-                <thead>
-                    <tr class="bg-purple-800 text-white">
-                        <th class="border border-black p-2">Data</th>
-                        <th class="border border-black p-2">Descrição</th>
-                        <th class="border border-black p-2">Valor</th>
-                        <th class="border border-black p-2">Tipo</th>
-                        <th class="border border-black p-2">Categoria</th>
-                        <th class="border border-black p-2">Status</th>
-                        <th class="border border-black p-2"></th>
+            <table class="min-w-full text-sm mt-6 border border-gray-200 rounded-lg overflow-hidden shadow-xl shadow-purple-600">
+                <thead class="bg-violet-800 text-white">
+                    <tr>
+                        <th class="border border-black p-2 w-1/9">Data</th>
+                        <th class="border border-black p-2 w-1/4">Descrição</th>
+                        <th class="border border-black p-2 w-1/9">Valor</th>
+                        <th class="border border-black p-2 w-1/9">Tipo</th>
+                        <th class="border border-black p-2 w-1/9">Categoria</th>
+                        <th class="border border-black p-2 w-1/6">Instituição</th>
+                        <th class="border border-black p-2 w-1/10">Status</th>
+                        <th class="border border-black p-2 w-1/10"></th>
                     </tr>
                 </thead>
-                <tbody class="border-collapse">
+                <tbody class="divide-y divide-gray-100">
                     @foreach ($this->getInvestments() as $investment)
-                    <tr class="odd:bg-gray-300 even:bg-white">
+                    <tr wire:click="showEditModal({{ $investment->id }})" class="odd:bg-white even:bg-gray-100 hover:bg-violet-200 transition cursor-pointer">
                         <td class="border p-2">{{ \Carbon\Carbon::parse($investment->date)->format('d/m/Y') }}</td>
                         <td class="border p-2">{{ $investment->description }}</td>
                         <td class="border p-2">R$ {{ number_format($investment->value, 2, ',', '.') }}</td>
@@ -282,11 +331,13 @@ new class extends Component
                             <p class="rounded-xl p-1 {{ $this->getCategoryColor($investment->category) }}">{{ $investment->category }}</p>
                         </td>
                         <td class="border p-2">
+                            <p class="rounded-xl p-1">{{ $investment->institution }}</p>
+                        </td>
+                        <td class="border p-2">
                             <p class="rounded-xl p-1 {{ $this->getStatusColor($investment->status) }}">{{ $investment->status }}</p>
                         </td>
                         <td class="border p-2">
-                            <button class="btn text-white bg-yellow-800 rounded p-1 hover:bg-yellow-600 cursor-pointer">Editar</button>
-                            <button wire:click="removeExpense({{ $investment->id }})" class="btn text-white bg-red-800 rounded p-1 hover:bg-red-600 cursor-pointer">Excluir</button>
+                            <button wire:click="removeInvestment({{ $investment->id }})" class="btn text-white bg-red-800 rounded p-1 hover:bg-red-600 cursor-pointer">Excluir</button>
                         </td>
                     </tr>
                     @endforeach
@@ -313,7 +364,84 @@ new class extends Component
                     </div>
                     <div>
                         <label class="block text-sm font-medium mb-1">Valor</label>
-                        <input type="number" wire:model="value" class="w-full border rounded px-2 py-2">
+                        <input type="number" step="0.01" wire:model="value" class="w-full border rounded px-2 py-2">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Tipo</label>
+                        <select type="text" wire:model="type" class="w-full border rounded px-2 py-2">
+                            <option value="">Selecione um tipo</option>
+                            <option value="renda fixa">Renda fixa</option>
+                            <option value="renda variavel">Renda Variável</option>
+                            <option value="cripto">Criptomoedas</option>
+                            <option value="outros">Outros</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Categoria</label>
+                        <select type="text" wire:model="category" class="w-full border rounded px-2 py-2">
+                            <option value="">Selecione uma categoria</option>
+                            <option value="tesouro">Tesouro</option>
+                            <option value="CDB">CDB</option>
+                            <option value="ações">Ações</option>
+                            <option value="FII">FII</option>
+                            <option value="outros">Outros</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Instituição</label>
+                        <input type="text" wire:model="institution" class="w-full border rounded px-2 py-2">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Status</label>
+                        <select name="status" id="status" wire:model="status" class="w-full border rounded px-2 py-2">
+                            <option value="">Selecione um status</option>
+                            <option value="ativo">Ativo</option>
+                            <option value="inativo">Inativo</option>
+                        </select>
+                    </div>
+                    <div>
+                        <input type="radio" wire:model="is_initial" value="1">
+                        <label class="text-sm font-medium mb-1">Investimento pré-existente</label>
+                    </div>
+                    <div>
+                        <button type="submit" class="btn text-white p-1 rounded bg-purple-900 hover:bg-purple-600 cursor-pointer">Salvar</button>
+                        <button type="button" wire:click="closeAddInvestment" class="btn text-white p-1 rounded bg-gray-600 hover:bg-gray-400 cursor-pointer">Cancelar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        @endif
+
+        @if ($modalImport)
+        <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+            <div class="bg-white p-6 rounded shadow-lg w-96">
+                <input type="file" wire:model="file" class="file:mr-4 file:rounded-full file:border-0 file:bg-violet-500 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white hover:file:bg-violet-800 mb-2">
+
+                <button wire:click="importInvestments"
+                    class="btn text-white bg-green-800 rounded p-1 hover:bg-green-600">
+                    Confirmar Importação
+                </button>
+                <button type="button" wire:click="closeImport" class="btn text-white p-1 rounded bg-gray-600 hover:bg-gray-400 cursor-pointer">Cancelar</button>
+            </div>
+        </div>
+        @endif
+
+        @if ($modalEdit)
+        <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+            <div class="bg-white p-6 rounded shadow-lg w-96">
+                <h2 class="font-bold pb-5">Editar investimento</h2>
+                <form wire:submit.prevent="editInvestment" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Data</label>
+                        <input type="date" wire:model="date" class="w-full border rounded px-2 py-2">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Descrição</label>
+                        <input type="text" wire:model="description" class="w-full border rounded px-2 py-2">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Valor</label>
+                        <input type="number" step="0.01" wire:model="value" class="w-full border rounded px-2 py-2">
                     </div>
                     <div>
                         <label class="block text-sm font-medium mb-1">Tipo</label>
@@ -331,25 +459,16 @@ new class extends Component
                         <label class="block text-sm font-medium mb-1">Status</label>
                         <input type="text" wire:model="status" class="w-full border rounded px-2 py-2">
                     </div>
+                    <div>
+                        <input type="radio" wire:model="is_initial" value="1">
+                        <label class="text-sm font-medium mb-1">Investimento pré-existente</label>
+                    </div>
 
                     <div>
                         <button type="submit" class="btn text-white p-1 rounded bg-purple-900 hover:bg-purple-600 cursor-pointer">Salvar</button>
-                        <button type="button" wire:click="closeAddInvestment" class="btn text-white p-1 rounded bg-gray-600 hover:bg-gray-400 cursor-pointer">Cancelar</button>
+                        <button type="button" wire:click="closeAddExpense" class="btn text-white p-1 rounded bg-gray-600 hover:bg-gray-400 cursor-pointer">Cancelar</button>
                     </div>
                 </form>
-            </div>
-        </div>
-        @endif
-
-        @if ($modalImport)
-        <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-            <div class="bg-white p-6 rounded shadow-lg w-96">
-                <input type="file" wire:model="file" class="file:mr-4 file:rounded-full file:border-0 file:bg-violet-500 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white hover:file:bg-violet-800 mb-2">
-
-                <button wire:click="importExpenses"
-                    class="btn text-white bg-green-800 rounded p-1 hover:bg-green-600">
-                    Confirmar Importação
-                </button>
             </div>
         </div>
         @endif
