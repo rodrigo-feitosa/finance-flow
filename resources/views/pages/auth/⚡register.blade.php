@@ -21,7 +21,7 @@ new class extends Component
     }
 };
 ?>
-<div class="min-h-screen bg-gray-100" style="background-image: url('/imgs/wallpaper.png');">
+<div class="min-h-screen bg-gray-100">
     <div class="fixed inset-0 flex items-center justify-center bg-cover bg-center">
         <div class="bg-white bg-opacity-90 p-6 rounded-lg shadow-lg w-96">
             <h2 class="text-2xl font-bold text-center mb-6">Cadastro</h2>

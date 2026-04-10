@@ -25,9 +25,7 @@ new class extends Component
 };
 ?>
 
-<div
-    class="fixed inset-0 flex items-center justify-center bg-cover bg-center"
-    style="background-image: url('/images/games-bg.jpg');">
+<div class="fixed inset-0 flex items-center justify-center bg-cover bg-center">
 
     <div class="bg-white/90 backdrop-blur-md p-8 rounded-xl shadow-xl w-96">
 
