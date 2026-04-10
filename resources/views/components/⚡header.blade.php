@@ -26,11 +26,12 @@ new class extends Component
             <h1 class="text-2xl font-bold">FinanceFlow</h1>
         </a>
 
-        <nav class="space-x-6 relative">
-            <a href="/" class="hover:text-gray-300">Home</a>
-            <a href="/expenses" class="hover:text-gray-300">Despesas</a>
-            <a href="/revenues" class="hover:text-gray-300">Receitas</a>
-            <a href="/cash-flow" class="hover:text-gray-300">Fluxo Financeiro</a>
+        <nav class="space-x-3 relative">
+            <a href="/" class="rounded bg-blue-500 hover:bg-blue-600 p-2">Home</a>
+            <a href="/expenses" class="rounded bg-purple-500 hover:bg-purple-700 p-2">Despesas</a>
+            <a href="/revenues" class="rounded bg-green-500 hover:bg-green-700 p-2">Receitas</a>
+            <a href="/investments" class="rounded bg-yellow-500 hover:bg-yellow-900 p-2">Investimentos</a>
+            <a href="/cash-flow" class="rounded bg-cyan-500 hover:bg-cyan-700 p-2">Fluxo Financeiro</a>
             <div class="relative inline-block">
                 <button wire:click="toggleMenu" class="hover:text-gray-300 cursor-pointer">
                     <i class="fa-solid fa-user"></i>
