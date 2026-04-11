@@ -262,8 +262,16 @@ new class extends Component
     <p class="text-center mt-4 text-gray-600">Gerencie suas finanças pessoais de forma fácil e eficiente.</p>
 
     <div class="text-center gap-1">
-        <button wire:click="showAddInvestment" class="btn w-24 text-white bg-purple-800 rounded p-1 hover:bg-purple-600 cursor-pointer">Adicionar</button>
-        <button wire:click="showImport" class="btn w-24 text-white bg-blue-800 rounded p-1 hover:bg-blue-600 cursor-pointer">Importar</button>
+        <button 
+            wire:click="showAddInvestment" 
+            class="btn w-24 text-white bg-blue-800 rounded p-1 hover:bg-blue-600 cursor-pointer">
+            Adicionar
+        </button>
+        <button 
+            wire:click="showImport" 
+            class="btn w-24 text-white bg-fuchsia-800 rounded p-1 hover:bg-fuchsia-600 cursor-pointer">
+            Importar
+        </button>
     </div>
 
     <div class="mx-auto max-w-5xl px-4">
