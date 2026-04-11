@@ -26,13 +26,9 @@ new class extends Component
 
     public $editingRevenueId;
 
-    public function getRevenues(
-        $filterStatus = null,
-        $filterDateStart = null,
-        $filterDateEnd = null
-    ) {
+    public function getRevenuesProperty() {
         if (!auth()->check()) {
-            return [];
+            return collect();
         }
 
         $query = Revenue::where('user', auth()->id());
@@ -212,7 +208,7 @@ new class extends Component
     </div>
 
     <div class="mx-auto max-w-5xl px-4">
-        @if ($this->getRevenues()->isEmpty())
+        @if ($this->revenues->isEmpty())
         <p class="mt-6 text-gray-600">Nenhuma receita registrada. Adicione uma nova receita para começar a gerenciar suas finanças.</p>
         @else
         <div>
@@ -223,12 +219,12 @@ new class extends Component
                     <option value="a receber">A receber</option>
                 </select>
 
-                <input type="date" wire:model="filterDateStart" class="border p-1 rounded">
-                <input type="date" wire:model="filterDateEnd" class="border p-1 rounded">
+                <input type="date" wire:model="filterDateStart" class="border p-1 rounded w-1/3">
+                <input type="date" wire:model="filterDateEnd" class="border p-1 rounded w-1/3">
 
                 <button wire:click="applyFilters" class="btn w-24 text-white bg-yellow-600 rounded p-1 hover:bg-yellow-800 cursor-pointer">Filtrar</button>
             </div>
-            <table class="min-w-full text-sm mt-6 border border-gray-200 rounded-lg overflow-hidden shadow-xl shadow-purple-600">
+            <table class="hidden md:min-w-full text-sm mt-6 border border-gray-200 rounded-lg overflow-hidden shadow-xl shadow-purple-600">
                 <thead class="bg-violet-800 text-white">
                     <tr>
                         <th class="border border-black p-2 w-1/9">Data</th>
@@ -239,7 +235,7 @@ new class extends Component
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-100">
-                    @foreach ($this->getRevenues() as $revenue)
+                    @foreach ($this->revenues as $revenue)
                     <tr wire:click="showEditModal({{ $revenue->id }})" class="odd:bg-white even:bg-gray-100 hover:bg-violet-200 transition cursor-pointer">
                         <td class="border p-2">{{ \Carbon\Carbon::parse($revenue->date)->format('d/m/Y') }}</td>
                         <td class="border p-2">{{ $revenue->description }}</td>
@@ -256,8 +252,23 @@ new class extends Component
                     @endforeach
                 </tbody>
             </table>
-            <div class="mt-4">
-                {{ $this->getRevenues()->links() }}
+
+            <div class="md:hidden mt-4 space-y-3">
+                @foreach ($this->revenues as $revenue)
+                <div wire:click="showEditModal({{ $revenue->id }})" class="bg-white p-3 rounded shadow">
+                    <div class="flex justify-between mb-2">
+                        <span>{{ $revenue->description }}</span>
+                        <span>R$ {{ number_format($revenue->value, 2, ',', '.') }}</span>
+                    </div>
+                    <div class="text-sm text-gray-500">
+                        <span>{{ \Carbon\Carbon::parse($revenue->date)->format('d/m/Y') }}</span>
+                        <span class="ml-2 px-2 py-1 rounded {{ $this->getStatusColor($revenue->status) }}">{{ $revenue->status }}</span>
+                    </div>
+                </div>
+                @endforeach
+            </div>
+            <div class="mt-6">
+                {{ $this->revenues->links() }}
             </div>
             @endif
         </div>

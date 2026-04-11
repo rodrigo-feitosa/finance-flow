@@ -30,20 +30,10 @@ new class extends Component
 
     public $editingExpenseId;
 
-    public function updated()
+    public function getExpensesProperty()
     {
-        $this->resetPage();
-    }
-
-    public function getExpenses(
-        $filterType = null,
-        $filterPaymentMethod = null,
-        $filterStatus = null,
-        $filterDateStart = null,
-        $filterDateEnd = null
-    ) {
         if (!auth()->check()) {
-            return [];
+            return collect();
         }
 
         $query = Expense::where('user', auth()->id());
@@ -73,7 +63,7 @@ new class extends Component
 
     public function applyFilters()
     {
-        $this->getExpenses([
+        $this->getExpensesProperty([
             'type' => $this->filterType,
             'payment_method' => $this->filterPaymentMethod,
             'status' => $this->filterStatus,
@@ -93,6 +83,7 @@ new class extends Component
 
     public function closeAddExpense()
     {
+        $this->reset(['date', 'description', 'value', 'type', 'payment_method', 'status']);
         $this->modalAdd = false;
     }
 
@@ -198,7 +189,9 @@ new class extends Component
 
     public function removeExpense($id)
     {
-        Expense::where('id', $id)->delete();
+        Expense::where('id', $id)
+            ->where('user', auth()->id())
+            ->delete();
     }
 
     public function editExpense()
@@ -254,52 +247,51 @@ new class extends Component
     <p class="text-center mt-4 text-gray-600">Gerencie suas finanças pessoais de forma fácil e eficiente.</p>
 
     <div class="text-center gap-1">
-        <button 
-            wire:click="showAddExpense" 
+        <button
+            wire:click="showAddExpense"
             class="btn w-24 text-white bg-blue-800 rounded p-1 hover:bg-blue-600 cursor-pointer">
             Adicionar
         </button>
-        <button 
-            wire:click="showImport" 
+        <button
+            wire:click="showImport"
             class="btn w-24 text-white bg-fuchsia-800 rounded p-1 hover:bg-fuchsia-600 cursor-pointer">
             Importar
         </button>
     </div>
 
     <div class="mx-auto max-w-5xl px-4">
-        @if ($this->getExpenses()->isEmpty())
+        <div class="flex flex-wrap gap-2 mt-4 justify-center">
+            <select wire:model="filterType" class="border p-1 rounded">
+                <option value="">Tipo</option>
+                <option value="fixa">Fixa</option>
+                <option value="variavel">Variável</option>
+                <option value="parcelada">Parcelada</option>
+            </select>
+
+            <select wire:model="filterPaymentMethod" class="border p-1 rounded">
+                <option value="">Pagamento</option>
+                <option value="credito">Crédito</option>
+                <option value="debito">Débito</option>
+                <option value="pix">Pix</option>
+                <option value="dinheiro">Dinheiro</option>
+            </select>
+
+            <select wire:model="filterStatus" class="border p-1 rounded">
+                <option value="">Status</option>
+                <option value="paga">Paga</option>
+                <option value="a pagar">A pagar</option>
+            </select>
+
+            <input type="date" wire:model="filterDateStart" class="border p-1 rounded">
+            <input type="date" wire:model="filterDateEnd" class="border p-1 rounded">
+
+            <button wire:click="applyFilters" class="btn w-24 text-white bg-yellow-600 rounded p-1 hover:bg-yellow-800 cursor-pointer">Filtrar</button>
+        </div>
+        @if ($this->expenses->isEmpty())
         <p class="mt-6 text-gray-600">Nenhuma despesa registrada. Adicione uma nova despesa para começar a gerenciar suas finanças.</p>
         @else
         <div>
-            <div class="flex flex-wrap gap-2 mt-4 justify-center">
-                <select wire:model="filterType" class="border p-1 rounded">
-                    <option value="">Tipo</option>
-                    <option value="fixa">Fixa</option>
-                    <option value="variavel">Variável</option>
-                    <option value="parcelada">Parcelada</option>
-                </select>
-
-                <select wire:model="filterPaymentMethod" class="border p-1 rounded">
-                    <option value="">Pagamento</option>
-                    <option value="credito">Crédito</option>
-                    <option value="debito">Débito</option>
-                    <option value="pix">Pix</option>
-                    <option value="dinheiro">Dinheiro</option>
-                </select>
-
-                <select wire:model="filterStatus" class="border p-1 rounded">
-                    <option value="">Status</option>
-                    <option value="paga">Paga</option>
-                    <option value="a pagar">A pagar</option>
-                </select>
-
-                <input type="date" wire:model="filterDateStart" class="border p-1 rounded">
-                <input type="date" wire:model="filterDateEnd" class="border p-1 rounded">
-
-                <button wire:click="applyFilters" class="btn w-24 text-white bg-yellow-600 rounded p-1 hover:bg-yellow-800 cursor-pointer">Filtrar</button>
-            </div>
-
-            <table class="min-w-full text-sm mt-6 border border-gray-200 rounded-lg overflow-hidden shadow-xl shadow-purple-600">
+            <table class="hidden md:table min-w-full text-sm mt-6 border border-gray-200 rounded-lg overflow-hidden shadow-xl shadow-purple-600">
                 <thead class="bg-violet-800 text-white">
                     <tr>
                         <th class="border border-black p-2 w-1/9">Data</th>
@@ -312,7 +304,7 @@ new class extends Component
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-100">
-                    @foreach ($this->getExpenses() as $expense)
+                    @foreach ($this->expenses as $expense)
                     <tr wire:click="showEditModal({{ $expense->id }})" class="odd:bg-white even:bg-gray-100 hover:bg-violet-200 transition cursor-pointer">
                         <td class="border p-2">{{ \Carbon\Carbon::parse($expense->date)->format('d/m/Y') }}</td>
                         <td class="border p-2">{{ $expense->description }}</td>
@@ -327,14 +319,31 @@ new class extends Component
                             <p class="rounded-xl p-1 {{ $this->getStatusColor($expense->status) }}">{{ $expense->status }}</p>
                         </td>
                         <td class="border p-2">
-                            <button wire:click="removeExpense({{ $expense->id }})" class="btn text-white bg-red-800 rounded p-1 hover:bg-red-600 cursor-pointer">Excluir</button>
+                            <button wire:click.stop="removeExpense({{ $expense->id }})" class="btn text-white bg-red-800 rounded p-1 hover:bg-red-600 cursor-pointer">Excluir</button>
                         </td>
                     </tr>
                     @endforeach
                 </tbody>
             </table>
+
+            <div class="md:hidden mt-4 space-y-3">
+                @foreach ($this->expenses as $expense)
+                <div wire:click="showEditModal({{ $expense->id }})" class="bg-white p-3 rounded shadow">
+                    <div class="flex justify-between mb-2">
+                        <span>{{ $expense->description }}</span>
+                        <span>R$ {{ number_format($expense->value, 2, ',', '.') }}</span>
+                    </div>
+                    <div class="text-sm text-gray-500">
+                        <span>{{ \Carbon\Carbon::parse($expense->date)->format('d/m/Y') }}</span>
+                        <span class="ml-2 px-2 py-1 rounded {{ $this->getTypeColor($expense->type) }}">{{ $expense->type }}</span>
+                        <span class="ml-2 px-2 py-1 rounded {{ $this->getPaymentMethodColor($expense->payment_method) }}">{{ $expense->payment_method }}</span>
+                        <span class="ml-2 px-2 py-1 rounded {{ $this->getStatusColor($expense->status) }}">{{ $expense->status }}</span>
+                    </div>
+                </div>
+                @endforeach
+            </div>
             <div class="mt-6">
-                {{ $this->getExpenses()->links() }}
+                {{ $this->expenses->links() }}
             </div>
             @endif
         </div>
@@ -362,7 +371,7 @@ new class extends Component
                             <option value="">Selecione o tipo</option>
                             <option value="fixa">Despesa Fixa</option>
                             <option value="variavel">Despesa Variável</option>
-                            <option value="fixa">Despesa Fixa</option>
+                            <option value="parcelada">Despesa Parcelada</option>
                         </select>
                     </div>
                     <div>

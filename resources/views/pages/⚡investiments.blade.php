@@ -38,13 +38,7 @@ new class extends Component
         $this->resetPage();
     }
 
-    public function getInvestments(
-        $filterType = null,
-        $filterInstitution = null,
-        $filterStatus = null,
-        $filterCategory = null,
-        $filterDateStart = null,
-        $filterDateEnd = null
+    public function getInvestmentsProperty(
     ) {
         if (!auth()->check()) {
             return [];
@@ -273,7 +267,7 @@ new class extends Component
     </div>
 
     <div class="mx-auto max-w-5xl px-4">
-        @if ($this->getInvestments()->isEmpty())
+        @if ($this->investments->isEmpty())
         <p class="mt-6 text-gray-600">Nenhum investimento registrada. Adicione um novo investimento para começar a gerenciar suas finanças.</p>
         @else
         <div>
@@ -305,7 +299,7 @@ new class extends Component
                 <button wire:click="applyFilters" class="btn w-24 text-white bg-yellow-600 rounded p-1 hover:bg-yellow-800 cursor-pointer">Filtrar</button>
             </div>
 
-            <table class="min-w-full text-sm mt-6 border border-gray-200 rounded-lg overflow-hidden shadow-xl shadow-purple-600">
+            <table class="hidden md:table min-w-full text-sm mt-6 border border-gray-200 rounded-lg overflow-hidden shadow-xl shadow-purple-600">
                 <thead class="bg-violet-800 text-white">
                     <tr>
                         <th class="border border-black p-2 w-1/9">Data</th>
@@ -319,7 +313,7 @@ new class extends Component
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-100">
-                    @foreach ($this->getInvestments() as $investment)
+                    @foreach ($this->investments as $investment)
                     <tr wire:click="showEditModal({{ $investment->id }})" class="odd:bg-white even:bg-gray-100 hover:bg-violet-200 transition cursor-pointer">
                         <td class="border p-2">{{ \Carbon\Carbon::parse($investment->date)->format('d/m/Y') }}</td>
                         <td class="border p-2">{{ $investment->description }}</td>
@@ -343,134 +337,149 @@ new class extends Component
                     @endforeach
                 </tbody>
             </table>
+            <div class="md:hidden mt-4 space-y-3">
+                @foreach ($this->investments as $investment)
+                <div wire:click="showEditModal({{ $investment->id }})" class="bg-white p-3 rounded shadow">
+                    <div class="flex justify-between mb-2">
+                        <span>{{ $investment->description }}</span>
+                        <span>R$ {{ number_format($investment->value, 2, ',', '.') }}</span>
+                    </div>
+                    <div class="text-sm text-gray-500">
+                        <span>{{ \Carbon\Carbon::parse($investment->date)->format('d/m/Y') }}</span>
+                        <span class="ml-2 px-2 py-1 rounded {{ $this->getStatusColor($investment->status) }}">{{ $investment->status }}</span>
+                    </div>
+                </div>
+                @endforeach
+            </div>
             <div class="mt-6">
-                {{ $this->getInvestments()->links() }}
+                {{ $this->investments->links() }}
             </div>
             @endif
         </div>
-
-        @if ($modalAdd)
-        <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-            <div class="bg-white p-6 rounded shadow-lg w-96">
-                <h2 class="font-bold pb-5">Adicionar investimento</h2>
-                <form wire:submit.prevent="addInvestment" class="space-y-4">
-                    <div>
-                        <label class="block text-sm font-medium mb-1">Data</label>
-                        <input type="date" wire:model="date" class="w-full border rounded px-2 py-2">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium mb-1">Descrição</label>
-                        <input type="text" wire:model="description" class="w-full border rounded px-2 py-2">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium mb-1">Valor</label>
-                        <input type="number" step="0.01" wire:model="value" class="w-full border rounded px-2 py-2">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium mb-1">Tipo</label>
-                        <select type="text" wire:model="type" class="w-full border rounded px-2 py-2">
-                            <option value="">Selecione um tipo</option>
-                            <option value="renda fixa">Renda fixa</option>
-                            <option value="renda variavel">Renda Variável</option>
-                            <option value="cripto">Criptomoedas</option>
-                            <option value="outros">Outros</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium mb-1">Categoria</label>
-                        <select type="text" wire:model="category" class="w-full border rounded px-2 py-2">
-                            <option value="">Selecione uma categoria</option>
-                            <option value="tesouro">Tesouro</option>
-                            <option value="CDB">CDB</option>
-                            <option value="ações">Ações</option>
-                            <option value="FII">FII</option>
-                            <option value="outros">Outros</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium mb-1">Instituição</label>
-                        <input type="text" wire:model="institution" class="w-full border rounded px-2 py-2">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium mb-1">Status</label>
-                        <select name="status" id="status" wire:model="status" class="w-full border rounded px-2 py-2">
-                            <option value="">Selecione um status</option>
-                            <option value="ativo">Ativo</option>
-                            <option value="inativo">Inativo</option>
-                        </select>
-                    </div>
-                    <div>
-                        <input type="radio" wire:model="is_initial" value="1">
-                        <label class="text-sm font-medium mb-1">Investimento pré-existente</label>
-                    </div>
-                    <div>
-                        <button type="submit" class="btn text-white p-1 rounded bg-purple-900 hover:bg-purple-600 cursor-pointer">Salvar</button>
-                        <button type="button" wire:click="closeAddInvestment" class="btn text-white p-1 rounded bg-gray-600 hover:bg-gray-400 cursor-pointer">Cancelar</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-        @endif
-
-        @if ($modalImport)
-        <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-            <div class="bg-white p-6 rounded shadow-lg w-96">
-                <input type="file" wire:model="file" class="file:mr-4 file:rounded-full file:border-0 file:bg-violet-500 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white hover:file:bg-violet-800 mb-2">
-
-                <button wire:click="importInvestments"
-                    class="btn text-white bg-green-800 rounded p-1 hover:bg-green-600">
-                    Confirmar Importação
-                </button>
-                <button type="button" wire:click="closeImport" class="btn text-white p-1 rounded bg-gray-600 hover:bg-gray-400 cursor-pointer">Cancelar</button>
-            </div>
-        </div>
-        @endif
-
-        @if ($modalEdit)
-        <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-            <div class="bg-white p-6 rounded shadow-lg w-96">
-                <h2 class="font-bold pb-5">Editar investimento</h2>
-                <form wire:submit.prevent="editInvestment" class="space-y-4">
-                    <div>
-                        <label class="block text-sm font-medium mb-1">Data</label>
-                        <input type="date" wire:model="date" class="w-full border rounded px-2 py-2">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium mb-1">Descrição</label>
-                        <input type="text" wire:model="description" class="w-full border rounded px-2 py-2">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium mb-1">Valor</label>
-                        <input type="number" step="0.01" wire:model="value" class="w-full border rounded px-2 py-2">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium mb-1">Tipo</label>
-                        <input type="text" wire:model="type" class="w-full border rounded px-2 py-2">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium mb-1">Categoria</label>
-                        <input type="text" wire:model="category" class="w-full border rounded px-2 py-2">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium mb-1">Instituição</label>
-                        <input type="text" wire:model="institution" class="w-full border rounded px-2 py-2">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium mb-1">Status</label>
-                        <input type="text" wire:model="status" class="w-full border rounded px-2 py-2">
-                    </div>
-                    <div>
-                        <input type="radio" wire:model="is_initial" value="1">
-                        <label class="text-sm font-medium mb-1">Investimento pré-existente</label>
-                    </div>
-
-                    <div>
-                        <button type="submit" class="btn text-white p-1 rounded bg-purple-900 hover:bg-purple-600 cursor-pointer">Salvar</button>
-                        <button type="button" wire:click="closeAddExpense" class="btn text-white p-1 rounded bg-gray-600 hover:bg-gray-400 cursor-pointer">Cancelar</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-        @endif
     </div>
+
+    @if ($modalAdd)
+    <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+        <div class="bg-white p-6 rounded shadow-lg w-96">
+            <h2 class="font-bold pb-5">Adicionar investimento</h2>
+            <form wire:submit.prevent="addInvestment" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium mb-1">Data</label>
+                    <input type="date" wire:model="date" class="w-full border rounded px-2 py-2">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-1">Descrição</label>
+                    <input type="text" wire:model="description" class="w-full border rounded px-2 py-2">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-1">Valor</label>
+                    <input type="number" step="0.01" wire:model="value" class="w-full border rounded px-2 py-2">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-1">Tipo</label>
+                    <select type="text" wire:model="type" class="w-full border rounded px-2 py-2">
+                        <option value="">Selecione um tipo</option>
+                        <option value="renda fixa">Renda fixa</option>
+                        <option value="renda variavel">Renda Variável</option>
+                        <option value="cripto">Criptomoedas</option>
+                        <option value="outros">Outros</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-1">Categoria</label>
+                    <select type="text" wire:model="category" class="w-full border rounded px-2 py-2">
+                        <option value="">Selecione uma categoria</option>
+                        <option value="tesouro">Tesouro</option>
+                        <option value="CDB">CDB</option>
+                        <option value="ações">Ações</option>
+                        <option value="FII">FII</option>
+                        <option value="outros">Outros</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-1">Instituição</label>
+                    <input type="text" wire:model="institution" class="w-full border rounded px-2 py-2">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-1">Status</label>
+                    <select name="status" id="status" wire:model="status" class="w-full border rounded px-2 py-2">
+                        <option value="">Selecione um status</option>
+                        <option value="ativo">Ativo</option>
+                        <option value="inativo">Inativo</option>
+                    </select>
+                </div>
+                <div>
+                    <input type="radio" wire:model="is_initial" value="1">
+                    <label class="text-sm font-medium mb-1">Investimento pré-existente</label>
+                </div>
+                <div>
+                    <button type="submit" class="btn text-white p-1 rounded bg-purple-900 hover:bg-purple-600 cursor-pointer">Salvar</button>
+                    <button type="button" wire:click="closeAddInvestment" class="btn text-white p-1 rounded bg-gray-600 hover:bg-gray-400 cursor-pointer">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    @endif
+
+    @if ($modalImport)
+    <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+        <div class="bg-white p-6 rounded shadow-lg w-96">
+            <input type="file" wire:model="file" class="file:mr-4 file:rounded-full file:border-0 file:bg-violet-500 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white hover:file:bg-violet-800 mb-2">
+
+            <button wire:click="importInvestments"
+                class="btn text-white bg-green-800 rounded p-1 hover:bg-green-600">
+                Confirmar Importação
+            </button>
+            <button type="button" wire:click="closeImport" class="btn text-white p-1 rounded bg-gray-600 hover:bg-gray-400 cursor-pointer">Cancelar</button>
+        </div>
+    </div>
+    @endif
+
+    @if ($modalEdit)
+    <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+        <div class="bg-white p-6 rounded shadow-lg w-96">
+            <h2 class="font-bold pb-5">Editar investimento</h2>
+            <form wire:submit.prevent="editInvestment" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium mb-1">Data</label>
+                    <input type="date" wire:model="date" class="w-full border rounded px-2 py-2">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-1">Descrição</label>
+                    <input type="text" wire:model="description" class="w-full border rounded px-2 py-2">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-1">Valor</label>
+                    <input type="number" step="0.01" wire:model="value" class="w-full border rounded px-2 py-2">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-1">Tipo</label>
+                    <input type="text" wire:model="type" class="w-full border rounded px-2 py-2">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-1">Categoria</label>
+                    <input type="text" wire:model="category" class="w-full border rounded px-2 py-2">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-1">Instituição</label>
+                    <input type="text" wire:model="institution" class="w-full border rounded px-2 py-2">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-1">Status</label>
+                    <input type="text" wire:model="status" class="w-full border rounded px-2 py-2">
+                </div>
+                <div>
+                    <input type="radio" wire:model="is_initial" value="1">
+                    <label class="text-sm font-medium mb-1">Investimento pré-existente</label>
+                </div>
+
+                <div>
+                    <button type="submit" class="btn text-white p-1 rounded bg-purple-900 hover:bg-purple-600 cursor-pointer">Salvar</button>
+                    <button type="button" wire:click="closeEditModal" class="btn text-white p-1 rounded bg-gray-600 hover:bg-gray-400 cursor-pointer">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    @endif
+</div>
 </div>
