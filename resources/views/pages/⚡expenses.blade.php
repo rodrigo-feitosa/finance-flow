@@ -333,11 +333,16 @@ new class extends Component
                         <span>{{ $expense->description }}</span>
                         <span>R$ {{ number_format($expense->value, 2, ',', '.') }}</span>
                     </div>
-                    <div class="text-sm text-gray-500">
-                        <span>{{ \Carbon\Carbon::parse($expense->date)->format('d/m/Y') }}</span>
-                        <span class="ml-2 px-2 py-1 rounded {{ $this->getTypeColor($expense->type) }}">{{ $expense->type }}</span>
-                        <span class="ml-2 px-2 py-1 rounded {{ $this->getPaymentMethodColor($expense->payment_method) }}">{{ $expense->payment_method }}</span>
-                        <span class="ml-2 px-2 py-1 rounded {{ $this->getStatusColor($expense->status) }}">{{ $expense->status }}</span>
+                    <div class="flex justify-between items-center text-sm text-gray-500">
+                        <div>
+                            <span>{{ \Carbon\Carbon::parse($expense->date)->format('d/m/Y') }}</span>
+                            <span class="ml-2 px-2 py-1 rounded {{ $this->getTypeColor($expense->type) }}">{{ $expense->type }}</span>
+                            <span class="ml-2 px-2 py-1 rounded {{ $this->getPaymentMethodColor($expense->payment_method) }}">{{ $expense->payment_method }}</span>
+                            <span class="ml-2 px-2 py-1 rounded {{ $this->getStatusColor($expense->status) }}">{{ $expense->status }}</span>
+                        </div>
+                        <div>
+                            <button wire:click.stop="removeExpense({{ $expense->id }})" class="text-lg text-red-500 hover:text-red-700 cursor-pointer"><i class="fa-regular fa-trash-can"></i></button>
+                        </div>
                     </div>
                 </div>
                 @endforeach

@@ -344,9 +344,14 @@ new class extends Component
                         <span>{{ $investment->description }}</span>
                         <span>R$ {{ number_format($investment->value, 2, ',', '.') }}</span>
                     </div>
-                    <div class="text-sm text-gray-500">
-                        <span>{{ \Carbon\Carbon::parse($investment->date)->format('d/m/Y') }}</span>
-                        <span class="ml-2 px-2 py-1 rounded {{ $this->getStatusColor($investment->status) }}">{{ $investment->status }}</span>
+                    <div class="flex justify-between items-center text-sm text-gray-500">
+                        <div>
+                            <span>{{ \Carbon\Carbon::parse($investment->date)->format('d/m/Y') }}</span>
+                            <span class="ml-2 px-2 py-1 rounded {{ $this->getStatusColor($investment->status) }}">{{ $investment->status }}</span>
+                        </div>
+                        <div>
+                            <button wire:click.stop="removeInvestment({{ $investment->id }})" class="text-lg text-red-500 hover:text-red-700 cursor-pointer"><i class="fa-regular fa-trash-can"></i></button>
+                        </div>
                     </div>
                 </div>
                 @endforeach
