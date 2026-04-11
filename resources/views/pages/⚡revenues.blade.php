@@ -355,7 +355,11 @@ new class extends Component
                     </div>
                     <div>
                         <label class="block text-sm font-medium mb-1">Status</label>
-                        <input type="text" wire:model="status" class="w-full border rounded px-2 py-2">
+                        <select name="status" id="status" wire:model="status" class="w-full border rounded px-2 py-2">
+                            <option value="">Selecione um status</option>
+                            <option value="recebida">Recebida</option>
+                            <option value="a receber">À receber</option>
+                        </select>
                     </div>
 
                     <div>

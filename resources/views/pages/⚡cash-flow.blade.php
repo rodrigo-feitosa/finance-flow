@@ -170,10 +170,10 @@ new class extends Component
                 <table class="min-w-[600px] w-full text-xs md:text-sm">
                     <thead class="bg-violet-800 text-white">
                         <tr>
-                            <th class="p-2">Data</th>
-                            <th class="p-2">Descrição</th>
-                            <th class="p-2">Valor</th>
-                            <th class="p-2">Status</th>
+                            <th class="p-2 text-start">Data</th>
+                            <th class="p-2 text-start">Descrição</th>
+                            <th class="p-2 text-start">Valor</th>
+                            <th class="p-2 text-start">Status</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -207,10 +207,10 @@ new class extends Component
                 <table class="min-w-[600px] w-full text-xs md:text-sm">
                     <thead class="bg-violet-800 text-white">
                         <tr>
-                            <th class="p-2">Data</th>
-                            <th class="p-2">Descrição</th>
-                            <th class="p-2">Valor</th>
-                            <th class="p-2">Status</th>
+                            <th class="p-2 text-start">Data</th>
+                            <th class="p-2 text-start">Descrição</th>
+                            <th class="p-2 text-start">Valor</th>
+                            <th class="p-2 text-start">Status</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -244,10 +244,10 @@ new class extends Component
                 <table class="min-w-[600px] w-full text-xs md:text-sm">
                     <thead class="bg-violet-800 text-white">
                         <tr>
-                            <th class="p-2">Data</th>
-                            <th class="p-2">Descrição</th>
-                            <th class="p-2">Valor</th>
-                            <th class="p-2">Status</th>
+                            <th class="p-2 text-start">Data</th>
+                            <th class="p-2 text-start">Descrição</th>
+                            <th class="p-2 text-start">Valor</th>
+                            <th class="p-2 text-start">Status</th>
                         </tr>
                     </thead>
                     <tbody>

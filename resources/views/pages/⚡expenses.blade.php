@@ -440,15 +440,30 @@ new class extends Component
                     </div>
                     <div>
                         <label class="block text-sm font-medium mb-1">Tipo</label>
-                        <input type="text" wire:model="type" class="w-full border rounded px-2 py-2">
+                        <select type="text" wire:model="type" class="w-full border rounded px-2 py-2">
+                            <option value="">Selecione o tipo</option>
+                            <option value="fixa">Despesa Fixa</option>
+                            <option value="variavel">Despesa Variável</option>
+                            <option value="parcelada">Despesa Parcelada</option>
+                        </select>
                     </div>
                     <div>
                         <label class="block text-sm font-medium mb-1">Forma de pagamento</label>
-                        <input type="text" wire:model="payment_method" class="w-full border rounded px-2 py-2">
+                        <select name="payment_method" id="payment_method" wire:model="payment_method" class="w-full border rounded px-2 py-2">
+                            <option value="">Selecione o método</option>
+                            <option value="credito">Crédito</option>
+                            <option value="debito">Débito</option>
+                            <option value="pix">Pix</option>
+                            <option value="dinheiro">Dinheiro</option>
+                        </select>
                     </div>
                     <div>
                         <label class="block text-sm font-medium mb-1">Status</label>
-                        <input type="text" wire:model="status" class="w-full border rounded px-2 py-2">
+                        <select type="text" wire:model="status" class="w-full border rounded px-2 py-2">
+                            <option value="">Selecione o status</option>
+                            <option value="paga">Paga</option>
+                            <option value="a pagar">A pagar</option>
+                        </select>
                     </div>
 
                     <div>

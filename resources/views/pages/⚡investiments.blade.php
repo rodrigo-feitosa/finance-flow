@@ -467,11 +467,24 @@ new class extends Component
                 </div>
                 <div>
                     <label class="block text-sm font-medium mb-1">Tipo</label>
-                    <input type="text" wire:model="type" class="w-full border rounded px-2 py-2">
+                    <select type="text" wire:model="type" class="w-full border rounded px-2 py-2">
+                        <option value="">Selecione um tipo</option>
+                        <option value="renda fixa">Renda fixa</option>
+                        <option value="renda variavel">Renda Variável</option>
+                        <option value="cripto">Criptomoedas</option>
+                        <option value="outros">Outros</option>
+                    </select>
                 </div>
                 <div>
                     <label class="block text-sm font-medium mb-1">Categoria</label>
-                    <input type="text" wire:model="category" class="w-full border rounded px-2 py-2">
+                    <select type="text" wire:model="category" class="w-full border rounded px-2 py-2">
+                        <option value="">Selecione uma categoria</option>
+                        <option value="tesouro">Tesouro</option>
+                        <option value="CDB">CDB</option>
+                        <option value="ações">Ações</option>
+                        <option value="FII">FII</option>
+                        <option value="outros">Outros</option>
+                    </select>
                 </div>
                 <div>
                     <label class="block text-sm font-medium mb-1">Instituição</label>
@@ -479,7 +492,11 @@ new class extends Component
                 </div>
                 <div>
                     <label class="block text-sm font-medium mb-1">Status</label>
-                    <input type="text" wire:model="status" class="w-full border rounded px-2 py-2">
+                    <select name="status" id="status" wire:model="status" class="w-full border rounded px-2 py-2">
+                        <option value="">Selecione um status</option>
+                        <option value="ativo">Ativo</option>
+                        <option value="inativo">Inativo</option>
+                    </select>
                 </div>
                 <div>
                     <input type="radio" wire:model="is_initial" value="1">
