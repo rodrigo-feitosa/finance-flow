@@ -224,7 +224,7 @@ new class extends Component
 
                 <button wire:click="applyFilters" class="btn w-24 text-white bg-yellow-600 rounded p-1 hover:bg-yellow-800 cursor-pointer">Filtrar</button>
             </div>
-            <table class="hidden md:min-w-full text-sm mt-6 border border-gray-200 rounded-lg overflow-hidden shadow-xl shadow-purple-600">
+            <table class="hidden md:table min-w-full text-sm mt-6 border border-gray-200 rounded-lg overflow-hidden shadow-xl shadow-purple-600">
                 <thead class="bg-violet-800 text-white">
                     <tr>
                         <th class="border border-black p-2 w-1/9">Data</th>
