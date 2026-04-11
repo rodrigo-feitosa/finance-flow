@@ -246,7 +246,7 @@ new class extends Component
                             </p>
                         </td>
                         <td class="border p-2">
-                            <button wire:click="removeRevenue({{ $revenue->id }})" class="btn text-white bg-red-800 rounded p-1 hover:bg-red-600 cursor-pointer">Excluir</button>
+                            <button wire:click.stop="removeRevenue({{ $revenue->id }})" class="btn text-white bg-red-800 rounded p-1 hover:bg-red-600 cursor-pointer">Excluir</button>
                         </td>
                     </tr>
                     @endforeach

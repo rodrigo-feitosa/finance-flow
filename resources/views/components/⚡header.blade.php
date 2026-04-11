@@ -27,11 +27,11 @@ new class extends Component
         </a>
 
         <nav class="hidden md:flex space-x-3 relative items-center">
-            <a href="{{ route('index') }}" class="rounded bg-blue-500 hover:bg-blue-600 p-2">Home</a>
-            <a href="{{ route('expenses') }}" class="rounded bg-blue-500 hover:bg-blue-600 p-2">Despesas</a>
-            <a href="{{ route('revenues') }}" class="rounded bg-blue-500 hover:bg-blue-600 p-2">Receitas</a>
-            <a href="{{ route('investments') }}" class="rounded bg-blue-500 hover:bg-blue-600 p-2">Investimentos</a>
-            <a href="{{ route('cash-flow') }}" class="rounded bg-blue-500 hover:bg-blue-600 p-2">Fluxo Financeiro</a>
+            <a href="{{ route('index') }}" class="rounded bg-violet-500 hover:bg-violet-600 p-2">Home</a>
+            <a href="{{ route('expenses') }}" class="rounded bg-violet-500 hover:bg-violet-600 p-2">Despesas</a>
+            <a href="{{ route('revenues') }}" class="rounded bg-violet-500 hover:bg-violet-600 p-2">Receitas</a>
+            <a href="{{ route('investments') }}" class="rounded bg-violet-500 hover:bg-violet-600 p-2">Investimentos</a>
+            <a href="{{ route('cash-flow') }}" class="rounded bg-violet-500 hover:bg-violet-600 p-2">Fluxo Financeiro</a>
             <div class="relative inline-block">
                 <button wire:click="toggleMenu" class="scale-120 pl-5 hover:text-gray-300 transition hover:scale-150 cursor-pointer">
                     <i class="fa-solid fa-user"></i>
@@ -92,7 +92,7 @@ new class extends Component
 
         <div class="fixed bottom-0 left-0 w-full bg-gray-900 text-white flex justify-around py-3 md:hidden shadow-lg z-50">
             <a href="{{ route('index') }}" class="flex flex-col items-center text-xs">
-                <i class="fa-solid fa-hand-holding-dollar text-lg"></i>
+                <i class="fa-solid fa-hand-holding-dollar text-lg "></i>
                 Home
             </a>
 
