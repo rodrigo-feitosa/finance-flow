@@ -22,6 +22,15 @@ new class extends Component
         return redirect()->route('revenues');
     }
 
+    public function goToInvestments()
+    {
+        if (!auth()->check()) {
+            return redirect()->route('login');
+        }
+
+        return redirect()->route('investments');
+    }
+
     public function goToFlow()
     {
         if (!auth()->check()) {
@@ -54,6 +63,12 @@ new class extends Component
             wire:click="goToRevenues"
             class="w-full bg-pink-800 text-white py-2 mb-2 rounded-lg hover:bg-pink-600 transition cursor-pointer">
             Acessar minhas receitas
+        </button>
+
+        <button
+            wire:click="goToInvestments"
+            class="w-full bg-yellow-600 text-white py-2 mb-2 rounded-lg hover:bg-yellow-800 transition cursor-pointer">
+            Acessar meus investimentos
         </button>
 
         <button
