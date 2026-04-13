@@ -4,6 +4,7 @@ use Livewire\Component;
 use App\Models\Expense;
 use Livewire\WithFileUploads;
 use Livewire\WithPagination;
+use Carbon\Carbon;
 
 new class extends Component
 {
@@ -29,6 +30,8 @@ new class extends Component
     public $filterDateEnd;
 
     public $editingExpenseId;
+
+    public $installments = 1;
 
     public function getExpensesProperty()
     {
@@ -128,20 +131,33 @@ new class extends Component
 
     public function addExpense()
     {
-        // if (!auth()->check()) {
-        //     return redirect()->route('login');
-        // }
+        $installments = (int) $this->installments;
 
-        Expense::create([
-            'user' => auth()->id(),
-            'date' => $this->date,
-            'description' => $this->description,
-            'value' => $this->value,
-            'type' => $this->type,
-            'payment_method' => $this->payment_method,
-            'status' => $this->status,
-        ]);
+        if ($installments <= 1) {
+            Expense::create([
+                'user' => auth()->id(),
+                'date' => $this->date,
+                'description' => $this->description,
+                'value' => $this->value,
+                'type' => $this->type,
+                'payment_method' => $this->payment_method,
+                'status' => $this->status,
+            ]);
+        } else {
+            for ($i = 0; $i < $installments; $i++) {
+                Expense::create([
+                    'user' => auth()->id(),
+                    'date' => \Carbon\Carbon::parse($this->date)->addMonths($i),
+                    'description' => $this->description . ' (' . ($i + 1) . '/' . $installments . ')',
+                    'value' => $this->value,
+                    'type' => 'parcelada', // força consistência
+                    'payment_method' => $this->payment_method,
+                    'status' => $this->status,
+                ]);
+            }
+        }
 
+        $this->reset(['installments']);
         $this->closeAddExpense();
     }
 
@@ -380,6 +396,10 @@ new class extends Component
                         </select>
                     </div>
                     <div>
+                        <label class="block text-sm font-medium mb-1">Qtd parcelas</label>
+                        <input type="number" wire:model="installments" id="installments" class="w-full border rounded px-2 py-2">
+                    </div>
+                    <div>
                         <label class="block text-sm font-medium mb-1">Forma de pagamento</label>
                         <select name="payment_method" id="payment_method" wire:model="payment_method" class="w-full border rounded px-2 py-2">
                             <option value="">Selecione o método</option>
@@ -445,16 +465,6 @@ new class extends Component
                             <option value="fixa">Despesa Fixa</option>
                             <option value="variavel">Despesa Variável</option>
                             <option value="parcelada">Despesa Parcelada</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium mb-1">Forma de pagamento</label>
-                        <select name="payment_method" id="payment_method" wire:model="payment_method" class="w-full border rounded px-2 py-2">
-                            <option value="">Selecione o método</option>
-                            <option value="credito">Crédito</option>
-                            <option value="debito">Débito</option>
-                            <option value="pix">Pix</option>
-                            <option value="dinheiro">Dinheiro</option>
                         </select>
                     </div>
                     <div>
