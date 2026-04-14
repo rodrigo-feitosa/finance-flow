@@ -15,7 +15,11 @@ new class extends Component
     public function logout()
     {
         auth()->logout();
-        return redirect()->route('index');
+        session()->flash('toast', [
+            'message' => 'Logout realizado com sucesso!',
+            'type' => 'success'
+        ]);
+        return redirect()->route('login');
     }
 };
 ?>

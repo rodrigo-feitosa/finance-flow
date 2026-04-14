@@ -20,6 +20,7 @@ new #[Layout('layouts.app'), Title('Cadastro')] class extends Component
         ]);
 
         $this->reset();
+        $this->dispatch('toast', message: 'Cadastro realizado com sucesso!');
     }
 };
 ?>

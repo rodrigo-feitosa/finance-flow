@@ -164,6 +164,7 @@ new #[Layout('layouts.app'), Title('Despesas')] class extends Component
 
         $this->reset(['installments']);
         $this->closeAddExpense();
+        $this->dispatch('toast', message: 'Despesa adicionada com sucesso!', type: 'success');
     }
 
     public function importExpenses()
@@ -205,7 +206,7 @@ new #[Layout('layouts.app'), Title('Despesas')] class extends Component
 
         $this->closeImport();
 
-        session()->flash('message', $count . ' despesas importadas com sucesso.');
+        $this->dispatch('toast', message: $count . 'despesas importadas com sucesso!', type: 'success');
     }
 
     public function exportExpenses()
@@ -216,6 +217,8 @@ new #[Layout('layouts.app'), Title('Despesas')] class extends Component
         $file = fopen($path, 'w');
 
         fputcsv($file, ['Data', 'Descrição', 'Valor', 'Tipo', 'Pagamento', 'Status']);
+
+        $this->reset();
 
         $expenses = Expense::where('user', auth()->id())->get();
 
@@ -241,6 +244,8 @@ new #[Layout('layouts.app'), Title('Despesas')] class extends Component
         Expense::where('id', $id)
             ->where('user', auth()->id())
             ->delete();
+        
+        $this->dispatch('toast', message: 'Despesa removida com sucesso!', type: 'success');
     }
 
     public function editExpense()
@@ -257,6 +262,7 @@ new #[Layout('layouts.app'), Title('Despesas')] class extends Component
             ]);
 
         $this->closeEditModal();
+        $this->dispatch('toast', message: 'Modificações salvas com sucesso!', type: 'success');
     }
 
     public function getTypeColor($type)

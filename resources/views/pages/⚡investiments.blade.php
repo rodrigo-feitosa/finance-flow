@@ -40,7 +40,7 @@ new #[Layout('layouts.app'), Title('Investimentos')] class extends Component
         $this->resetPage();
     }
 
-    public function getInvestmentsProperty() 
+    public function getInvestmentsProperty()
     {
         if (!auth()->check()) {
             return [];
@@ -162,6 +162,7 @@ new #[Layout('layouts.app'), Title('Investimentos')] class extends Component
         ]);
 
         $this->closeAddInvestment();
+        $this->dispatch('toast', message: 'Investimento adicionado com sucesso!', type: 'success');
     }
 
     public function importInvestments()
@@ -203,7 +204,7 @@ new #[Layout('layouts.app'), Title('Investimentos')] class extends Component
 
         $this->closeImport();
 
-        session()->flash('message', $count . ' despesas importadas com sucesso.');
+        $this->dispatch('toast', message: $count . 'investimentos importados com sucesso!', type: 'success');
     }
 
     public function exportInvestments()
@@ -236,25 +237,30 @@ new #[Layout('layouts.app'), Title('Investimentos')] class extends Component
 
     public function removeInvestment($id)
     {
-        Investment::where('id', $id)->delete();
+        Investment::where('id', $id)
+            ->where('user', auth()->id())
+            ->delete();
+
+        $this->dispatch('toast', message: 'Investimento removido com sucesso!', type: 'success');
     }
 
     public function editInvestment()
     {
         Investment::where('id', $this->editingInvestmentId)
-        ->where('user', auth()->id())
-        ->update([
-            'date' => $this->date,
-            'description' => $this->description,
-            'value' => $this->value,
-            'type' => $this->type,
-            'category' => $this->category,
-            'institution' => $this->institution,
-            'status' => $this->status,
-            'is_initial' => $this->is_initial,
-        ]);
+            ->where('user', auth()->id())
+            ->update([
+                'date' => $this->date,
+                'description' => $this->description,
+                'value' => $this->value,
+                'type' => $this->type,
+                'category' => $this->category,
+                'institution' => $this->institution,
+                'status' => $this->status,
+                'is_initial' => $this->is_initial,
+            ]);
 
         $this->closeEditModal();
+        $this->dispatch('toast', message: 'Modificações salvas com sucesso!');
     }
 
     public function getTypeColor($type)
@@ -296,13 +302,13 @@ new #[Layout('layouts.app'), Title('Investimentos')] class extends Component
     <p class="text-center mt-4 text-gray-600">Gerencie suas finanças pessoais de forma fácil e eficiente.</p>
 
     <div class="text-center gap-1">
-        <button 
-            wire:click="showAddInvestment" 
+        <button
+            wire:click="showAddInvestment"
             class="btn w-24 text-white bg-blue-800 rounded p-1 hover:bg-blue-600 cursor-pointer">
             Adicionar
         </button>
-        <button 
-            wire:click="showImport" 
+        <button
+            wire:click="showImport"
             class="btn w-24 text-white bg-fuchsia-800 rounded p-1 hover:bg-fuchsia-600 cursor-pointer">
             Importar
         </button>

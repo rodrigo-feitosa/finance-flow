@@ -129,6 +129,7 @@ new #[Layout('layouts.app'), Title('Receitas')] class extends Component
         ]);
 
         $this->closeAddRevenue();
+        $this->dispatch('toast', message: 'Receita adicionada com sucesso!', type: 'success');
     }
 
     public function importRevenues()
@@ -168,7 +169,7 @@ new #[Layout('layouts.app'), Title('Receitas')] class extends Component
 
         $this->closeImport();
 
-        session()->flash('message', $count . ' receitas importadas com sucesso.');
+        $this->dispatch('toast', message: $count . 'receitas importadas com sucesso!', type: 'success');
     }
 
     public function exportRevenues()
@@ -198,7 +199,11 @@ new #[Layout('layouts.app'), Title('Receitas')] class extends Component
 
     public function removeRevenue($id)
     {
-        Revenue::where('id', $id)->delete();
+        Revenue::where('id', $id)
+            ->where('user', auth()->id())
+            ->delete();
+        
+        $this->dispatch('toast', message: 'Receita removida com sucesso', type: 'success');
     }
 
     public function editRevenue()
@@ -213,6 +218,7 @@ new #[Layout('layouts.app'), Title('Receitas')] class extends Component
             ]);
 
         $this->closeEditModal();
+        $this->dispatch('toast', message: 'Modificações salvas com sucesso!', type: 'success');
     }
 
     public function getStatusColor($status)

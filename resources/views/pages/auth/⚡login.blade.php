@@ -18,6 +18,10 @@ new #[Layout('layouts.app'), Title('Login')] class extends Component
         ];
 
         if (Auth::attempt($credentials)) {
+            session()->flash('toast', [
+                'message' => 'Login realizado com sucesso!',
+                'type' => 'success'
+            ]);
             return redirect()->route('index');
         }
 
