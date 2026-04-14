@@ -7,6 +7,7 @@ use Livewire\WithPagination;
 use Carbon\Carbon;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
+use Illuminate\Support\Facades\Storage;
 
 new #[Layout('layouts.app'), Title('Despesas')] class extends Component
 {
@@ -114,7 +115,9 @@ new #[Layout('layouts.app'), Title('Despesas')] class extends Component
 
         $this->modalEdit = true;
 
-        $expense = Expense::where('id', $idExpense)->first();
+        $expense = Expense::where('id', $idExpense)
+            ->where('user', auth()->id())
+            ->firstOrFail();
 
         $this->editingExpenseId = $expense->id;
 
@@ -205,6 +208,34 @@ new #[Layout('layouts.app'), Title('Despesas')] class extends Component
         session()->flash('message', $count . ' despesas importadas com sucesso.');
     }
 
+    public function exportExpenses()
+    {
+        $fileName = 'expenses.csv';
+        $path = storage_path('app/public/' . $fileName);
+
+        $file = fopen($path, 'w');
+
+        fputcsv($file, ['Data', 'Descrição', 'Valor', 'Tipo', 'Pagamento', 'Status']);
+
+        $expenses = Expense::where('user', auth()->id())->get();
+
+        foreach ($expenses as $expense) {
+            fputcsv($file, [
+                $expense->date,
+                $expense->description,
+                $expense->value,
+                $expense->type,
+                $expense->payment_method,
+                $expense->status,
+            ]);
+        }
+
+        fclose($file);
+
+        return Storage::disk('public')->download($fileName);
+    }
+
+
     public function removeExpense($id)
     {
         Expense::where('id', $id)
@@ -214,14 +245,16 @@ new #[Layout('layouts.app'), Title('Despesas')] class extends Component
 
     public function editExpense()
     {
-        Expense::where('id', $this->editingExpenseId)->update([
-            'date' => $this->date,
-            'description' => $this->description,
-            'value' => $this->value,
-            'type' => $this->type,
-            'payment_method' => $this->payment_method,
-            'status' => $this->status,
-        ]);
+        Expense::where('id', $this->editingExpenseId)
+            ->where('user', auth()->id())
+            ->update([
+                'date' => $this->date,
+                'description' => $this->description,
+                'value' => $this->value,
+                'type' => $this->type,
+                'payment_method' => $this->payment_method,
+                'status' => $this->status,
+            ]);
 
         $this->closeEditModal();
     }
@@ -274,6 +307,11 @@ new #[Layout('layouts.app'), Title('Despesas')] class extends Component
             wire:click="showImport"
             class="btn w-24 text-white bg-fuchsia-800 rounded p-1 hover:bg-fuchsia-600 cursor-pointer">
             Importar
+        </button>
+        <button
+            wire:click="exportExpenses"
+            class="btn w-24 text-white bg-emerald-800 rounded p-1 hover:bg-green-600 cursor-pointer">
+            Exportar
         </button>
     </div>
 

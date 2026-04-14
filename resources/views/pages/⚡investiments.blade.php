@@ -123,7 +123,9 @@ new #[Layout('layouts.app'), Title('Investimentos')] class extends Component
 
         $this->modalEdit = true;
 
-        $investment = Investment::where('id', $idInvestment)->first();
+        $investment = Investment::where('id', $idInvestment)
+            ->where('user', auth()->id())
+            ->firstOrFail();
 
         $this->editingInvestmentId = $investment->id;
 
@@ -204,6 +206,34 @@ new #[Layout('layouts.app'), Title('Investimentos')] class extends Component
         session()->flash('message', $count . ' despesas importadas com sucesso.');
     }
 
+    public function exportInvestments()
+    {
+        $fileName = 'investments.csv';
+        $path = storage_path('app/public/' . $fileName);
+
+        $file = fopen($path, 'w');
+
+        fputcsv($file, ['Data', 'Descrição', 'Valor', 'Tipo', 'Categoria', 'Status']);
+
+        $investments = Investment::where('user', auth()->id())->get();
+
+        foreach ($investments as $investment) {
+            fputcsv($file, [
+                $investment->date,
+                $investment->description,
+                $investment->type,
+                $investment->category,
+                $investment->value,
+                $investment->institution,
+                $investment->status,
+            ]);
+        }
+
+        fclose($file);
+
+        return Storage::disk('public')->download($fileName);
+    }
+
     public function removeInvestment($id)
     {
         Investment::where('id', $id)->delete();
@@ -211,7 +241,9 @@ new #[Layout('layouts.app'), Title('Investimentos')] class extends Component
 
     public function editInvestment()
     {
-        Investment::where('id', $this->editingInvestmentId)->update([
+        Investment::where('id', $this->editingInvestmentId)
+        ->where('user', auth()->id())
+        ->update([
             'date' => $this->date,
             'description' => $this->description,
             'value' => $this->value,
@@ -273,6 +305,11 @@ new #[Layout('layouts.app'), Title('Investimentos')] class extends Component
             wire:click="showImport" 
             class="btn w-24 text-white bg-fuchsia-800 rounded p-1 hover:bg-fuchsia-600 cursor-pointer">
             Importar
+        </button>
+        <button
+            wire:click="exportInvestments"
+            class="btn w-24 text-white bg-emerald-800 rounded p-1 hover:bg-green-600 cursor-pointer">
+            Exportar
         </button>
     </div>
 

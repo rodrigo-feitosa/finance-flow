@@ -28,7 +28,8 @@ new #[Layout('layouts.app'), Title('Receitas')] class extends Component
 
     public $editingRevenueId;
 
-    public function getRevenuesProperty() {
+    public function getRevenuesProperty()
+    {
         if (!auth()->check()) {
             return collect();
         }
@@ -96,7 +97,9 @@ new #[Layout('layouts.app'), Title('Receitas')] class extends Component
 
         $this->modalEdit = true;
 
-        $revenue = Revenue::where('id', $idRevenue)->first();
+        $revenue = Revenue::where('id', $idRevenue)
+            ->where('user', auth()->id())
+            ->firstOrFail();
 
         $this->editingRevenueId = $revenue->id;
 
@@ -168,6 +171,31 @@ new #[Layout('layouts.app'), Title('Receitas')] class extends Component
         session()->flash('message', $count . ' receitas importadas com sucesso.');
     }
 
+    public function exportRevenues()
+    {
+        $fileName = 'revenues.csv';
+        $path = storage_path('app/public/' . $fileName);
+
+        $file = fopen($path, 'w');
+
+        fputcsv($file, ['Data', 'Descrição', 'Valor', 'Tipo', 'Categoria', 'Status']);
+
+        $revenues = Revenue::where('user', auth()->id())->get();
+
+        foreach ($revenues as $revenue) {
+            fputcsv($file, [
+                $revenue->date,
+                $revenue->description,
+                $revenue->value,
+                $revenue->status,
+            ]);
+        }
+
+        fclose($file);
+
+        return Storage::disk('public')->download($fileName);
+    }
+
     public function removeRevenue($id)
     {
         Revenue::where('id', $id)->delete();
@@ -175,12 +203,14 @@ new #[Layout('layouts.app'), Title('Receitas')] class extends Component
 
     public function editRevenue()
     {
-        Revenue::where('id', $this->editingRevenueId)->update([
-            'date' => $this->date,
-            'description' => $this->description,
-            'value' => $this->value,
-            'status' => $this->status,
-        ]);
+        Revenue::where('id', $this->editingRevenueId)
+            ->where('user', auth()->id())
+            ->update([
+                'date' => $this->date,
+                'description' => $this->description,
+                'value' => $this->value,
+                'status' => $this->status,
+            ]);
 
         $this->closeEditModal();
     }
@@ -205,15 +235,20 @@ new #[Layout('layouts.app'), Title('Receitas')] class extends Component
     <p class="text-center mt-4 text-gray-600">Gerencie suas finanças pessoais de forma fácil e eficiente.</p>
 
     <div class="text-center gap-1">
-        <button 
-            wire:click="showAddRevenue" 
+        <button
+            wire:click="showAddRevenue"
             class="btn w-24 text-white bg-blue-800 rounded p-1 hover:bg-blue-600 cursor-pointer">
             Adicionar
         </button>
-        <button 
-            wire:click="showImport" 
+        <button
+            wire:click="showImport"
             class="btn w-24 text-white bg-fuchsia-800 rounded p-1 hover:bg-fuchsia-600 cursor-pointer">
             Importar
+        </button>
+        <button
+            wire:click="exportRevenues"
+            class="btn w-24 text-white bg-emerald-800 rounded p-1 hover:bg-emerald-600 cursor-pointer">
+            Exportar
         </button>
     </div>
 
