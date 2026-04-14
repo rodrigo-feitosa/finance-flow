@@ -82,6 +82,7 @@ new #[Layout('layouts.app'), Title('Fluxo de Caixa')] class extends Component
             ->groupBy(fn($item) => \Carbon\Carbon::parse($item->date)->format('Y-m'));
 
         $investments = Investment::where('user', $userId)
+            ->where('is_initial', false)
             ->get()
             ->groupBy(fn($item) => \Carbon\Carbon::parse($item->date)->format('Y-m'));
 
@@ -302,7 +303,7 @@ new #[Layout('layouts.app'), Title('Fluxo de Caixa')] class extends Component
                     $pendingE = $data['pending_expenses'] ?? 0;
                     $investments = $data['investments'] ?? 0;
 
-                    $real = $received - $paid;
+                    $real = $received - ($paid + $investments);
                     $projected = ($received + $pendingR) - ($paid + $pendingE + $investments);
                     @endphp
 
