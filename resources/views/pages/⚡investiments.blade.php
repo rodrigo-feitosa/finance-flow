@@ -6,6 +6,7 @@ use Livewire\WithPagination;
 use App\Models\Investment;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
+use Carbon\Carbon;
 
 new #[Layout('layouts.app'), Title('Investimentos')] class extends Component
 {
@@ -181,7 +182,7 @@ new #[Layout('layouts.app'), Title('Investimentos')] class extends Component
 
         while (($row = fgetcsv($file, 0, ',')) !== false) {
             $row = array_map(fn($item) => mb_convert_encoding($item, 'UTF-8', 'auto'), $row);
-            $date = \Carbon\Carbon::createFromFormat('d/m/Y', $row[0])->format('Y-m-d');
+            $date = Carbon::createFromFormat('d/m/Y', $row[0])->format('Y-m-d');
 
             if (count($row) < 6 || empty($row[4])) {
                 continue;
@@ -368,7 +369,7 @@ new #[Layout('layouts.app'), Title('Investimentos')] class extends Component
                 <tbody class="divide-y divide-gray-100">
                     @foreach ($this->investments as $investment)
                     <tr wire:click="showEditModal({{ $investment->id }})" class="odd:bg-white even:bg-gray-100 hover:bg-violet-200 transition cursor-pointer">
-                        <td class="border p-2">{{ \Carbon\Carbon::parse($investment->date)->format('d/m/Y') }}</td>
+                        <td class="border p-2">{{ Carbon::parse($investment->date)->format('d/m/Y') }}</td>
                         <td class="border p-2">{{ $investment->description }}</td>
                         <td class="border p-2">R$ {{ number_format($investment->value, 2, ',', '.') }}</td>
                         <td class="border p-2">
@@ -399,7 +400,7 @@ new #[Layout('layouts.app'), Title('Investimentos')] class extends Component
                     </div>
                     <div class="flex justify-between items-center text-sm text-gray-500">
                         <div>
-                            <span>{{ \Carbon\Carbon::parse($investment->date)->format('d/m/Y') }}</span>
+                            <span>{{ Carbon::parse($investment->date)->format('d/m/Y') }}</span>
                             <span class="ml-2 px-2 py-1 rounded {{ $this->getStatusColor($investment->status) }}">{{ $investment->status }}</span>
                         </div>
                         <div>

@@ -6,6 +6,7 @@ use Livewire\WithFileUploads;
 use Livewire\WithPagination;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
+use Carbon\Carbon;
 
 new #[Layout('layouts.app'), Title('Receitas')] class extends Component
 {
@@ -148,7 +149,7 @@ new #[Layout('layouts.app'), Title('Receitas')] class extends Component
 
         while (($row = fgetcsv($file, 0, ',')) !== false) {
             $row = array_map(fn($item) => mb_convert_encoding($item, 'UTF-8', 'auto'), $row);
-            $date = \Carbon\Carbon::createFromFormat('d/m/Y', $row[0])->format('Y-m-d');
+            $date = Carbon::createFromFormat('d/m/Y', $row[0])->format('Y-m-d');
 
             if (count($row) < 4 || empty($row[3])) {
                 continue;
@@ -288,7 +289,7 @@ new #[Layout('layouts.app'), Title('Receitas')] class extends Component
                 <tbody class="divide-y divide-gray-100">
                     @foreach ($this->revenues as $revenue)
                     <tr wire:click="showEditModal({{ $revenue->id }})" class="odd:bg-white even:bg-gray-100 hover:bg-violet-200 transition cursor-pointer">
-                        <td class="border p-2">{{ \Carbon\Carbon::parse($revenue->date)->format('d/m/Y') }}</td>
+                        <td class="border p-2">{{ Carbon::parse($revenue->date)->format('d/m/Y') }}</td>
                         <td class="border p-2">{{ $revenue->description }}</td>
                         <td class="border p-2">R$ {{ number_format($revenue->value, 2, ',', '.') }}</td>
                         <td class="border p-2">
@@ -313,7 +314,7 @@ new #[Layout('layouts.app'), Title('Receitas')] class extends Component
                     </div>
                     <div class="flex justify-between items-center text-sm text-gray-500">
                         <div>
-                            <span>{{ \Carbon\Carbon::parse($revenue->date)->format('d/m/Y') }}</span>
+                            <span>{{ Carbon::parse($revenue->date)->format('d/m/Y') }}</span>
                             <span class="ml-2 px-2 py-1 rounded {{ $this->getStatusColor($revenue->status) }}">{{ $revenue->status }}</span>
                         </div>
                         <div>

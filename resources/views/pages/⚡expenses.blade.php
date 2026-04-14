@@ -152,7 +152,7 @@ new #[Layout('layouts.app'), Title('Despesas')] class extends Component
             for ($i = 0; $i < $installments; $i++) {
                 Expense::create([
                     'user' => auth()->id(),
-                    'date' => \Carbon\Carbon::parse($this->date)->addMonths($i),
+                    'date' => Carbon::parse($this->date)->addMonths($i),
                     'description' => $this->description . ' (' . ($i + 1) . '/' . $installments . ')',
                     'value' => $this->value,
                     'type' => 'parcelada', // força consistência
@@ -183,7 +183,7 @@ new #[Layout('layouts.app'), Title('Despesas')] class extends Component
 
         while (($row = fgetcsv($file, 0, ',')) !== false) {
             $row = array_map(fn($item) => mb_convert_encoding($item, 'UTF-8', 'auto'), $row);
-            $date = \Carbon\Carbon::createFromFormat('d/m/Y', $row[0])->format('Y-m-d');
+            $date = Carbon::createFromFormat('d/m/Y', $row[0])->format('Y-m-d');
 
             if (count($row) < 6 || empty($row[4])) {
                 continue;
@@ -368,7 +368,7 @@ new #[Layout('layouts.app'), Title('Despesas')] class extends Component
                 <tbody class="divide-y divide-gray-100">
                     @foreach ($this->expenses as $expense)
                     <tr wire:click="showEditModal({{ $expense->id }})" class="odd:bg-white even:bg-gray-100 hover:bg-violet-200 transition cursor-pointer">
-                        <td class="border p-2">{{ \Carbon\Carbon::parse($expense->date)->format('d/m/Y') }}</td>
+                        <td class="border p-2">{{ Carbon::parse($expense->date)->format('d/m/Y') }}</td>
                         <td class="border p-2">{{ $expense->description }}</td>
                         <td class="border p-2">R$ {{ number_format($expense->value, 2, ',', '.') }}</td>
                         <td class="border p-2">
@@ -397,7 +397,7 @@ new #[Layout('layouts.app'), Title('Despesas')] class extends Component
                     </div>
                     <div class="flex justify-between items-center text-sm text-gray-500">
                         <div>
-                            <span>{{ \Carbon\Carbon::parse($expense->date)->format('d/m/Y') }}</span>
+                            <span>{{ Carbon::parse($expense->date)->format('d/m/Y') }}</span>
                             <span class="ml-2 px-2 py-1 rounded {{ $this->getTypeColor($expense->type) }}">{{ $expense->type }}</span>
                             <span class="ml-2 px-2 py-1 rounded {{ $this->getPaymentMethodColor($expense->payment_method) }}">{{ $expense->payment_method }}</span>
                             <span class="ml-2 px-2 py-1 rounded {{ $this->getStatusColor($expense->status) }}">{{ $expense->status }}</span>

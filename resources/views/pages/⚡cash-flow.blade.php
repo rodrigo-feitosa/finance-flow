@@ -7,6 +7,7 @@ use App\Models\Investment;
 use Livewire\WithPagination;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
+use Carbon\Carbon;
 
 new #[Layout('layouts.app'), Title('Fluxo de Caixa')] class extends Component
 {
@@ -75,16 +76,16 @@ new #[Layout('layouts.app'), Title('Fluxo de Caixa')] class extends Component
 
         $revenues = Revenue::where('user', $userId)
             ->get()
-            ->groupBy(fn($item) => \Carbon\Carbon::parse($item->date)->format('Y-m'));
+            ->groupBy(fn($item) => Carbon::parse($item->date)->format('Y-m'));
 
         $expenses = Expense::where('user', $userId)
             ->get()
-            ->groupBy(fn($item) => \Carbon\Carbon::parse($item->date)->format('Y-m'));
+            ->groupBy(fn($item) => Carbon::parse($item->date)->format('Y-m'));
 
         $investments = Investment::where('user', $userId)
             ->where('is_initial', false)
             ->get()
-            ->groupBy(fn($item) => \Carbon\Carbon::parse($item->date)->format('Y-m'));
+            ->groupBy(fn($item) => Carbon::parse($item->date)->format('Y-m'));
 
         $months = collect();
 
@@ -180,7 +181,7 @@ new #[Layout('layouts.app'), Title('Fluxo de Caixa')] class extends Component
                     <tbody>
                         @foreach ($this->getExpenses('variavel') as $item)
                         <tr class="border-b">
-                            <td class="p-2">{{ \Carbon\Carbon::parse($item->date)->format('d/m/Y') }}</td>
+                            <td class="p-2">{{ Carbon::parse($item->date)->format('d/m/Y') }}</td>
                             <td class="p-2">{{ $item->description }}</td>
                             <td class="p-2 font-bold text-red-600">
                                 R$ {{ number_format($item->value, 2, ',', '.') }}
@@ -217,7 +218,7 @@ new #[Layout('layouts.app'), Title('Fluxo de Caixa')] class extends Component
                     <tbody>
                         @foreach ($this->getExpenses('fixa') as $item)
                         <tr class="border-b">
-                            <td class="p-2">{{ \Carbon\Carbon::parse($item->date)->format('d/m/Y') }}</td>
+                            <td class="p-2">{{ Carbon::parse($item->date)->format('d/m/Y') }}</td>
                             <td class="p-2">{{ $item->description }}</td>
                             <td class="p-2 font-bold text-red-600">
                                 R$ {{ number_format($item->value, 2, ',', '.') }}
@@ -254,7 +255,7 @@ new #[Layout('layouts.app'), Title('Fluxo de Caixa')] class extends Component
                     <tbody>
                         @foreach ($this->getExpenses('parcelada') as $item)
                         <tr class="border-b">
-                            <td class="p-2">{{ \Carbon\Carbon::parse($item->date)->format('d/m/Y') }}</td>
+                            <td class="p-2">{{ Carbon::parse($item->date)->format('d/m/Y') }}</td>
                             <td class="p-2">{{ $item->description }}</td>
                             <td class="p-2 font-bold text-red-600">
                                 R$ {{ number_format($item->value, 2, ',', '.') }}
@@ -309,7 +310,7 @@ new #[Layout('layouts.app'), Title('Fluxo de Caixa')] class extends Component
 
                     <tr class="border-b odd:bg-white even:bg-gray-100">
                         <td class="p-2 font-bold">
-                            {{ \Carbon\Carbon::createFromFormat('Y-m', $month)->format('m/Y') }}
+                            {{ Carbon::createFromFormat('Y-m', $month)->format('m/Y') }}
                         </td>
 
                         <td class="p-2 text-green-600 font-bold">R$ {{ number_format($received, 2, ',', '.') }}</td>
