@@ -4,8 +4,10 @@ use Livewire\Component;
 use App\Models\Revenue;
 use Livewire\WithFileUploads;
 use Livewire\WithPagination;
+use Livewire\Attributes\Layout;
+use Livewire\Attributes\Title;
 
-new class extends Component
+new #[Layout('layouts.app'), Title('Receitas')] class extends Component
 {
     use WithFileUploads, WithPagination;
 

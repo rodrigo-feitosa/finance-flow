@@ -4,8 +4,10 @@ use Livewire\Component;
 use Livewire\WithFileUploads;
 use Livewire\WithPagination;
 use App\Models\Investment;
+use Livewire\Attributes\Layout;
+use Livewire\Attributes\Title;
 
-new class extends Component
+new #[Layout('layouts.app'), Title('Investimentos')] class extends Component
 {
     use WithFileUploads, WithPagination;
 
@@ -38,8 +40,8 @@ new class extends Component
         $this->resetPage();
     }
 
-    public function getInvestmentsProperty(
-    ) {
+    public function getInvestmentsProperty() 
+    {
         if (!auth()->check()) {
             return [];
         }

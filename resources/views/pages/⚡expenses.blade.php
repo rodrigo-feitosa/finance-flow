@@ -5,8 +5,10 @@ use App\Models\Expense;
 use Livewire\WithFileUploads;
 use Livewire\WithPagination;
 use Carbon\Carbon;
+use Livewire\Attributes\Layout;
+use Livewire\Attributes\Title;
 
-new class extends Component
+new #[Layout('layouts.app'), Title('Despesas')] class extends Component
 {
     use WithFileUploads, WithPagination;
 

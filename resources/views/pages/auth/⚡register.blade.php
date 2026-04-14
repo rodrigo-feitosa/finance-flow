@@ -2,8 +2,10 @@
 
 use Livewire\Component;
 use App\Models\User;
+use Livewire\Attributes\Layout;
+use Livewire\Attributes\Title;
 
-new class extends Component
+new #[Layout('layouts.app'), Title('Cadastro')] class extends Component
 {
     public $name;
     public $email;

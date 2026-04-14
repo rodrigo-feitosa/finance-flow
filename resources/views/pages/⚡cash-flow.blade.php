@@ -5,8 +5,10 @@ use App\Models\Revenue;
 use App\Models\Expense;
 use App\Models\Investment;
 use Livewire\WithPagination;
+use Livewire\Attributes\Layout;
+use Livewire\Attributes\Title;
 
-new class extends Component
+new #[Layout('layouts.app'), Title('Fluxo de Caixa')] class extends Component
 {
     use WithPagination;
 
@@ -25,14 +27,12 @@ new class extends Component
 
         $revenues = Revenue::where('user', $userId)
             ->whereBetween('date', [$this->startDate, $this->endDate])
+            ->where('status', 'recebida')
             ->sum('value');
 
         $expenses = Expense::where('user', $userId)
             ->whereBetween('date', [$this->startDate, $this->endDate])
-            ->sum('value');
-
-        $expenses = Expense::where('user', $userId)
-            ->whereBetween('date', [$this->startDate, $this->endDate])
+            ->where('status', 'paga')
             ->sum('value');
 
         $investments = Investment::where('user', $userId)
@@ -134,28 +134,28 @@ new class extends Component
 
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-8">
         <div class="bg-green-600 text-white p-4 rounded-xl shadow-lg text-center">
-            <p>Receitas</p>
+            <p>Receitas recebidas</p>
             <h2 class="text-xl md:text-2xl font-bold">
                 R$ {{ number_format($this->getSummary()['revenues'], 2, ',', '.') }}
             </h2>
         </div>
 
         <div class="bg-yellow-500 text-white p-4 rounded-xl shadow-lg text-center">
-            <p>Investimentos</p>
+            <p>Total de investimentos</p>
             <h2 class="text-xl md:text-2xl font-bold">
                 R$ {{ number_format($this->getSummary()['investments'], 2, ',', '.') }}
             </h2>
         </div>
 
         <div class="bg-red-600 text-white p-4 rounded-xl shadow-lg text-center">
-            <p>Despesas</p>
+            <p>Despesas pagas</p>
             <h2 class="text-xl md:text-2xl font-bold">
                 R$ {{ number_format($this->getSummary()['expenses'], 2, ',', '.') }}
             </h2>
         </div>
 
         <div class="{{ $this->getSummary()['balance'] >= 0 ? 'bg-blue-600' : 'bg-red-800' }} text-white p-4 rounded-xl shadow-lg text-center">
-            <p>Saldo</p>
+            <p>Saldo atual</p>
             <h2 class="text-xl md:text-2xl font-bold">
                 R$ {{ number_format($this->getSummary()['balance'], 2, ',', '.') }}
             </h2>

@@ -2,9 +2,10 @@
 
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
+use Livewire\Attributes\Layout;
+use Livewire\Attributes\Title;
 
-
-new class extends Component
+new #[Layout('layouts.app'), Title('Login')] class extends Component
 {
     public $email;
     public $password;
