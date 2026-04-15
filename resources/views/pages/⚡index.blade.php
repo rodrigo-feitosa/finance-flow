@@ -1,8 +1,10 @@
 <?php
 
 use Livewire\Component;
+use Livewire\Attributes\Layout;
+use Livewire\Attributes\Title;
 
-new class extends Component
+new #[Layout('layouts.app'), Title('Finance Flow')] class extends Component
 {
     public function goToExpenses()
     {
@@ -42,7 +44,7 @@ new class extends Component
 };
 ?>
 
-<div class="flex flex-col items-center justify-center min-h-screen bg-gray-100">
+<div class="flex flex-col items-center justify-center min-h-screen bg-gray-300">
     <div class="bg-white p-10 rounded-2xl shadow-lg text-center w-[400px]">
 
         <h1 class="text-4xl font-bold text-purple-800 mb-4">

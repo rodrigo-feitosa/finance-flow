@@ -261,7 +261,7 @@ new #[Layout('layouts.app'), Title('Investimentos')] class extends Component
             ]);
 
         $this->closeEditModal();
-        $this->dispatch('toast', message: 'Modificações salvas com sucesso!');
+        $this->dispatch('toast', message: 'Modificações salvas com sucesso!', type: 'success');
     }
 
     public function getTypeColor($type)

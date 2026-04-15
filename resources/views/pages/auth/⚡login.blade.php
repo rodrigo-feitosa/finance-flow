@@ -31,8 +31,7 @@ new #[Layout('layouts.app'), Title('Login')] class extends Component
 ?>
 
 <div class="fixed inset-0 flex items-center justify-center bg-cover bg-center">
-
-    <div class="bg-white/90 backdrop-blur-md p-8 rounded-xl shadow-xl w-96">
+    <div class="bg-white backdrop-blur-md p-8 rounded-xl shadow-xl w-96">
 
         <h2 class="text-2xl font-bold text-center mb-6">Login</h2>
 
@@ -43,7 +42,6 @@ new #[Layout('layouts.app'), Title('Login')] class extends Component
         @endif
 
         <form wire:submit.prevent="login" class="space-y-4">
-
             <div>
                 <label class="block text-sm font-medium mb-1">E-mail</label>
                 <input
@@ -64,10 +62,9 @@ new #[Layout('layouts.app'), Title('Login')] class extends Component
 
             <button
                 type="submit"
-                class="w-full bg-indigo-600 text-white py-2 rounded hover:bg-indigo-700">
+                class="w-full bg-indigo-600 text-white py-2 rounded hover:bg-indigo-700 cursor-pointer">
                 Entrar
             </button>
-
         </form>
 
         <p class="text-sm text-center mt-4">
@@ -76,7 +73,11 @@ new #[Layout('layouts.app'), Title('Login')] class extends Component
                 Registrar
             </a>
         </p>
-
+        <p class="text-sm text-center mt-4">
+            Esqueceu a senha?
+            <a href="/reset-password" class="text-indigo-600 hover:underline cursor-pointer">
+                Clique aqui
+            </a>
+        </p>
     </div>
-
 </div>
