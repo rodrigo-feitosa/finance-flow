@@ -5,6 +5,7 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Mail;
 use App\Models\PasswordResetToken;
 use App\Mail\ResetPasswordMail;
+use Illuminate\Support\Facades\Hash;
 
 new class extends Component
 {
@@ -17,11 +18,13 @@ new class extends Component
 
         PasswordResetToken::create([
             'email' => $this->email,
-            'token' => bcrypt($this->token),
+            'token' => Hash::make($this->token),
             'created_at' => now(),
         ]);
         
         Mail::to($this->email)->send(new ResetPasswordMail($this->token, $this->email));
+
+        //dd($this->token, $this->email);
 
         $this->email = '';
 

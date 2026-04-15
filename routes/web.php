@@ -14,3 +14,4 @@ Route::livewire('/revenues', 'pages::revenues')->name('revenues');
 Route::livewire('/cash-flow', 'pages::cash-flow')->name('cash-flow');
 Route::livewire('/investments', 'pages::investiments')->name('investments');
 Route::livewire('/reset-password', 'pages::reset-password')->name('reset-password');
+Route::livewire('/new-password', 'pages::auth.new-password')->name('new-password');
