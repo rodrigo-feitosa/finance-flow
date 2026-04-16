@@ -6,9 +6,11 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Str;
 use App\Models\User;
+use Livewire\Attributes\Layout;
+use Livewire\Attributes\Title;
 
-new class extends Component {
-
+new #[Layout('layouts.app'), Title('Nova senha')] class extends Component
+{
     public string $token = '';
     public string $email = '';
     public string $password = '';
