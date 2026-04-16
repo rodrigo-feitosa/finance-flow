@@ -24,7 +24,7 @@ new class extends Component
 };
 ?>
 
-<header class="mt-2 mx-2 bg-gray-900 text-white rounded-xl">
+<header class="mt-2 mx-2 bg-gray-900 text-white rounded-xl z-999">
     <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
         <a href="{{ route('index') }}">
             <img src="/images/logo.png" alt="Logo" class="w-50 h-auto">
@@ -44,12 +44,12 @@ new class extends Component
                 @if($showMenu)
                 <div class="absolute right-0 mt-2 w-40 bg-white border rounded-lg shadow-lg">
                     @auth
-                    <a href="" class="block w-full text-left px-4 py-2 text-black hover:bg-gray-100">
+                    <a href="{{ route('profile') }}" class="block w-full text-left px-4 py-2 text-black hover:bg-gray-100">
                         Perfil
                     </a>
-                    <a href="" class="block w-full text-left px-4 py-2 text-black hover:bg-gray-100">
-                        Configurações
-                    </a>
+                    <!-- <a wire:click="goToPreferences" class="block w-full text-left px-4 py-2 text-black hover:bg-gray-100">
+                        Preferências
+                    </a> -->
 
                     <button wire:click="logout" class="block w-full text-left px-4 py-2 text-red-500 hover:bg-gray-100">
                         Logout
@@ -78,8 +78,8 @@ new class extends Component
                 @if($showMenu)
                 <div class="absolute right-0 mt-2 w-40 bg-white border rounded-lg shadow-lg">
                     @auth
-                    <a href="" class="block px-4 py-2 text-black hover:bg-gray-100">Perfil</a>
-                    <a href="" class="block px-4 py-2 text-black hover:bg-gray-100">Configurações</a>
+                    <a wire:click="goToProfile" class="block px-4 py-2 text-black hover:bg-gray-100">Perfil</a>
+                    <!-- <a wire:click="goToPreferences" class="block px-4 py-2 text-black hover:bg-gray-100">Preferências</a> -->
                     <button wire:click="logout" class="block w-full text-left px-4 py-2 text-red-500 hover:bg-gray-100">
                         Logout
                     </button>
