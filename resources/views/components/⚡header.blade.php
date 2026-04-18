@@ -36,12 +36,41 @@ new class extends Component
             <a href="{{ route('revenues') }}" class="rounded bg-violet-500 hover:bg-violet-600 p-2">Receitas</a>
             <a href="{{ route('investments') }}" class="rounded bg-violet-500 hover:bg-violet-600 p-2">Investimentos</a>
             <a href="{{ route('cash-flow') }}" class="rounded bg-violet-500 hover:bg-violet-600 p-2">Fluxo Financeiro</a>
-            <button
-                onclick="toggleTheme()"
-                class="p-2 rounded-lg bg-violet-500 hover:bg-violet-600 transition flex items-center justify-center"
-                title="Alternar tema">
-                <span id="theme-icon">🌙</span>
-            </button>
+            <label class="relative inline-flex items-center cursor-pointer">
+                <input
+                    type="checkbox"
+                    class="sr-only peer"
+                    onchange="toggleTheme(this.checked)">
+
+                <div class="
+                    w-16 h-8 rounded-full 
+                    bg-gray-300 dark:bg-gray-700
+                    peer-checked:bg-indigo-500
+                    transition-all duration-300
+                "></div>
+
+                <!-- Bolinha -->
+                <div class="
+                    absolute left-1 top-1
+                    w-6 h-6 bg-white rounded-full shadow-md
+                    flex items-center justify-center
+                    transition-all duration-300
+                    peer-checked:translate-x-8
+                ">
+                    <!-- Ícone muda via dark -->
+
+                    <!-- Sol -->
+                    <svg class="w-4 h-4 text-yellow-500 dark:hidden" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2m0 14v2m9-9h-2M5 12H3m15.364-6.364l-1.414 1.414M7.05 16.95l-1.414 1.414m12.728 0l-1.414-1.414M7.05 7.05L5.636 5.636M12 8a4 4 0 100 8 4 4 0 000-8z" />
+                    </svg>
+
+                    <!-- Lua -->
+                    <svg class="w-4 h-4 text-indigo-600 hidden dark:block" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 12.79A9 9 0 1111.21 3c0 .34.02.67.05 1A7 7 0 0021 12.79z" />
+                    </svg>
+                </div>
+            </label>
+
             <div class="relative inline-block">
                 <button wire:click="toggleMenu" class="scale-120 pl-5 hover:text-gray-300 transition hover:scale-150 cursor-pointer">
                     <i class="fa-solid fa-user"></i>
@@ -76,11 +105,41 @@ new class extends Component
         </nav>
 
         <nav class="flex md:hidden justify-end relative">
-            <button
-                onclick="toggleTheme()"
-                class="mr-3 p-2 rounded-lg bg-violet-500 hover:bg-violet-600 transition">
-                <span id="theme-icon-mobile">🌙</span>
-            </button>
+            <label class="relative inline-flex items-center cursor-pointer">
+                <input
+                    type="checkbox"
+                    class="sr-only peer"
+                    onchange="toggleTheme(this.checked)">
+
+                <div class="
+                    w-16 h-8 rounded-full 
+                    bg-gray-300 dark:bg-gray-700
+                    peer-checked:bg-indigo-500
+                    transition-all duration-300
+                "></div>
+
+                <!-- Bolinha -->
+                <div class="
+                    absolute left-1 top-1
+                    w-6 h-6 bg-white rounded-full shadow-md
+                    flex items-center justify-center
+                    transition-all duration-300
+                    peer-checked:translate-x-8
+                ">
+                    <!-- Ícone muda via dark -->
+
+                    <!-- Sol -->
+                    <svg class="w-4 h-4 text-yellow-500 dark:hidden" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2m0 14v2m9-9h-2M5 12H3m15.364-6.364l-1.414 1.414M7.05 16.95l-1.414 1.414m12.728 0l-1.414-1.414M7.05 7.05L5.636 5.636M12 8a4 4 0 100 8 4 4 0 000-8z" />
+                    </svg>
+
+                    <!-- Lua -->
+                    <svg class="w-4 h-4 text-indigo-600 hidden dark:block" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 12.79A9 9 0 1111.21 3c0 .34.02.67.05 1A7 7 0 0021 12.79z" />
+                    </svg>
+                </div>
+            </label>
+
             <div class="relative inline-block">
                 <button wire:click="toggleMenu" class="hover:text-gray-300 cursor-pointer">
                     <i class="fa-solid fa-user"></i>
