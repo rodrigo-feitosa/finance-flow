@@ -40,7 +40,7 @@ new class extends Component
                 <input
                     type="checkbox"
                     class="sr-only peer"
-                    onchange="toggleTheme(this.checked)">
+                    onchange="toggleTheme()">
 
                 <div class="
                     w-16 h-8 rounded-full 
@@ -105,7 +105,7 @@ new class extends Component
                 <input
                     type="checkbox"
                     class="sr-only peer"
-                    onchange="toggleTheme(this.checked)">
+                    onchange="toggleTheme()">
 
                 <div class="
                     w-16 h-8 rounded-full 

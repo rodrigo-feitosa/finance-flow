@@ -21,21 +21,44 @@
 
             if (icon) icon.textContent = isDark ? '☀️' : '🌙';
             if (iconMobile) iconMobile.textContent = isDark ? '☀️' : '🌙';
+
+            // 🔥 sincroniza TODOS os toggles
+            document.querySelectorAll('input[type="checkbox"]').forEach(el => {
+                el.checked = isDark;
+            });
         }
 
         function toggleTheme() {
-            if (document.documentElement.classList.contains('dark')) {
+            const isDark = document.documentElement.classList.contains('dark');
+
+            if (isDark) {
                 document.documentElement.classList.remove('dark');
-                localStorage.theme = 'light';
+                localStorage.setItem('theme', 'light');
             } else {
                 document.documentElement.classList.add('dark');
-                localStorage.theme = 'dark';
+                localStorage.setItem('theme', 'dark');
             }
 
             updateIcons();
         }
 
-        updateIcons();
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('theme');
+
+            if (savedTheme === 'dark') {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+
+            updateIcons();
+        });
+
+        if (localStorage.getItem('theme') === 'dark') {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
     </script>
 </head>
 
