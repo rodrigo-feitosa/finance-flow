@@ -24,7 +24,7 @@ new class extends Component
 };
 ?>
 
-<header class="mt-2 mx-2 bg-gray-900 text-white rounded-xl z-999">
+<header class="mt-2 mx-2 bg-[#0B0618] border-[#2E235A] text-white rounded-xl z-999">
     <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
         <a href="{{ route('index') }}">
             <img src="/images/logo.png" alt="Logo" class="w-50 h-auto">
@@ -36,6 +36,12 @@ new class extends Component
             <a href="{{ route('revenues') }}" class="rounded bg-violet-500 hover:bg-violet-600 p-2">Receitas</a>
             <a href="{{ route('investments') }}" class="rounded bg-violet-500 hover:bg-violet-600 p-2">Investimentos</a>
             <a href="{{ route('cash-flow') }}" class="rounded bg-violet-500 hover:bg-violet-600 p-2">Fluxo Financeiro</a>
+            <button
+                onclick="toggleTheme()"
+                class="p-2 rounded-lg bg-violet-500 hover:bg-violet-600 transition flex items-center justify-center"
+                title="Alternar tema">
+                <span id="theme-icon">🌙</span>
+            </button>
             <div class="relative inline-block">
                 <button wire:click="toggleMenu" class="scale-120 pl-5 hover:text-gray-300 transition hover:scale-150 cursor-pointer">
                     <i class="fa-solid fa-user"></i>
@@ -70,6 +76,11 @@ new class extends Component
         </nav>
 
         <nav class="flex md:hidden justify-end relative">
+            <button
+                onclick="toggleTheme()"
+                class="mr-3 p-2 rounded-lg bg-violet-500 hover:bg-violet-600 transition">
+                <span id="theme-icon-mobile">🌙</span>
+            </button>
             <div class="relative inline-block">
                 <button wire:click="toggleMenu" class="hover:text-gray-300 cursor-pointer">
                     <i class="fa-solid fa-user"></i>

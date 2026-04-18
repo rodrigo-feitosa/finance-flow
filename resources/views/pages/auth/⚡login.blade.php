@@ -30,8 +30,8 @@ new #[Layout('layouts.app'), Title('Login')] class extends Component
 };
 ?>
 
-<div class="fixed inset-0 flex items-center justify-center bg-cover bg-center">
-    <div class="bg-white backdrop-blur-md p-8 rounded-xl shadow-xl w-96">
+<div class="fixed inset-0 flex items-center justify-center bg-cover bg-center dark:text-white">
+    <div class="bg-white dark:bg-[#0B0618] backdrop-blur-md p-8 rounded-xl shadow-xl w-96">
 
         <h2 class="text-2xl font-bold text-center mb-6">Login</h2>
 

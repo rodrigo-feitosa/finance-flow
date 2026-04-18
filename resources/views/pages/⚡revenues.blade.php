@@ -232,14 +232,14 @@ new #[Layout('layouts.app'), Title('Receitas')] class extends Component
 };
 ?>
 
-<div>
+<div class="dark:text-white">
     @if (session()->has('message'))
     <div class="bg-green-500 text-white p-2 text-center mt-2">
         {{ session('message') }}
     </div>
     @endif
     <h1 class="text-3xl font-bold text-center pt-10">Bem-vindo ao FinanceFlow</h1>
-    <p class="text-center mt-4 text-gray-600">Gerencie suas finanças pessoais de forma fácil e eficiente.</p>
+    <p class="text-center mt-4 text-gray-600 dark:text-gray-300">Gerencie suas finanças pessoais de forma fácil e eficiente.</p>
 
     <div class="text-center gap-1">
         <button
@@ -276,28 +276,31 @@ new #[Layout('layouts.app'), Title('Receitas')] class extends Component
 
                 <button wire:click="applyFilters" class="btn w-24 text-white bg-yellow-600 rounded p-1 hover:bg-yellow-800 cursor-pointer">Filtrar</button>
             </div>
-            <table class="hidden md:table min-w-full text-sm mt-6 border border-gray-200 rounded-lg overflow-hidden shadow-xl shadow-purple-600">
-                <thead class="bg-violet-800 text-white">
+            <table class="hidden md:table min-w-full text-sm mt-6 border border-white rounded-lg overflow-hidden shadow-xl shadow-purple-600 bg-[#1A1233]">
+                <thead class="bg-violet-800 dark:bg-[#0B0618] text-white">
                     <tr>
-                        <th class="border border-black p-2 w-1/9">Data</th>
-                        <th class="border border-black p-2 w-1/2">Descrição</th>
-                        <th class="border border-black p-2 w-1/6">Valor</th>
-                        <th class="border border-black p-2 w-1/9">Status</th>
-                        <th class="border border-black p-2 w-1/12"></th>
+                        <th class="border dark:border-white p-2 w-1/9">Data</th>
+                        <th class="border dark:border-white p-2 w-1/2">Descrição</th>
+                        <th class="border dark:border-white p-2 w-1/6">Valor</th>
+                        <th class="border dark:border-white p-2 w-1/9">Status</th>
+                        <th class="border dark:border-white p-2 w-1/12"></th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-100">
                     @foreach ($this->revenues as $revenue)
-                    <tr wire:click="showEditModal({{ $revenue->id }})" class="odd:bg-white even:bg-gray-100 hover:bg-violet-200 transition cursor-pointer">
-                        <td class="border p-2">{{ Carbon::parse($revenue->date)->format('d/m/Y') }}</td>
-                        <td class="border p-2">{{ $revenue->description }}</td>
-                        <td class="border p-2">R$ {{ number_format($revenue->value, 2, ',', '.') }}</td>
-                        <td class="border p-2">
+                    <tr wire:click="showEditModal({{ $revenue->id }})" 
+                    <tr wire:click="showEditModal({{ $revenue->id }})"
+                        class="odd:bg-white even:bg-gray-100 hover:bg-violet-200 
+                        dark:odd:bg-[#1A1233] dark:even:bg-[#21184A] dark:hover:bg-[#2A1F5E] transition cursor-pointer">
+                        <td class="border dark:border-white p-2">{{ Carbon::parse($revenue->date)->format('d/m/Y') }}</td>
+                        <td class="border dark:border-white p-2">{{ $revenue->description }}</td>
+                        <td class="border dark:border-white p-2">R$ {{ number_format($revenue->value, 2, ',', '.') }}</td>
+                        <td class="border dark:border-white p-2">
                             <p class="rounded-xl p-1 {{ $this->getStatusColor($revenue->status) }}">
                                 {{ $revenue->status }}
                             </p>
                         </td>
-                        <td class="border p-2">
+                        <td class="border dark:border-white p-2">
                             <button wire:click.stop="removeRevenue({{ $revenue->id }})" class="btn text-white bg-red-800 rounded p-1 hover:bg-red-600 cursor-pointer">Excluir</button>
                         </td>
                     </tr>
@@ -307,7 +310,7 @@ new #[Layout('layouts.app'), Title('Receitas')] class extends Component
 
             <div class="md:hidden mt-4 space-y-3">
                 @foreach ($this->revenues as $revenue)
-                <div wire:click="showEditModal({{ $revenue->id }})" class="bg-white p-3 rounded shadow">
+                <div wire:click="showEditModal({{ $revenue->id }})" class="bg-[#0B0618] p-3 rounded shadow-xs shadow-gray-500">
                     <div class="flex justify-between mb-2">
                         <span>{{ $revenue->description }}</span>
                         <span>R$ {{ number_format($revenue->value, 2, ',', '.') }}</span>
@@ -332,7 +335,7 @@ new #[Layout('layouts.app'), Title('Receitas')] class extends Component
 
         @if ($modalAdd)
         <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-            <div class="bg-white p-6 rounded shadow-lg w-96">
+            <div class="bg-white dark:bg-[#0B0618] p-6 rounded shadow-lg w-96">
                 <h2 class="font-bold pb-5">Adicionar Receita</h2>
                 <form wire:submit.prevent="addRevenue" class="space-y-4">
                     <div>
@@ -367,7 +370,7 @@ new #[Layout('layouts.app'), Title('Receitas')] class extends Component
 
         @if ($modalImport)
         <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-            <div class="bg-white p-6 rounded shadow-lg w-96">
+            <div class="bg-white dark:bg-[#0B0618] p-6 rounded shadow-lg w-96">
                 <input type="file" wire:model="file" class="file:mr-4 file:rounded-full file:border-0 file:bg-violet-500 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white hover:file:bg-violet-800 mb-2">
 
                 <button wire:click="importRevenues"
@@ -382,7 +385,7 @@ new #[Layout('layouts.app'), Title('Receitas')] class extends Component
 
         @if ($modalEdit)
         <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-            <div class="bg-white p-6 rounded shadow-lg w-96">
+            <div class="bg-white dark:bg-[#0B0618] p-6 rounded shadow-lg w-96">
                 <h2 class="font-bold pb-5">Editar receita</h2>
                 <form wire:submit.prevent="editRevenue" class="space-y-4">
                     <div>

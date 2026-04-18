@@ -35,8 +35,8 @@ new #[Layout('layouts.app'), Title('Perfil')] class extends Component
     }
 };
 ?>
-<div class="fixed inset-0 flex items-center justify-center bg-cover bg-center">
-    <div class="bg-white bg-opacity-90 p-6 rounded-lg shadow-lg w-96">
+<div class="fixed inset-0 flex items-center justify-center bg-cover bg-center text-white">
+    <div class="bg-[#0B0618] bg-opacity-90 p-6 rounded-lg shadow-lg w-96">
         <h2 class="text-2xl font-bold text-center mb-6">Perfil</h2>
 
         <form wire:submit.prevent="updateProfile">

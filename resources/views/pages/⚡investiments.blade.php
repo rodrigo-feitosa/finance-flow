@@ -293,14 +293,14 @@ new #[Layout('layouts.app'), Title('Investimentos')] class extends Component
 };
 ?>
 
-<div class="bg-gray-300">
+<div class="dark:text-white">
     @if (session()->has('message'))
     <div class="bg-green-500 text-white p-2 text-center mt-2">
         {{ session('message') }}
     </div>
     @endif
     <h1 class="text-3xl font-bold text-center pt-10">Bem-vindo ao FinanceFlow</h1>
-    <p class="text-center mt-4 text-gray-600">Gerencie suas finanças pessoais de forma fácil e eficiente.</p>
+    <p class="text-center mt-4 text-gray-600 dark:text-gray-300">Gerencie suas finanças pessoais de forma fácil e eficiente.</p>
 
     <div class="text-center gap-1">
         <button
@@ -354,37 +354,39 @@ new #[Layout('layouts.app'), Title('Investimentos')] class extends Component
             </div>
 
             <table class="hidden md:table min-w-full text-sm mt-6 border border-gray-200 rounded-lg overflow-hidden shadow-xl shadow-purple-600">
-                <thead class="bg-violet-800 text-white">
+                <thead class="bg-violet-800 dark:bg-[#0B0618] text-white">
                     <tr>
-                        <th class="border border-black p-2 w-1/9">Data</th>
-                        <th class="border border-black p-2 w-1/4">Descrição</th>
-                        <th class="border border-black p-2 w-1/9">Valor</th>
-                        <th class="border border-black p-2 w-1/9">Tipo</th>
-                        <th class="border border-black p-2 w-1/9">Categoria</th>
-                        <th class="border border-black p-2 w-1/6">Instituição</th>
-                        <th class="border border-black p-2 w-1/10">Status</th>
-                        <th class="border border-black p-2 w-1/10"></th>
+                        <th class="border dark:border-white p-2 w-1/9">Data</th>
+                        <th class="border dark:border-white p-2 w-1/4">Descrição</th>
+                        <th class="border dark:border-white p-2 w-1/9">Valor</th>
+                        <th class="border dark:border-white p-2 w-1/9">Tipo</th>
+                        <th class="border dark:border-white p-2 w-1/9">Categoria</th>
+                        <th class="border dark:border-white p-2 w-1/6">Instituição</th>
+                        <th class="border dark:border-white p-2 w-1/10">Status</th>
+                        <th class="border dark:border-white p-2 w-1/10"></th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-100">
                     @foreach ($this->investments as $investment)
-                    <tr wire:click="showEditModal({{ $investment->id }})" class="odd:bg-white even:bg-gray-100 hover:bg-violet-200 transition cursor-pointer">
-                        <td class="border p-2">{{ Carbon::parse($investment->date)->format('d/m/Y') }}</td>
-                        <td class="border p-2">{{ $investment->description }}</td>
-                        <td class="border p-2">R$ {{ number_format($investment->value, 2, ',', '.') }}</td>
-                        <td class="border p-2">
+                    <tr wire:click="showEditModal({{ $investment->id }})" 
+                        class="odd:bg-white even:bg-gray-100 hover:bg-violet-200 
+                        dark:odd:bg-[#1A1233] dark:even:bg-[#21184A] dark:hover:bg-[#2A1F5E] transition cursor-pointer">
+                        <td class="border dark:border-white p-2">{{ Carbon::parse($investment->date)->format('d/m/Y') }}</td>
+                        <td class="border dark:border-white p-2">{{ $investment->description }}</td>
+                        <td class="border dark:border-white p-2">R$ {{ number_format($investment->value, 2, ',', '.') }}</td>
+                        <td class="border dark:border-white p-2">
                             <p class="rounded-xl p-1 {{ $this->getTypeColor($investment->type) }}">{{ $investment->type }}</p>
                         </td>
-                        <td class="border p-2">
+                        <td class="border dark:border-white p-2">
                             <p class="rounded-xl p-1 {{ $this->getCategoryColor($investment->category) }}">{{ $investment->category }}</p>
                         </td>
-                        <td class="border p-2">
+                        <td class="border dark:border-white p-2">
                             <p class="rounded-xl p-1">{{ $investment->institution }}</p>
                         </td>
-                        <td class="border p-2">
+                        <td class="border dark:border-white p-2">
                             <p class="rounded-xl p-1 {{ $this->getStatusColor($investment->status) }}">{{ $investment->status }}</p>
                         </td>
-                        <td class="border p-2">
+                        <td class="border dark:border-white p-2">
                             <button wire:click.stop="removeInvestment({{ $investment->id }})" class="btn text-white bg-red-800 rounded p-1 hover:bg-red-600 cursor-pointer">Excluir</button>
                         </td>
                     </tr>
@@ -393,7 +395,7 @@ new #[Layout('layouts.app'), Title('Investimentos')] class extends Component
             </table>
             <div class="md:hidden mt-4 space-y-3">
                 @foreach ($this->investments as $investment)
-                <div wire:click="showEditModal({{ $investment->id }})" class="bg-white p-3 rounded shadow">
+                <div wire:click="showEditModal({{ $investment->id }})" class="bg-[#0B0618] p-3 rounded shadow-xs shadow-gray-500">
                     <div class="flex justify-between mb-2">
                         <span>{{ $investment->description }}</span>
                         <span>R$ {{ number_format($investment->value, 2, ',', '.') }}</span>
@@ -419,7 +421,7 @@ new #[Layout('layouts.app'), Title('Investimentos')] class extends Component
 
     @if ($modalAdd)
     <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-        <div class="bg-white p-6 rounded shadow-lg w-96">
+        <div class="bg-white dark:bg-[#0B0618] p-6 rounded shadow-lg w-96">
             <h2 class="font-bold pb-5">Adicionar investimento</h2>
             <form wire:submit.prevent="addInvestment" class="space-y-4">
                 <div>
@@ -482,7 +484,7 @@ new #[Layout('layouts.app'), Title('Investimentos')] class extends Component
 
     @if ($modalImport)
     <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-        <div class="bg-white p-6 rounded shadow-lg w-96">
+        <div class="bg-white dark:bg-[#0B0618] p-6 rounded shadow-lg w-96">
             <input type="file" wire:model="file" class="file:mr-4 file:rounded-full file:border-0 file:bg-violet-500 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white hover:file:bg-violet-800 mb-2">
 
             <button wire:click="importInvestments"
@@ -496,7 +498,7 @@ new #[Layout('layouts.app'), Title('Investimentos')] class extends Component
 
     @if ($modalEdit)
     <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-        <div class="bg-white p-6 rounded shadow-lg w-96">
+        <div class="bg-white dark:bg-[#0B0618] p-6 rounded shadow-lg w-96">
             <h2 class="font-bold pb-5">Editar investimento</h2>
             <form wire:submit.prevent="editInvestment" class="space-y-4">
                 <div>

@@ -11,9 +11,35 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     @livewireStyles
+
+    <script>
+        function updateIcons() {
+            const isDark = document.documentElement.classList.contains('dark');
+
+            const icon = document.getElementById('theme-icon');
+            const iconMobile = document.getElementById('theme-icon-mobile');
+
+            if (icon) icon.textContent = isDark ? '☀️' : '🌙';
+            if (iconMobile) iconMobile.textContent = isDark ? '☀️' : '🌙';
+        }
+
+        function toggleTheme() {
+            if (document.documentElement.classList.contains('dark')) {
+                document.documentElement.classList.remove('dark');
+                localStorage.theme = 'light';
+            } else {
+                document.documentElement.classList.add('dark');
+                localStorage.theme = 'dark';
+            }
+
+            updateIcons();
+        }
+
+        updateIcons();
+    </script>
 </head>
 
-<body class="flex flex-col min-h-screen bg-gray-300">
+<body class="flex flex-col min-h-screen bg-gray-300 dark:bg-[#0B0618]">
     <div
         x-data="toastComponent()"
         x-init="init()"
@@ -36,7 +62,7 @@
     </div>
     <livewire:header />
 
-    <main class="flex-1 bg-gray-300">
+    <main class="flex-1 bg-gray-300 dark:bg-[#170F2F]">
         {{ $slot }}
     </main>
 

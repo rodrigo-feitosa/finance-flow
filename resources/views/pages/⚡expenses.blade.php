@@ -244,7 +244,7 @@ new #[Layout('layouts.app'), Title('Despesas')] class extends Component
         Expense::where('id', $id)
             ->where('user', auth()->id())
             ->delete();
-        
+
         $this->dispatch('toast', message: 'Despesa removida com sucesso!', type: 'success');
     }
 
@@ -294,14 +294,14 @@ new #[Layout('layouts.app'), Title('Despesas')] class extends Component
 };
 ?>
 
-<div>
+<div class="dark:text-white">
     @if (session()->has('message'))
     <div class="bg-green-500 text-white p-2 text-center mt-2">
         {{ session('message') }}
     </div>
     @endif
     <h1 class="text-3xl font-bold text-center pt-10">Bem-vindo ao FinanceFlow</h1>
-    <p class="text-center mt-4 text-gray-600">Gerencie suas finanças pessoais de forma fácil e eficiente.</p>
+    <p class="text-center mt-4 text-gray-600 dark:text-gray-300">Gerencie suas finanças pessoais de forma fácil e eficiente.</p>
 
     <div class="text-center gap-1">
         <button
@@ -353,34 +353,36 @@ new #[Layout('layouts.app'), Title('Despesas')] class extends Component
         <p class="mt-6 text-gray-600">Nenhuma despesa registrada. Adicione uma nova despesa para começar a gerenciar suas finanças.</p>
         @else
         <div>
-            <table class="hidden md:table min-w-full text-sm mt-6 border border-gray-200 rounded-lg overflow-hidden shadow-xl shadow-purple-600">
-                <thead class="bg-violet-800 text-white">
+            <table class="hidden md:table min-w-full text-sm mt-6 border dark:border-white rounded-lg overflow-hidden shadow-xl shadow-purple-600 dark:bg-[#1A1233]">
+                <thead class="bg-violet-800 dark:bg-[#0B0618] text-white">
                     <tr>
-                        <th class="border border-black p-2 w-1/9">Data</th>
-                        <th class="border border-black p-2 w-1/3">Descrição</th>
-                        <th class="border border-black p-2 w-1/9">Valor</th>
-                        <th class="border border-black p-2 w-1/9">Tipo</th>
-                        <th class="border border-black p-2 w-1/6">Forma de pagamento</th>
-                        <th class="border border-black p-2 w-1/9">Status</th>
-                        <th class="border border-black p-2 w-1/9"></th>
+                        <th class="border dark:border-white p-2 w-1/9">Data</th>
+                        <th class="border dark:border-white p-2 w-1/3">Descrição</th>
+                        <th class="border dark:border-white p-2 w-1/9">Valor</th>
+                        <th class="border dark:border-white p-2 w-1/9">Tipo</th>
+                        <th class="border dark:border-white p-2 w-1/6">Forma de pagamento</th>
+                        <th class="border dark:border-white p-2 w-1/9">Status</th>
+                        <th class="border dark:border-white p-2 w-1/9"></th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-100">
                     @foreach ($this->expenses as $expense)
-                    <tr wire:click="showEditModal({{ $expense->id }})" class="odd:bg-white even:bg-gray-100 hover:bg-violet-200 transition cursor-pointer">
-                        <td class="border p-2">{{ Carbon::parse($expense->date)->format('d/m/Y') }}</td>
-                        <td class="border p-2">{{ $expense->description }}</td>
-                        <td class="border p-2">R$ {{ number_format($expense->value, 2, ',', '.') }}</td>
-                        <td class="border p-2">
+                    <tr wire:click="showEditModal({{ $expense->id }})"
+                        class="odd:bg-white even:bg-gray-100 hover:bg-violet-200 
+                        dark:odd:bg-[#1A1233] dark:even:bg-[#21184A] dark:hover:bg-[#2A1F5E] transition cursor-pointer">
+                        <td class="border dark:border-white p-2">{{ Carbon::parse($expense->date)->format('d/m/Y') }}</td>
+                        <td class="border dark:border-white p-2">{{ $expense->description }}</td>
+                        <td class="border dark:border-white p-2">R$ {{ number_format($expense->value, 2, ',', '.') }}</td>
+                        <td class="border dark:border-white p-2">
                             <p class="rounded-xl p-1 {{ $this->getTypeColor($expense->type) }}">{{ $expense->type }}</p>
                         </td>
-                        <td class="border p-2">
+                        <td class="border dark:border-white p-2">
                             <p class="rounded-xl p-1 {{ $this->getPaymentMethodColor($expense->payment_method) }}">{{ $expense->payment_method }}</p>
                         </td>
-                        <td class="border p-2">
+                        <td class="border dark:border-white p-2">
                             <p class="rounded-xl p-1 {{ $this->getStatusColor($expense->status) }}">{{ $expense->status }}</p>
                         </td>
-                        <td class="border p-2">
+                        <td class="border dark:border-white p-2">
                             <button wire:click.stop="removeExpense({{ $expense->id }})" class="btn text-white bg-red-800 rounded p-1 hover:bg-red-600 cursor-pointer">Excluir</button>
                         </td>
                     </tr>
@@ -390,7 +392,7 @@ new #[Layout('layouts.app'), Title('Despesas')] class extends Component
 
             <div class="md:hidden mt-4 space-y-3">
                 @foreach ($this->expenses as $expense)
-                <div wire:click="showEditModal({{ $expense->id }})" class="bg-white p-3 rounded shadow">
+                <div wire:click="showEditModal({{ $expense->id }})" class="bg-[#0B0618] p-3 rounded shadow-xs shadow-gray-500">
                     <div class="flex justify-between mb-2">
                         <span>{{ $expense->description }}</span>
                         <span>R$ {{ number_format($expense->value, 2, ',', '.') }}</span>
@@ -417,7 +419,7 @@ new #[Layout('layouts.app'), Title('Despesas')] class extends Component
 
         @if ($modalAdd)
         <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-            <div class="bg-white p-6 rounded shadow-lg w-96">
+            <div class="bg-white dark:bg-[#0B0618] p-6 rounded shadow-lg w-96">
                 <h2 class="font-bold pb-5">Adicionar despesa</h2>
                 <form wire:submit.prevent="addExpense" class="space-y-4">
                     <div>
@@ -475,7 +477,7 @@ new #[Layout('layouts.app'), Title('Despesas')] class extends Component
 
         @if ($modalImport)
         <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-            <div class="bg-white p-6 rounded shadow-lg w-96">
+            <div class="bg-white dark:bg-[#0B0618] p-6 rounded shadow-lg w-96">
                 <input type="file" wire:model="file" class="file:mr-4 file:rounded-full file:border-0 file:bg-violet-500 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white hover:file:bg-violet-800 mb-2">
 
                 <button wire:click="importExpenses"
@@ -489,7 +491,7 @@ new #[Layout('layouts.app'), Title('Despesas')] class extends Component
 
         @if ($modalEdit)
         <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-            <div class="bg-white p-6 rounded shadow-lg w-96">
+            <div class="bg-white dark:bg-[#0B0618] p-6 rounded shadow-lg w-96">
                 <h2 class="font-bold pb-5">Editar despesa</h2>
                 <form wire:submit.prevent="editExpense" class="space-y-4">
                     <div>

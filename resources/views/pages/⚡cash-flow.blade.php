@@ -126,7 +126,7 @@ new #[Layout('layouts.app'), Title('Fluxo de Caixa')] class extends Component
 };
 ?>
 
-<div class="p-4 md:p-6 bg-gray-300 min-h-screen">
+<div class="p-4 md:p-6 dark:text-white min-h-screen">
     <h1 class="text-2xl md:text-3xl font-bold text-center mb-6">📊 Balanço Financeiro</h1>
 
     <div class="flex flex-col md:flex-row gap-2 justify-center mb-6">
@@ -165,12 +165,12 @@ new #[Layout('layouts.app'), Title('Fluxo de Caixa')] class extends Component
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-        <div class="bg-white p-4 rounded-xl shadow-lg">
+        <div class="dark:bg-[#1A1233] p-4 rounded-xl shadow-lg">
             <h2 class="text-lg md:text-xl font-bold mb-4">Despesas variáveis</h2>
 
             <div class="overflow-x-auto">
                 <table class="min-w-[600px] w-full text-xs md:text-sm">
-                    <thead class="bg-violet-800 text-white">
+                    <thead class="bg-violet-800 dark:bg-[#0B0618] text-white">
                         <tr>
                             <th class="p-2 text-start">Data</th>
                             <th class="p-2 text-start">Descrição</th>
@@ -202,12 +202,12 @@ new #[Layout('layouts.app'), Title('Fluxo de Caixa')] class extends Component
             </div>
         </div>
 
-        <div class="bg-white p-4 rounded-xl shadow-lg">
+        <div class="dark:bg-[#1A1233] p-4 rounded-xl shadow-lg">
             <h2 class="text-lg md:text-xl font-bold mb-4">Despesas fixas</h2>
 
             <div class="overflow-x-auto">
                 <table class="min-w-[600px] w-full text-xs md:text-sm">
-                    <thead class="bg-violet-800 text-white">
+                    <thead class="bg-violet-800 dark:bg-[#0B0618] text-white">
                         <tr>
                             <th class="p-2 text-start">Data</th>
                             <th class="p-2 text-start">Descrição</th>
@@ -239,12 +239,12 @@ new #[Layout('layouts.app'), Title('Fluxo de Caixa')] class extends Component
             </div>
         </div>
 
-        <div class="bg-white p-4 rounded-xl shadow-lg">
+        <div class="dark:bg-[#1A1233] p-4 rounded-xl shadow-lg">
             <h2 class="text-lg md:text-xl font-bold mb-4">Despesas parceladas</h2>
 
             <div class="overflow-x-auto">
                 <table class="min-w-[600px] w-full text-xs md:text-sm">
-                    <thead class="bg-violet-800 text-white">
+                    <thead class="bg-violet-800 dark:bg-[#0B0618] text-white">
                         <tr>
                             <th class="p-2 text-start">Data</th>
                             <th class="p-2 text-start">Descrição</th>
@@ -278,12 +278,12 @@ new #[Layout('layouts.app'), Title('Fluxo de Caixa')] class extends Component
 
     </div>
 
-    <div class="mt-6 bg-white p-4 rounded-xl shadow-lg">
+    <div class="mt-6 dark:bg-[#1A1233] p-4 rounded-xl shadow-lg">
         <h2 class="text-lg md:text-xl font-bold mb-4">📅 Fluxo mensal</h2>
 
         <div class="overflow-x-auto">
             <table class="min-w-[800px] w-full text-sm text-center">
-                <thead class="bg-violet-800 text-white">
+                <thead class="bg-violet-800 dark:bg-[#0B0618] text-white">
                     <tr>
                         <th class="p-2">Mês</th>
                         <th class="p-2">Recebidas</th>
@@ -308,7 +308,8 @@ new #[Layout('layouts.app'), Title('Fluxo de Caixa')] class extends Component
                     $projected = ($received + $pendingR) - ($paid + $pendingE + $investments);
                     @endphp
 
-                    <tr class="border-b odd:bg-white even:bg-gray-100">
+                    <tr class="odd:bg-white even:bg-gray-100 hover:bg-violet-200
+                        dark:odd:bg-[#1A1233] dark:even:bg-[#21184A] hover:bg-[#2A1F5E] transition cursor-pointer">
                         <td class="p-2 font-bold">
                             {{ Carbon::createFromFormat('Y-m', $month)->format('m/Y') }}
                         </td>
