@@ -310,7 +310,7 @@ new #[Layout('layouts.app'), Title('Receitas')] class extends Component
 
             <div class="md:hidden mt-4 space-y-3">
                 @foreach ($this->revenues as $revenue)
-                <div wire:click="showEditModal({{ $revenue->id }})" class="bg-[#0B0618] p-3 rounded shadow-xs shadow-gray-500">
+                <div wire:click="showEditModal({{ $revenue->id }})" class="dark:bg-[#0B0618] bg-white p-3 rounded shadow-xs shadow-gray-500">
                     <div class="flex justify-between mb-2">
                         <span>{{ $revenue->description }}</span>
                         <span>R$ {{ number_format($revenue->value, 2, ',', '.') }}</span>

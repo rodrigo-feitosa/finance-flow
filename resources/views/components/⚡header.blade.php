@@ -49,7 +49,6 @@ new class extends Component
                     transition-all duration-300
                 "></div>
 
-                <!-- Bolinha -->
                 <div class="
                     absolute left-1 top-1
                     w-6 h-6 bg-white rounded-full shadow-md
@@ -57,14 +56,11 @@ new class extends Component
                     transition-all duration-300
                     peer-checked:translate-x-8
                 ">
-                    <!-- Ícone muda via dark -->
 
-                    <!-- Sol -->
                     <svg class="w-4 h-4 text-yellow-500 dark:hidden" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2m0 14v2m9-9h-2M5 12H3m15.364-6.364l-1.414 1.414M7.05 16.95l-1.414 1.414m12.728 0l-1.414-1.414M7.05 7.05L5.636 5.636M12 8a4 4 0 100 8 4 4 0 000-8z" />
                     </svg>
 
-                    <!-- Lua -->
                     <svg class="w-4 h-4 text-indigo-600 hidden dark:block" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M21 12.79A9 9 0 1111.21 3c0 .34.02.67.05 1A7 7 0 0021 12.79z" />
                     </svg>
@@ -86,7 +82,7 @@ new class extends Component
                         Preferências
                     </a> -->
 
-                    <button wire:click="logout" class="block w-full text-left px-4 py-2 text-red-500 hover:bg-gray-100">
+                    <button wire:click="logout" class="block w-full text-left px-4 py-2 text-red-500 hover:bg-gray-100 cursor-pointer">
                         Logout
                     </button>
                     @endauth
@@ -104,7 +100,7 @@ new class extends Component
             </div>
         </nav>
 
-        <nav class="flex md:hidden justify-end relative">
+        <nav class="flex md:hidden justify-end relative aligns-center space-x-3">
             <label class="relative inline-flex items-center cursor-pointer">
                 <input
                     type="checkbox"
@@ -118,7 +114,6 @@ new class extends Component
                     transition-all duration-300
                 "></div>
 
-                <!-- Bolinha -->
                 <div class="
                     absolute left-1 top-1
                     w-6 h-6 bg-white rounded-full shadow-md
@@ -126,14 +121,11 @@ new class extends Component
                     transition-all duration-300
                     peer-checked:translate-x-8
                 ">
-                    <!-- Ícone muda via dark -->
 
-                    <!-- Sol -->
                     <svg class="w-4 h-4 text-yellow-500 dark:hidden" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2m0 14v2m9-9h-2M5 12H3m15.364-6.364l-1.414 1.414M7.05 16.95l-1.414 1.414m12.728 0l-1.414-1.414M7.05 7.05L5.636 5.636M12 8a4 4 0 100 8 4 4 0 000-8z" />
                     </svg>
 
-                    <!-- Lua -->
                     <svg class="w-4 h-4 text-indigo-600 hidden dark:block" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M21 12.79A9 9 0 1111.21 3c0 .34.02.67.05 1A7 7 0 0021 12.79z" />
                     </svg>

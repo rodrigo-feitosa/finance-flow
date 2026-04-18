@@ -395,7 +395,7 @@ new #[Layout('layouts.app'), Title('Investimentos')] class extends Component
             </table>
             <div class="md:hidden mt-4 space-y-3">
                 @foreach ($this->investments as $investment)
-                <div wire:click="showEditModal({{ $investment->id }})" class="bg-[#0B0618] p-3 rounded shadow-xs shadow-gray-500">
+                <div wire:click="showEditModal({{ $investment->id }})" class="dark:bg-[#0B0618] bg-white p-3 rounded shadow-xs shadow-gray-500">
                     <div class="flex justify-between mb-2">
                         <span>{{ $investment->description }}</span>
                         <span>R$ {{ number_format($investment->value, 2, ',', '.') }}</span>
