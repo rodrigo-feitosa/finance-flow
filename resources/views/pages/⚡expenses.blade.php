@@ -437,10 +437,10 @@ new #[Layout('layouts.app'), Title('Despesas')] class extends Component
                     <div>
                         <label class="block text-sm font-medium mb-1">Tipo</label>
                         <select name="type" id="type" wire:model="type" class="w-full border rounded px-2 py-2">
-                            <option value="">Selecione o tipo</option>
-                            <option value="fixa">Despesa Fixa</option>
-                            <option value="variavel">Despesa Variável</option>
-                            <option value="parcelada">Despesa Parcelada</option>
+                            <option class="dark:text-black" value="">Selecione o tipo</option>
+                            <option class="dark:text-black" value="fixa">Despesa Fixa</option>
+                            <option class="dark:text-black" value="variavel">Despesa Variável</option>
+                            <option class="dark:text-black" value="parcelada">Despesa Parcelada</option>
                         </select>
                     </div>
                     <div>
@@ -450,19 +450,19 @@ new #[Layout('layouts.app'), Title('Despesas')] class extends Component
                     <div>
                         <label class="block text-sm font-medium mb-1">Forma de pagamento</label>
                         <select name="payment_method" id="payment_method" wire:model="payment_method" class="w-full border rounded px-2 py-2">
-                            <option value="">Selecione o método</option>
-                            <option value="credito">Crédito</option>
-                            <option value="debito">Débito</option>
-                            <option value="pix">Pix</option>
-                            <option value="dinheiro">Dinheiro</option>
+                            <option class="dark:text-black" value="">Selecione o método</option>
+                            <option class="dark:text-black" value="credito">Crédito</option>
+                            <option class="dark:text-black" value="debito">Débito</option>
+                            <option class="dark:text-black" value="pix">Pix</option>
+                            <option class="dark:text-black" value="dinheiro">Dinheiro</option>
                         </select>
                     </div>
                     <div>
                         <label class="block text-sm font-medium mb-1">Status</label>
                         <select name="status" id="status" wire:model="status" class="w-full border rounded px-2 py-2">
-                            <option value="">Selecione um status</option>
-                            <option value="paga">Paga</option>
-                            <option value="a pagar">À pagar</option>
+                            <option class="dark:text-black" value="">Selecione um status</option>
+                            <option class="dark:text-black" value="paga">Paga</option>
+                            <option class="dark:text-black" value="a pagar">À pagar</option>
                         </select>
                     </div>
 
@@ -509,18 +509,18 @@ new #[Layout('layouts.app'), Title('Despesas')] class extends Component
                     <div>
                         <label class="block text-sm font-medium mb-1">Tipo</label>
                         <select type="text" wire:model="type" class="w-full border rounded px-2 py-2">
-                            <option value="">Selecione o tipo</option>
-                            <option value="fixa">Despesa Fixa</option>
-                            <option value="variavel">Despesa Variável</option>
-                            <option value="parcelada">Despesa Parcelada</option>
+                            <option class="dark:text-black" value="">Selecione o tipo</option>
+                            <option class="dark:text-black" value="fixa">Despesa Fixa</option>
+                            <option class="dark:text-black" value="variavel">Despesa Variável</option>
+                            <option class="dark:text-black" value="parcelada">Despesa Parcelada</option>
                         </select>
                     </div>
                     <div>
                         <label class="block text-sm font-medium mb-1">Status</label>
                         <select type="text" wire:model="status" class="w-full border rounded px-2 py-2">
-                            <option value="">Selecione o status</option>
-                            <option value="paga">Paga</option>
-                            <option value="a pagar">A pagar</option>
+                            <option class="dark:text-black" value="">Selecione o status</option>
+                            <option class="dark:text-black" value="paga">Paga</option>
+                            <option class="dark:text-black" value="a pagar">A pagar</option>
                         </select>
                     </div>
 
