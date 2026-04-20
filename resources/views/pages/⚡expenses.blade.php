@@ -324,24 +324,24 @@ new #[Layout('layouts.app'), Title('Despesas')] class extends Component
     <div class="mx-auto max-w-5xl px-4">
         <div class="flex flex-wrap gap-2 mt-4 justify-center">
             <select wire:model="filterType" class="border p-1 rounded">
-                <option value="">Tipo</option>
-                <option value="fixa">Fixa</option>
-                <option value="variavel">Variável</option>
-                <option value="parcelada">Parcelada</option>
+                <option class="dark:text-black" value="">Tipo</option>
+                <option class="dark:text-black" value="fixa">Fixa</option>
+                <option class="dark:text-black" value="variavel">Variável</option>
+                <option class="dark:text-black" value="parcelada">Parcelada</option>
             </select>
 
             <select wire:model="filterPaymentMethod" class="border p-1 rounded">
-                <option value="">Pagamento</option>
-                <option value="credito">Crédito</option>
-                <option value="debito">Débito</option>
-                <option value="pix">Pix</option>
-                <option value="dinheiro">Dinheiro</option>
+                <option class="dark:text-black" value="">Pagamento</option>
+                <option class="dark:text-black" value="credito">Crédito</option>
+                <option class="dark:text-black" value="debito">Débito</option>
+                <option class="dark:text-black" value="pix">Pix</option>
+                <option class="dark:text-black" value="dinheiro">Dinheiro</option>
             </select>
 
             <select wire:model="filterStatus" class="border p-1 rounded">
-                <option value="">Status</option>
-                <option value="paga">Paga</option>
-                <option value="a pagar">A pagar</option>
+                <option class="dark:text-black" value="">Status</option>
+                <option class="dark:text-black" value="paga">Paga</option>
+                <option class="dark:text-black" value="a pagar">A pagar</option>
             </select>
 
             <input type="date" wire:model="filterDateStart" class="border p-1 rounded">

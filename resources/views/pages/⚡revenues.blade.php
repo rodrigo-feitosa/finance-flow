@@ -54,7 +54,7 @@ new #[Layout('layouts.app'), Title('Receitas')] class extends Component
 
     public function applyFilters()
     {
-        $this->getRevenues([
+        $this->getRevenuesProperty([
             'status' => $this->filterStatus,
             'date_start' => $this->filterDateStart,
             'date_end' => $this->filterDateEnd,
@@ -266,9 +266,9 @@ new #[Layout('layouts.app'), Title('Receitas')] class extends Component
         <div>
             <div class="flex flex-wrap gap-2 mt-4 justify-center">
                 <select wire:model="filterStatus" class="border p-1 rounded">
-                    <option value="">Status</option>
-                    <option value="recebida">Recebida</option>
-                    <option value="a receber">A receber</option>
+                    <option class="dark:text-black" value="">Status</option>
+                    <option class="dark:text-black" value="recebida">Recebida</option>
+                    <option class="dark:text-black" value="a receber">A receber</option>
                 </select>
 
                 <input type="date" wire:model="filterDateStart" class="border p-1 rounded w-1/3">
