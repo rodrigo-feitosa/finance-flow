@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\CookieConsentController;
 
 // Route::get('/', function () {
 //     return view('welcome');
@@ -18,4 +19,5 @@ Route::middleware('auth')->group(function () {
     Route::livewire('/cash-flow', 'pages::cash-flow')->name('cash-flow');
     Route::livewire('/investments', 'pages::investiments')->name('investments');
     Route::livewire('/profile', 'pages::profile')->name('profile');
+    Route::post('/cookie-consent', [CookieConsentController::class, 'store'])->name('cookie-consent');
 });
