@@ -149,7 +149,11 @@ new #[Layout('layouts.app'), Title('Receitas')] class extends Component
 
         while (($row = fgetcsv($file, 0, ',')) !== false) {
             $row = array_map(fn($item) => mb_convert_encoding($item, 'UTF-8', 'auto'), $row);
-            $date = Carbon::createFromFormat('d/m/Y', $row[0])->format('Y-m-d');
+            $date = $this->parseDate($row[0]);
+
+            if (!$date) {
+                continue;
+            }
 
             if (count($row) < 4 || empty($row[3])) {
                 continue;
@@ -171,6 +175,33 @@ new #[Layout('layouts.app'), Title('Receitas')] class extends Component
         $this->closeImport();
 
         $this->dispatch('toast', message: $count . 'receitas importadas com sucesso!', type: 'success');
+    }
+
+    private function parseDate($value)
+    {
+        try {
+            $formats = [
+                'd/m/Y',
+                'd-m-Y',
+                'Y-m-d',
+                'Y/m/d',
+                'm/d/Y',
+                'm-d-Y',
+            ];
+
+            foreach ($formats as $format) {
+                try {
+                    return Carbon::createFromFormat($format, $value)->format('Y-m-d');
+                } catch (\Exception $e) {
+                    // tenta próximo
+                }
+            }
+
+            // fallback inteligente
+            return Carbon::parse($value)->format('Y-m-d');
+        } catch (\Exception $e) {
+            return null;
+        }
     }
 
     public function exportRevenues()
@@ -203,7 +234,7 @@ new #[Layout('layouts.app'), Title('Receitas')] class extends Component
         Revenue::where('id', $id)
             ->where('user', auth()->id())
             ->delete();
-        
+
         $this->dispatch('toast', message: 'Receita removida com sucesso', type: 'success');
     }
 
@@ -288,8 +319,8 @@ new #[Layout('layouts.app'), Title('Receitas')] class extends Component
                 </thead>
                 <tbody class="divide-y divide-gray-100">
                     @foreach ($this->revenues as $revenue)
-                    <tr wire:click="showEditModal({{ $revenue->id }})" 
                     <tr wire:click="showEditModal({{ $revenue->id }})"
+                        <tr wire:click="showEditModal({{ $revenue->id }})"
                         class="odd:bg-white even:bg-gray-100 hover:bg-violet-200 
                         dark:odd:bg-[#1A1233] dark:even:bg-[#21184A] dark:hover:bg-[#2A1F5E] transition cursor-pointer">
                         <td class="border dark:border-white p-2">{{ Carbon::parse($revenue->date)->format('d/m/Y') }}</td>

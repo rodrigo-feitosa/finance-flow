@@ -182,7 +182,11 @@ new #[Layout('layouts.app'), Title('Investimentos')] class extends Component
 
         while (($row = fgetcsv($file, 0, ',')) !== false) {
             $row = array_map(fn($item) => mb_convert_encoding($item, 'UTF-8', 'auto'), $row);
-            $date = Carbon::createFromFormat('d/m/Y', $row[0])->format('Y-m-d');
+            $date = $this->parseDate($row[0]);
+
+            if (!$date) {
+                continue;
+            }
 
             if (count($row) < 6 || empty($row[4])) {
                 continue;
@@ -206,6 +210,33 @@ new #[Layout('layouts.app'), Title('Investimentos')] class extends Component
         $this->closeImport();
 
         $this->dispatch('toast', message: $count . 'investimentos importados com sucesso!', type: 'success');
+    }
+
+    private function parseDate($value)
+    {
+        try {
+            $formats = [
+                'd/m/Y',
+                'd-m-Y',
+                'Y-m-d',
+                'Y/m/d',
+                'm/d/Y',
+                'm-d-Y',
+            ];
+
+            foreach ($formats as $format) {
+                try {
+                    return Carbon::createFromFormat($format, $value)->format('Y-m-d');
+                } catch (\Exception $e) {
+                    // tenta próximo
+                }
+            }
+
+            // fallback inteligente
+            return Carbon::parse($value)->format('Y-m-d');
+        } catch (\Exception $e) {
+            return null;
+        }
     }
 
     public function exportInvestments()
@@ -368,7 +399,7 @@ new #[Layout('layouts.app'), Title('Investimentos')] class extends Component
                 </thead>
                 <tbody class="divide-y divide-gray-100">
                     @foreach ($this->investments as $investment)
-                    <tr wire:click="showEditModal({{ $investment->id }})" 
+                    <tr wire:click="showEditModal({{ $investment->id }})"
                         class="odd:bg-white even:bg-gray-100 hover:bg-violet-200 
                         dark:odd:bg-[#1A1233] dark:even:bg-[#21184A] dark:hover:bg-[#2A1F5E] transition cursor-pointer">
                         <td class="border dark:border-white p-2">{{ Carbon::parse($investment->date)->format('d/m/Y') }}</td>

@@ -155,7 +155,7 @@ new #[Layout('layouts.app'), Title('Despesas')] class extends Component
                     'date' => Carbon::parse($this->date)->addMonths($i),
                     'description' => $this->description . ' (' . ($i + 1) . '/' . $installments . ')',
                     'value' => $this->value,
-                    'type' => 'parcelada', // força consistência
+                    'type' => 'parcelada',
                     'payment_method' => $this->payment_method,
                     'status' => $this->status,
                 ]);
@@ -183,10 +183,15 @@ new #[Layout('layouts.app'), Title('Despesas')] class extends Component
 
         while (($row = fgetcsv($file, 0, ',')) !== false) {
             $row = array_map(fn($item) => mb_convert_encoding($item, 'UTF-8', 'auto'), $row);
-            $date = Carbon::createFromFormat('d/m/Y', $row[0])->format('Y-m-d');
 
             if (count($row) < 6 || empty($row[4])) {
                 continue;
+            }
+
+            $date = $this->parseDate($row[0]);
+
+            if (!$date) {
+                continue; // ignora datas inválidas
             }
 
             Expense::create([
@@ -206,7 +211,36 @@ new #[Layout('layouts.app'), Title('Despesas')] class extends Component
 
         $this->closeImport();
 
-        $this->dispatch('toast', message: $count . 'despesas importadas com sucesso!', type: 'success');
+        $this->dispatch('toast', message: $count . ' despesas importadas com sucesso!', type: 'success');
+    }
+
+    /**
+     * Converte qualquer formato comum de data para Y-m-d
+     */
+    private function parseDate($value)
+    {
+        try {
+            $formats = [
+                'd/m/Y',
+                'd-m-Y',
+                'Y-m-d',
+                'Y/m/d',
+                'm/d/Y',
+                'm-d-Y',
+            ];
+
+            foreach ($formats as $format) {
+                try {
+                    return Carbon::createFromFormat($format, $value)->format('Y-m-d');
+                } catch (\Exception $e) {
+                    // formato não corresponde, tenta próximo
+                }
+            }
+
+            return Carbon::parse($value)->format('Y-m-d');
+        } catch (\Exception $e) {
+            return null;
+        }
     }
 
     public function exportExpenses()
