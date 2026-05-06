@@ -359,23 +359,25 @@ new #[Layout('layouts.app'), Title('Investimentos')] class extends Component
             <div class="flex flex-wrap gap-2 mt-4 justify-center">
                 <select wire:model="filterType" class="border p-1 rounded">
                     <option class="dark:text-black" value="">Tipo</option>
-                    <option class="dark:text-black" value="fixa">Fixa</option>
-                    <option class="dark:text-black" value="variavel">Variável</option>
-                    <option class="dark:text-black" value="parcelada">Parcelada</option>
+                    <option class="dark:text-black" value="renda fixa">Renda Fixa</option>
+                    <option class="dark:text-black" value="renda variavel">Renda Variável</option>
+                    <option class="dark:text-black" value="cripto">Criptomoedas</option>
+                    <option class="dark:text-black" value="outros">Outros</option>
                 </select>
 
-                <select wire:model="filterPaymentMethod" class="border p-1 rounded">
-                    <option class="dark:text-black" value="">Pagamento</option>
-                    <option class="dark:text-black" value="credito">Crédito</option>
-                    <option class="dark:text-black" value="debito">Débito</option>
-                    <option class="dark:text-black" value="pix">Pix</option>
-                    <option class="dark:text-black" value="dinheiro">Dinheiro</option>
+                <select wire:model="filterCategory" class="border p-1 rounded">
+                    <option class="dark:text-black" value="">Categoria</option>
+                    <option class="dark:text-black" value="cdb">CDB</option>
+                    <option class="dark:text-black" value="ações">Ações</option>
+                    <option class="dark:text-black" value="FII">FII</option>
+                    <option class="dark:text-black" value="outros">Outros</option>
                 </select>
 
-                <select wire:model="filterStatus" class="border p-1 rounded">
-                    <option class="dark:text-black" value="">Status</option>
-                    <option class="dark:text-black" value="paga">Paga</option>
-                    <option class="dark:text-black" value="a pagar">A pagar</option>
+                <select wire:model="filterInstitution" class="border p-1 rounded">
+                    <option class="dark:text-black" value="">Instituição</option>
+                    @foreach ($this->investments->pluck('institution')->unique() as $institution)
+                    <option class="dark:text-black" value="{{ $institution }}">{{ $institution }}</option>
+                    @endforeach
                 </select>
 
                 <input type="date" wire:model="filterDateStart" class="border p-1 rounded">
