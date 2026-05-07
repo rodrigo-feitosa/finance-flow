@@ -196,10 +196,11 @@ new #[Layout('layouts.app'), Title('Investimentos')] class extends Component
                 'user' => auth()->id(),
                 'date' => $date,
                 'description' => $row[1],
-                'value' => $row[2],
+                'value' => (float) $row[2],
                 'type' => $row[3],
-                'institution' => $row[4],
-                'status' => $row[5],
+                'category' => $row[4],
+                'institution' => $row[5],
+                'status' => $row[6] ?? null,
             ]);
 
             $count++;
@@ -301,6 +302,7 @@ new #[Layout('layouts.app'), Title('Investimentos')] class extends Component
             'renda fixa' => 'bg-purple-300 text-purple-900 shadow-sm outline-1 outline-purple-400',
             'renda variavel' => 'bg-yellow-300 text-yellow-900 shadow-sm outline-1 outline-yellow-400',
             'cripto' => 'bg-rose-300 text-rose-800 shadow-sm outline-1 outline-rose-400',
+            'outros' => 'bg-gray-300 text-gray-800 shadow-sm outline-1 outline-gray-400',
         };
     }
 
@@ -311,6 +313,7 @@ new #[Layout('layouts.app'), Title('Investimentos')] class extends Component
             'CDB' => 'bg-green-300 text-green-900 shadow-sm outline-1 outline-green-400',
             'ações' => 'bg-emerald-300 text-emerald-900 shadow-sm outline-1 outline-emerald-400',
             'FII' => 'bg-yellow-300 text-gray-800 shadow-sm outline-1 outline-yellow-400',
+            'outros' => 'bg-gray-300 text-gray-800 shadow-sm outline-1 outline-gray-400',
         };
     }
 
@@ -355,101 +358,99 @@ new #[Layout('layouts.app'), Title('Investimentos')] class extends Component
         @if ($this->investments->isEmpty())
         <p class="mt-6 text-gray-600">Nenhum investimento registrada. Adicione um novo investimento para começar a gerenciar suas finanças.</p>
         @else
-        <div>
-            <div class="flex flex-wrap gap-2 mt-4 justify-center">
-                <select wire:model="filterType" class="border p-1 rounded">
-                    <option class="dark:text-black" value="">Tipo</option>
-                    <option class="dark:text-black" value="renda fixa">Renda Fixa</option>
-                    <option class="dark:text-black" value="renda variavel">Renda Variável</option>
-                    <option class="dark:text-black" value="cripto">Criptomoedas</option>
-                    <option class="dark:text-black" value="outros">Outros</option>
-                </select>
+        <div class="flex flex-wrap gap-2 mt-4 justify-center">
+            <select wire:model="filterType" class="border p-1 rounded">
+                <option class="dark:text-black" value="">Tipo</option>
+                <option class="dark:text-black" value="renda fixa">Renda Fixa</option>
+                <option class="dark:text-black" value="renda variavel">Renda Variável</option>
+                <option class="dark:text-black" value="cripto">Criptomoedas</option>
+                <option class="dark:text-black" value="outros">Outros</option>
+            </select>
 
-                <select wire:model="filterCategory" class="border p-1 rounded">
-                    <option class="dark:text-black" value="">Categoria</option>
-                    <option class="dark:text-black" value="cdb">CDB</option>
-                    <option class="dark:text-black" value="ações">Ações</option>
-                    <option class="dark:text-black" value="FII">FII</option>
-                    <option class="dark:text-black" value="outros">Outros</option>
-                </select>
+            <select wire:model="filterCategory" class="border p-1 rounded">
+                <option class="dark:text-black" value="">Categoria</option>
+                <option class="dark:text-black" value="cdb">CDB</option>
+                <option class="dark:text-black" value="ações">Ações</option>
+                <option class="dark:text-black" value="FII">FII</option>
+                <option class="dark:text-black" value="outros">Outros</option>
+            </select>
 
-                <select wire:model="filterInstitution" class="border p-1 rounded">
-                    <option class="dark:text-black" value="">Instituição</option>
-                    @foreach ($this->investments->pluck('institution')->unique() as $institution)
-                    <option class="dark:text-black" value="{{ $institution }}">{{ $institution }}</option>
-                    @endforeach
-                </select>
+            <select wire:model="filterInstitution" class="border p-1 rounded">
+                <option class="dark:text-black" value="">Instituição</option>
+                @foreach ($this->investments->pluck('institution')->unique() as $institution)
+                <option class="dark:text-black" value="{{ $institution }}">{{ $institution }}</option>
+                @endforeach
+            </select>
 
-                <input type="date" wire:model="filterDateStart" class="border p-1 rounded">
-                <input type="date" wire:model="filterDateEnd" class="border p-1 rounded">
+            <input type="date" wire:model="filterDateStart" class="border p-1 rounded">
+            <input type="date" wire:model="filterDateEnd" class="border p-1 rounded">
 
-                <button wire:click="applyFilters" class="btn w-24 text-white bg-yellow-600 rounded p-1 hover:bg-yellow-800 cursor-pointer">Filtrar</button>
-            </div>
+            <button wire:click="applyFilters" class="btn w-24 text-white bg-yellow-600 rounded p-1 hover:bg-yellow-800 cursor-pointer">Filtrar</button>
+        </div>
 
-            <table class="hidden md:table min-w-full text-sm mt-6 border border-gray-200 rounded-lg overflow-hidden shadow-xl shadow-purple-600">
-                <thead class="bg-violet-800 dark:bg-[#0B0618] text-white">
-                    <tr>
-                        <th class="border dark:border-white p-2 w-1/9">Data</th>
-                        <th class="border dark:border-white p-2 w-1/4">Descrição</th>
-                        <th class="border dark:border-white p-2 w-1/9">Valor</th>
-                        <th class="border dark:border-white p-2 w-1/9">Tipo</th>
-                        <th class="border dark:border-white p-2 w-1/9">Categoria</th>
-                        <th class="border dark:border-white p-2 w-1/6">Instituição</th>
-                        <th class="border dark:border-white p-2 w-1/10">Status</th>
-                        <th class="border dark:border-white p-2 w-1/10"></th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-100">
-                    @foreach ($this->investments as $investment)
-                    <tr wire:click="showEditModal({{ $investment->id }})"
-                        class="odd:bg-white even:bg-gray-100 hover:bg-violet-200 
-                        dark:odd:bg-[#1A1233] dark:even:bg-[#21184A] dark:hover:bg-[#2A1F5E] transition cursor-pointer">
-                        <td class="border dark:border-white p-2">{{ Carbon::parse($investment->date)->format('d/m/Y') }}</td>
-                        <td class="border dark:border-white p-2">{{ $investment->description }}</td>
-                        <td class="border dark:border-white p-2">R$ {{ number_format($investment->value, 2, ',', '.') }}</td>
-                        <td class="border dark:border-white p-2">
-                            <p class="rounded-xl p-1 {{ $this->getTypeColor($investment->type) }}">{{ $investment->type }}</p>
-                        </td>
-                        <td class="border dark:border-white p-2">
-                            <p class="rounded-xl p-1 {{ $this->getCategoryColor($investment->category) }}">{{ $investment->category }}</p>
-                        </td>
-                        <td class="border dark:border-white p-2">
-                            <p class="rounded-xl p-1">{{ $investment->institution }}</p>
-                        </td>
-                        <td class="border dark:border-white p-2">
-                            <p class="rounded-xl p-1 {{ $this->getStatusColor($investment->status) }}">{{ $investment->status }}</p>
-                        </td>
-                        <td class="border dark:border-white p-2">
-                            <button wire:click.stop="removeInvestment({{ $investment->id }})" class="btn text-white bg-red-800 rounded p-1 hover:bg-red-600 cursor-pointer">Excluir</button>
-                        </td>
-                    </tr>
-                    @endforeach
-                </tbody>
-            </table>
-            <div class="md:hidden mt-4 space-y-3">
+        <table class="hidden md:table min-w-full text-sm mt-6 border border-gray-200 rounded-lg overflow-hidden shadow-xl shadow-purple-600">
+            <thead class="bg-violet-800 dark:bg-[#0B0618] text-white">
+                <tr>
+                    <th class="border dark:border-white p-2 w-1/9">Data</th>
+                    <th class="border dark:border-white p-2 w-1/4">Descrição</th>
+                    <th class="border dark:border-white p-2 w-1/9">Valor</th>
+                    <th class="border dark:border-white p-2 w-1/9">Tipo</th>
+                    <th class="border dark:border-white p-2 w-1/9">Categoria</th>
+                    <th class="border dark:border-white p-2 w-1/6">Instituição</th>
+                    <th class="border dark:border-white p-2 w-1/10">Status</th>
+                    <th class="border dark:border-white p-2 w-1/10"></th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
                 @foreach ($this->investments as $investment)
-                <div wire:click="showEditModal({{ $investment->id }})" class="dark:bg-[#0B0618] bg-white p-3 rounded shadow-xs shadow-gray-500">
-                    <div class="flex justify-between mb-2">
-                        <span>{{ $investment->description }}</span>
-                        <span>R$ {{ number_format($investment->value, 2, ',', '.') }}</span>
+                <tr wire:click="showEditModal({{ $investment->id }})"
+                    class="odd:bg-white even:bg-gray-100 hover:bg-violet-200 
+                    dark:odd:bg-[#1A1233] dark:even:bg-[#21184A] dark:hover:bg-[#2A1F5E] transition cursor-pointer">
+                    <td class="border dark:border-white p-2">{{ Carbon::parse($investment->date)->format('d/m/Y') }}</td>
+                    <td class="border dark:border-white p-2">{{ $investment->description }}</td>
+                    <td class="border dark:border-white p-2">R$ {{ number_format($investment->value, 2, ',', '.') }}</td>
+                    <td class="border dark:border-white p-2">
+                        <p class="rounded-xl p-1 {{ $this->getTypeColor($investment->type) }}">{{ $investment->type }}</p>
+                    </td>
+                    <td class="border dark:border-white p-2">
+                        <p class="rounded-xl p-1 {{ $this->getCategoryColor($investment->category) }}">{{ $investment->category }}</p>
+                    </td>
+                    <td class="border dark:border-white p-2">
+                        <p class="rounded-xl p-1">{{ $investment->institution }}</p>
+                    </td>
+                    <td class="border dark:border-white p-2">
+                        <p class="rounded-xl p-1 {{ $this->getStatusColor($investment->status) }}">{{ $investment->status }}</p>
+                    </td>
+                    <td class="border dark:border-white p-2">
+                        <button wire:click.stop="removeInvestment({{ $investment->id }})" class="btn text-white bg-red-800 rounded p-1 hover:bg-red-600 cursor-pointer">Excluir</button>
+                    </td>
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
+        <div class="md:hidden mt-4 space-y-3">
+            @foreach ($this->investments as $investment)
+            <div wire:click="showEditModal({{ $investment->id }})" class="dark:bg-[#0B0618] bg-white p-3 rounded shadow-xs shadow-gray-500">
+                <div class="flex justify-between mb-2">
+                    <span>{{ $investment->description }}</span>
+                    <span>R$ {{ number_format($investment->value, 2, ',', '.') }}</span>
+                </div>
+                <div class="flex justify-between items-center text-sm text-gray-500">
+                    <div>
+                        <span>{{ Carbon::parse($investment->date)->format('d/m/Y') }}</span>
+                        <span class="ml-2 px-2 py-1 rounded {{ $this->getStatusColor($investment->status) }}">{{ $investment->status }}</span>
                     </div>
-                    <div class="flex justify-between items-center text-sm text-gray-500">
-                        <div>
-                            <span>{{ Carbon::parse($investment->date)->format('d/m/Y') }}</span>
-                            <span class="ml-2 px-2 py-1 rounded {{ $this->getStatusColor($investment->status) }}">{{ $investment->status }}</span>
-                        </div>
-                        <div>
-                            <button wire:click.stop="removeInvestment({{ $investment->id }})" class="text-lg text-red-500 hover:text-red-700 cursor-pointer"><i class="fa-regular fa-trash-can"></i></button>
-                        </div>
+                    <div>
+                        <button wire:click.stop="removeInvestment({{ $investment->id }})" class="text-lg text-red-500 hover:text-red-700 cursor-pointer"><i class="fa-regular fa-trash-can"></i></button>
                     </div>
                 </div>
-                @endforeach
             </div>
-            <div class="mt-6">
-                {{ $this->investments->links() }}
-            </div>
-            @endif
+            @endforeach
         </div>
+        <div class="mt-6">
+            {{ $this->investments->links() }}
+        </div>
+        @endif
     </div>
 
     @if ($modalAdd)
@@ -592,5 +593,4 @@ new #[Layout('layouts.app'), Title('Investimentos')] class extends Component
         </div>
     </div>
     @endif
-</div>
 </div>
