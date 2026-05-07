@@ -293,9 +293,13 @@ new #[Layout('layouts.app'), Title('Fluxo de Caixa')] class extends Component
                         <th class="p-2">Investimento</th>
                         <th class="p-2">Saldo real</th>
                         <th class="p-2">Saldo projetado</th>
+                        <th class="p-2">Saldo acumulado</th>
                     </tr>
                 </thead>
                 <tbody>
+                    @php
+                    $cumulative = 0;
+                    @endphp
                     @foreach ($this->getMonthlyProjection() as $month => $data)
                     @php
                     $received = $data['received_revenues'] ?? 0;
@@ -306,6 +310,7 @@ new #[Layout('layouts.app'), Title('Fluxo de Caixa')] class extends Component
 
                     $real = $received - ($paid + $investments);
                     $projected = ($received + $pendingR) - ($paid + $pendingE + $investments);
+                    $cumulative = $real + ($cumulative ?? 0);
                     @endphp
 
                     <tr class="odd:bg-white even:bg-gray-100 hover:bg-violet-200
@@ -326,6 +331,9 @@ new #[Layout('layouts.app'), Title('Fluxo de Caixa')] class extends Component
 
                         <td class="p-2 font-bold {{ $projected >= 0 ? 'text-blue-800' : 'text-red-800' }}">
                             R$ {{ number_format($projected, 2, ',', '.') }}
+                        </td>
+                        <td class="p-2 font-bold {{ $cumulative >= 0 ? 'text-blue-600' : 'text-red-600' }}">
+                            R$ {{ number_format($cumulative, 2, ',', '.') }}
                         </td>
                     </tr>
                     @endforeach
