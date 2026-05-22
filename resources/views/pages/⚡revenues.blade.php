@@ -26,6 +26,7 @@ new #[Layout('layouts.app'), Title('Receitas')] class extends Component
     public $filterStatus;
     public $filterDateStart;
     public $filterDateEnd;
+    public $filterDescription;
 
     public $editingRevenueId;
 
@@ -36,6 +37,10 @@ new #[Layout('layouts.app'), Title('Receitas')] class extends Component
         }
 
         $query = Revenue::where('user', auth()->id());
+
+        if ($this->filterDescription) {
+            $query->where('description','like', '%' . $this->filterDescription . '%');
+        }
 
         if ($this->filterStatus) {
             $query->where('status', $this->filterStatus);
@@ -55,6 +60,7 @@ new #[Layout('layouts.app'), Title('Receitas')] class extends Component
     public function applyFilters()
     {
         $this->getRevenuesProperty([
+            'description' => $this->description,
             'status' => $this->filterStatus,
             'date_start' => $this->filterDateStart,
             'date_end' => $this->filterDateEnd,
@@ -296,14 +302,16 @@ new #[Layout('layouts.app'), Title('Receitas')] class extends Component
         @else
         <div>
             <div class="flex flex-wrap gap-2 mt-4 justify-center">
+                <input type="text" wire:model="filterDescription" placeholder="Filtrar por descrição..." class="border p-1 rounded">    
+
                 <select wire:model="filterStatus" class="border p-1 rounded">
                     <option class="dark:text-black" value="">Status</option>
                     <option class="dark:text-black" value="recebida">Recebida</option>
                     <option class="dark:text-black" value="a receber">A receber</option>
                 </select>
 
-                <input type="date" wire:model="filterDateStart" class="border p-1 rounded w-1/3">
-                <input type="date" wire:model="filterDateEnd" class="border p-1 rounded w-1/3">
+                <input type="date" wire:model="filterDateStart" class="border p-1 rounded w-1/4">
+                <input type="date" wire:model="filterDateEnd" class="border p-1 rounded w-1/4">
 
                 <button wire:click="applyFilters" class="btn w-24 text-white bg-yellow-600 rounded p-1 hover:bg-yellow-800 cursor-pointer">Filtrar</button>
             </div>

@@ -31,6 +31,7 @@ new #[Layout('layouts.app'), Title('Despesas')] class extends Component
     public $filterStatus;
     public $filterDateStart;
     public $filterDateEnd;
+    public $filterDescription;
 
     public $editingExpenseId;
 
@@ -43,6 +44,10 @@ new #[Layout('layouts.app'), Title('Despesas')] class extends Component
         }
 
         $query = Expense::where('user', auth()->id());
+
+        if ($this->filterDescription) {
+            $query->where('description','like', '%' . $this->filterDescription . '%');
+        }
 
         if ($this->filterType) {
             $query->where('type', $this->filterType);
@@ -70,6 +75,7 @@ new #[Layout('layouts.app'), Title('Despesas')] class extends Component
     public function applyFilters()
     {
         $this->getExpensesProperty([
+            'description' => $this->filterDescription,
             'type' => $this->filterType,
             'payment_method' => $this->filterPaymentMethod,
             'status' => $this->filterStatus,
@@ -357,6 +363,8 @@ new #[Layout('layouts.app'), Title('Despesas')] class extends Component
 
     <div class="mx-auto max-w-5xl px-4">
         <div class="flex flex-wrap gap-2 mt-4 justify-center">
+            <input type="text" wire:model="filterDescription" placeholder="Filtrar por descrição..." class="border p-1 rounded">
+
             <select wire:model="filterType" class="border p-1 rounded">
                 <option class="dark:text-black" value="">Tipo</option>
                 <option class="dark:text-black" value="fixa">Fixa</option>
