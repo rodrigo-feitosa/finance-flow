@@ -9,7 +9,7 @@ class CookieConsentController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'consent' => 'required|in:accepted,rejected'
+            'consent' => 'required|in:accepted,rejected',
         ]);
 
         $user = auth()->user();

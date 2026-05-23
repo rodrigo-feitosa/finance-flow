@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Expense extends Model
 {
     public $table = 'expenses';
+
     public $fillable = [
         'user',
         'date',
