@@ -1,59 +1,133 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Finance Flow 💰
+Um sistema moderno para gerenciamento financeiro desenvolvido com Laravel 12 e Livewire 4. Gerencie suas despesas, receitas, investimentos e tenha uma visão de todo seu fluxo de caixa de forma intuitiva e em tempo real.
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## 🌟 Recursos
 
-## About Laravel
+### Funcionalidades principais
+- **Gerenciamento de despesas** - Monitore e categorize suas despesas de acordo com a forma de pagamento, tipo (variável, fixa, parcelada) e status.
+- **Gerenciamento de receitas** - Registre suas fontes de renda e monitore as origens, as formas de recebimento e o status.
+- **Gerenciamento de investimentos** - Monitor de investimentos com descrição, status, instituição, categoria e tipo.
+- **Fluxo de caixa** - Visualize o seu fluxo financeiro ao longo dos meses com entradas e saídas consolidadas, além da projeção para cada mês.
+- **Autenticação** - Cadastro seguro, login e funcionalidade de reset de senha via e-mail.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+### Destaques técnicos
+- Atualizações em tempo real com componentes livewire;
+- Design responsivo com TailwindCSS;
+- PHP 8.2+ com Laravel 12;
+- Banco de dados MySQL;
+- Gerenciamento de consentimento de cookies;
+- Controle de acesso baseado em funções;
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## 🚀 Execução local
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### Pré-requisitos
+- PHP 8.2+
+- Node.js 18+ (para ferramentas de frontend)
+- Composer
+- MySQL
 
-## Learning Laravel
+### Instalação
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+1. **Clonar o repositório**
+   ```bash
+   git clone <repository-url>
+   cd finance-flow
+   ```
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+2. **Instalar dependências**
+   ```bash
+   composer install
+   npm install
+   ```
 
-## Laravel Sponsors
+3. **Ambiente de configuração**
+   ```bash
+   cp .env.example .env
+   php artisan key:generate
+   ```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+4. **Configurar banco de dados e criar ativos**
+   ```bash
+   composer run setup
+   ```
 
-### Premium Partners
+   Ou manualmente:
+   ```bash
+   php artisan migrate
+   npm run build
+   ```
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+### Desenvolvimento
 
-## Contributing
+Inicie o servidor de desenvolvimento com recarregamento em tempo real:
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+```bash
+composer run dev
+```
 
-## Code of Conduct
+Esse comando inicial:
+- servidor de desenvolvimento Laravel
+- Visualizador de logs
+- Servidor Vite para compilação de assets
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+## 📁 Estrutura do projeto
 
-## Security Vulnerabilities
+```
+finance-flow/
+├── app/
+│   ├── Http/Controllers/      # Request handlers
+│   ├── Mail/                  # Email classes
+│   ├── Models/                # Database models (Expense, Revenue, Investment, User)
+│   └── Providers/             # Service providers
+├── resources/
+│   ├── css/                   # Tailwind CSS
+│   ├── js/                    # Frontend JavaScript
+│   ├── views/                 # Blade templates
+│   └── livewire/              # Livewire components
+├── routes/
+│   ├── web.php                # Web routes (authentication & dashboard routes)
+│   └── console.php            # Console commands
+├── database/
+│   ├── migrations/            # Database schema
+│   ├── factories/             # Model factories for testing
+│   └── seeders/               # Database seeders
+├── config/                    # Configuration files
+├── tests/                     # Test suites
+└── public/                    # Publicly accessible assets
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## 🔧 Demais comandos
 
-## License
+### Desenvolvimento
+```bash
+# Inicie o servidor de desenvolvimento com todos os serviços.
+composer run dev
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+# Execute apenas o servidor de desenvolvimento do Laravel.
+php artisan serve
+
+# Execute o servidor de desenvolvimento do Vite
+npm run dev
+
+# Crie ativos de front-end
+npm run build
+```
+
+## 🎨 Frontend Stack
+
+- **Livewire 4** - Real-time interactive components
+- **Tailwind CSS 4** - Utility-first CSS framework
+- **Vite** - Modern frontend build tool
+- **Alpine.js** - Lightweight JavaScript framework
+
+## 📝 Licença
+
+Este projeto é um software de código aberto licenciado sob a licença [MIT license](LICENSE).
+
+## 🤝 Contribuições
+
+Contribuições são bem-vindas! Sinta-se à vontade para enviar solicitações de pull request ou abrir issues para relatar bugs e sugerir novas funcionalidades.
+
+## 📧 Suporte
+
+Para suporte, dúvidas ou feedback, abra uma solicitação no repositório.
