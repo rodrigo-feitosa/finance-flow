@@ -363,7 +363,7 @@ new #[Layout('layouts.app'), Title('Despesas')] class extends Component
 
     <div class="mx-auto max-w-5xl px-4">
         <div class="flex flex-wrap gap-2 mt-4 justify-center">
-            <input type="text" wire:model="filterDescription" placeholder="Filtrar por descrição..." class="border p-1 rounded">
+            <input type="text" wire:model="filterDescription" placeholder="Filtrar por descrição" class="border p-1 rounded">
 
             <select wire:model="filterType" class="border p-1 rounded">
                 <option class="dark:text-black" value="">Tipo</option>

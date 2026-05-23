@@ -60,7 +60,7 @@ new #[Layout('layouts.app'), Title('Receitas')] class extends Component
     public function applyFilters()
     {
         $this->getRevenuesProperty([
-            'description' => $this->description,
+            'description' => $this->filterDescription,
             'status' => $this->filterStatus,
             'date_start' => $this->filterDateStart,
             'date_end' => $this->filterDateEnd,
@@ -302,7 +302,7 @@ new #[Layout('layouts.app'), Title('Receitas')] class extends Component
         @else
         <div>
             <div class="flex flex-wrap gap-2 mt-4 justify-center">
-                <input type="text" wire:model="filterDescription" placeholder="Filtrar por descrição..." class="border p-1 rounded">    
+                <input type="text" wire:model="filterDescription" placeholder="Filtrar por descrição" class="border p-1 rounded">    
 
                 <select wire:model="filterStatus" class="border p-1 rounded">
                     <option class="dark:text-black" value="">Status</option>

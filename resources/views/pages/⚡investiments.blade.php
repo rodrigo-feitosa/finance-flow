@@ -33,6 +33,7 @@ new #[Layout('layouts.app'), Title('Investimentos')] class extends Component
     public $filterCategory;
     public $filterDateStart;
     public $filterDateEnd;
+    public $filterDescription;
 
     public $editingInvestmentId;
 
@@ -48,6 +49,10 @@ new #[Layout('layouts.app'), Title('Investimentos')] class extends Component
         }
 
         $query = Investment::where('user', auth()->id());
+
+        if ($this->filterDescription) {
+            $query->where('description', 'like', '%' . $this->filterDescription . '%');
+        }
 
         if ($this->filterType) {
             $query->where('type', $this->filterType);
@@ -78,7 +83,8 @@ new #[Layout('layouts.app'), Title('Investimentos')] class extends Component
 
     public function applyFilters()
     {
-        $this->getInvestments([
+        $this->getInvestmentsProperty([
+            'description' => $this->filterDescription,
             'type' => $this->filterType,
             'institution' => $this->filterInstitution,
             'category' => $this->filterCategory,
@@ -354,11 +360,12 @@ new #[Layout('layouts.app'), Title('Investimentos')] class extends Component
         </button>
     </div>
 
-    <div class="mx-auto max-w-5xl px-4">
+    <div class="mx-auto max-w-6xl px-4">
         @if ($this->investments->isEmpty())
         <p class="mt-6 text-gray-600">Nenhum investimento registrada. Adicione um novo investimento para começar a gerenciar suas finanças.</p>
         @else
         <div class="flex flex-wrap gap-2 mt-4 justify-center">
+            <input wire:model="filterDescription" type="text" placeholder="Filtrar por descrição" class="border p-1 rounded">
             <select wire:model="filterType" class="border p-1 rounded">
                 <option class="dark:text-black" value="">Tipo</option>
                 <option class="dark:text-black" value="renda fixa">Renda Fixa</option>
