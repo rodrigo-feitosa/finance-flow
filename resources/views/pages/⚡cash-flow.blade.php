@@ -169,13 +169,13 @@ new #[Layout('layouts.app'), Title('Fluxo de Caixa')] class extends Component
             <h2 class="text-lg md:text-xl font-bold mb-4">Despesas variáveis</h2>
 
             <div class="overflow-x-auto">
-                <table class="min-w-[600px] w-full text-xs md:text-sm">
+                <table class="w-full text-xs md:text-sm">
                     <thead class="bg-violet-800 dark:bg-[#0B0618] text-white">
                         <tr>
-                            <th class="p-2 text-start">Data</th>
-                            <th class="p-2 text-start">Descrição</th>
-                            <th class="p-2 text-start">Valor</th>
-                            <th class="p-2 text-start">Status</th>
+                            <th class="p-2 text-start w-1/12">Data</th>
+                            <th class="p-2 text-start w-1/4">Descrição</th>
+                            <th class="p-2 text-start w-1/7">Valor</th>
+                            <th class="p-2 text-start w-1/9">Status</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -206,13 +206,13 @@ new #[Layout('layouts.app'), Title('Fluxo de Caixa')] class extends Component
             <h2 class="text-lg md:text-xl font-bold mb-4">Despesas fixas</h2>
 
             <div class="overflow-x-auto">
-                <table class="min-w-[600px] w-full text-xs md:text-sm">
+                <table class="w-full text-xs md:text-sm">
                     <thead class="bg-violet-800 dark:bg-[#0B0618] text-white">
                         <tr>
-                            <th class="p-2 text-start">Data</th>
-                            <th class="p-2 text-start">Descrição</th>
-                            <th class="p-2 text-start">Valor</th>
-                            <th class="p-2 text-start">Status</th>
+                            <th class="p-2 text-start w-1/12">Data</th>
+                            <th class="p-2 text-start w-1/4">Descrição</th>
+                            <th class="p-2 text-start w-1/7">Valor</th>
+                            <th class="p-2 text-start w-1/9">Status</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -243,13 +243,13 @@ new #[Layout('layouts.app'), Title('Fluxo de Caixa')] class extends Component
             <h2 class="text-lg md:text-xl font-bold mb-4">Despesas parceladas</h2>
 
             <div class="overflow-x-auto">
-                <table class="min-w-[600px] w-full text-xs md:text-sm">
+                <table class="w-full text-xs md:text-sm">
                     <thead class="bg-violet-800 dark:bg-[#0B0618] text-white">
                         <tr>
-                            <th class="p-2 text-start">Data</th>
-                            <th class="p-2 text-start">Descrição</th>
-                            <th class="p-2 text-start">Valor</th>
-                            <th class="p-2 text-start">Status</th>
+                            <th class="p-2 text-start w-1/12">Data</th>
+                            <th class="p-2 text-start w-1/4">Descrição</th>
+                            <th class="p-2 text-start w-1/7">Valor</th>
+                            <th class="p-2 text-start w-1/9">Status</th>
                         </tr>
                     </thead>
                     <tbody>
