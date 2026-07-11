@@ -512,7 +512,7 @@ new #[Layout('layouts.app'), Title('Investimentos')] class extends Component
                 </div>
                 <div>
                     <input type="radio" wire:model="is_initial" value="1">
-                    <label class="text-sm font-medium mb-1">Investimento pré-existente</label>
+                    <label class="text-sm font-medium mb-1">Valor pré-existente</label>
                 </div>
                 <div>
                     <button type="submit" class="btn text-white p-1 rounded bg-purple-900 hover:bg-purple-600 cursor-pointer">Salvar</button>
