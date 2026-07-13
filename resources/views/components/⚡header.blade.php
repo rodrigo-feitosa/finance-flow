@@ -1,7 +1,6 @@
 <?php
 
 use Livewire\Component;
-use Illuminate\Support\Facades\Http;
 
 new class extends Component
 {
@@ -24,163 +23,70 @@ new class extends Component
 };
 ?>
 
-<header class="mt-2 mx-2 bg-[#0B0618] border-[#2E235A] text-white rounded-xl z-999">
-    <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-        <a href="{{ route('index') }}">
-            <img src="/images/logo.png" alt="Logo" class="w-50 h-auto">
+@php
+    $items = [
+        ['route' => 'index', 'label' => 'Visão geral', 'icon' => 'fa-chart-pie'],
+        ['route' => 'expenses', 'label' => 'Despesas', 'icon' => 'fa-arrow-trend-down'],
+        ['route' => 'revenues', 'label' => 'Receitas', 'icon' => 'fa-arrow-trend-up'],
+        ['route' => 'investments', 'label' => 'Investimentos', 'icon' => 'fa-chart-line'],
+        ['route' => 'cash-flow', 'label' => 'Fluxo de caixa', 'icon' => 'fa-arrows-left-right'],
+    ];
+@endphp
+
+<header class="sticky top-0 z-40 border-b border-slate-200/80 bg-white/85 backdrop-blur-xl dark:border-slate-800 dark:bg-[#0b1020]/85">
+    <div class="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
+        <a href="{{ route('index') }}" class="flex shrink-0 items-center" aria-label="FinanceFlow — início">
+            <img src="/images/logo.png" alt="FinanceFlow" class="h-8 w-auto sm:h-9">
         </a>
 
-        <nav class="hidden md:flex space-x-3 relative items-center">
-            <a href="{{ route('index') }}" class="rounded bg-violet-500 hover:bg-violet-600 p-2">Home</a>
-            <a href="{{ route('expenses') }}" class="rounded bg-violet-500 hover:bg-violet-600 p-2">Despesas</a>
-            <a href="{{ route('revenues') }}" class="rounded bg-violet-500 hover:bg-violet-600 p-2">Receitas</a>
-            <a href="{{ route('investments') }}" class="rounded bg-violet-500 hover:bg-violet-600 p-2">Investimentos</a>
-            <a href="{{ route('cash-flow') }}" class="rounded bg-violet-500 hover:bg-violet-600 p-2">Fluxo Financeiro</a>
-            <label class="relative inline-flex items-center cursor-pointer">
-                <input
-                    type="checkbox"
-                    class="sr-only peer"
-                    onchange="toggleTheme()">
-
-                <div class="
-                    w-16 h-8 rounded-full 
-                    bg-gray-300 dark:bg-gray-700
-                    peer-checked:bg-indigo-500
-                    transition-all duration-300
-                "></div>
-
-                <div class="
-                    absolute left-1 top-1
-                    w-6 h-6 bg-white rounded-full shadow-md
-                    flex items-center justify-center
-                    transition-all duration-300
-                    peer-checked:translate-x-8
-                ">
-
-                    <svg class="w-4 h-4 text-yellow-500 dark:hidden" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2m0 14v2m9-9h-2M5 12H3m15.364-6.364l-1.414 1.414M7.05 16.95l-1.414 1.414m12.728 0l-1.414-1.414M7.05 7.05L5.636 5.636M12 8a4 4 0 100 8 4 4 0 000-8z" />
-                    </svg>
-
-                    <svg class="w-4 h-4 text-indigo-600 hidden dark:block" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 12.79A9 9 0 1111.21 3c0 .34.02.67.05 1A7 7 0 0021 12.79z" />
-                    </svg>
-                </div>
-            </label>
-
-            <div class="relative inline-block">
-                <button wire:click="toggleMenu" class="scale-120 pl-5 hover:text-gray-300 transition hover:scale-150 cursor-pointer">
-                    <i class="fa-solid fa-user"></i>
-                </button>
-
-                @if($showMenu)
-                <div class="absolute right-0 mt-2 w-40 bg-white border rounded-lg shadow-lg">
-                    @auth
-                    <a href="{{ route('profile') }}" class="block w-full text-left px-4 py-2 text-black hover:bg-gray-100">
-                        Perfil
-                    </a>
-                    <!-- <a wire:click="goToPreferences" class="block w-full text-left px-4 py-2 text-black hover:bg-gray-100">
-                        Preferências
-                    </a> -->
-
-                    <button wire:click="logout" class="block w-full text-left px-4 py-2 text-red-500 hover:bg-gray-100 cursor-pointer">
-                        Logout
-                    </button>
-                    @endauth
-
-                    @guest
-                    <a href="/login" class="block w-full text-left px-4 py-2 text-black hover:bg-gray-100">
-                        Login
-                    </a>
-                    <a href="/register" class="block w-full text-left px-4 py-2 text-black hover:bg-gray-100">
-                        Registrar
-                    </a>
-                    @endguest
-                </div>
-                @endif
-            </div>
+        <nav class="hidden items-center gap-1 lg:flex" aria-label="Navegação principal">
+            @foreach ($items as $item)
+                <a href="{{ route($item['route']) }}" @class([
+                    'inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition',
+                    'bg-indigo-50 text-indigo-700 dark:bg-indigo-500/15 dark:text-indigo-300' => request()->routeIs($item['route']),
+                    'text-slate-600 hover:bg-slate-100 hover:text-slate-950 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white' => !request()->routeIs($item['route']),
+                ])>
+                    <i class="fa-solid {{ $item['icon'] }} text-xs" aria-hidden="true"></i>{{ $item['label'] }}
+                </a>
+            @endforeach
         </nav>
 
-        <nav class="flex md:hidden justify-end relative aligns-center space-x-3">
-            <label class="relative inline-flex items-center cursor-pointer">
-                <input
-                    type="checkbox"
-                    class="sr-only peer"
-                    onchange="toggleTheme()">
-
-                <div class="
-                    w-16 h-8 rounded-full 
-                    bg-gray-300 dark:bg-gray-700
-                    peer-checked:bg-indigo-500
-                    transition-all duration-300
-                "></div>
-
-                <div class="
-                    absolute left-1 top-1
-                    w-6 h-6 bg-white rounded-full shadow-md
-                    flex items-center justify-center
-                    transition-all duration-300
-                    peer-checked:translate-x-8
-                ">
-
-                    <svg class="w-4 h-4 text-yellow-500 dark:hidden" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2m0 14v2m9-9h-2M5 12H3m15.364-6.364l-1.414 1.414M7.05 16.95l-1.414 1.414m12.728 0l-1.414-1.414M7.05 7.05L5.636 5.636M12 8a4 4 0 100 8 4 4 0 000-8z" />
-                    </svg>
-
-                    <svg class="w-4 h-4 text-indigo-600 hidden dark:block" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 12.79A9 9 0 1111.21 3c0 .34.02.67.05 1A7 7 0 0021 12.79z" />
-                    </svg>
-                </div>
+        <div class="flex items-center gap-2">
+            <label class="relative inline-flex cursor-pointer items-center" title="Alternar tema">
+                <input type="checkbox" class="peer sr-only" onchange="toggleTheme()">
+                <span class="flex h-8 w-14 items-center rounded-full bg-slate-200 p-1 transition peer-checked:bg-indigo-600 dark:bg-slate-700">
+                    <span class="flex h-6 w-6 items-center justify-center rounded-full bg-white text-xs shadow-sm transition peer-checked:translate-x-6"><span id="theme-icon" aria-hidden="true">🌙</span></span>
+                </span>
+                <span class="sr-only">Alternar tema</span>
             </label>
 
-            <div class="relative inline-block">
-                <button wire:click="toggleMenu" class="hover:text-gray-300 cursor-pointer">
-                    <i class="fa-solid fa-user"></i>
+            <div class="relative">
+                <button wire:click="toggleMenu" class="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-100 hover:text-slate-950 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white" aria-label="Abrir menu do perfil" aria-expanded="{{ $showMenu ? 'true' : 'false' }}">
+                    <i class="fa-regular fa-user" aria-hidden="true"></i>
                 </button>
-
                 @if($showMenu)
-                <div class="absolute right-0 mt-2 w-40 bg-white border rounded-lg shadow-lg">
-                    @auth
-                    <a wire:click="goToProfile" class="block px-4 py-2 text-black hover:bg-gray-100">Perfil</a>
-                    <!-- <a wire:click="goToPreferences" class="block px-4 py-2 text-black hover:bg-gray-100">Preferências</a> -->
-                    <button wire:click="logout" class="block w-full text-left px-4 py-2 text-red-500 hover:bg-gray-100">
-                        Logout
-                    </button>
-                    @endauth
-
-                    @guest
-                    <a href="/login" class="block px-4 py-2 text-black hover:bg-gray-100">Login</a>
-                    <a href="/register" class="block px-4 py-2 text-black hover:bg-gray-100">Registrar</a>
-                    @endguest
-                </div>
+                    <div class="absolute right-0 mt-2 w-48 overflow-hidden rounded-xl border border-slate-200 bg-white p-1 shadow-xl shadow-slate-950/10 dark:border-slate-700 dark:bg-slate-900">
+                        @auth
+                            <a href="{{ route('profile') }}" class="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-slate-700 hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-slate-800"><i class="fa-regular fa-user w-4"></i>Perfil</a>
+                            <button wire:click="logout" class="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm text-rose-600 hover:bg-rose-50 dark:text-rose-400 dark:hover:bg-rose-500/10"><i class="fa-solid fa-arrow-right-from-bracket w-4"></i>Sair</button>
+                        @endauth
+                        @guest
+                            <a href="{{ route('login') }}" class="block rounded-lg px-3 py-2 text-sm text-slate-700 hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-slate-800">Entrar</a>
+                            <a href="{{ route('register') }}" class="block rounded-lg px-3 py-2 text-sm text-slate-700 hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-slate-800">Criar conta</a>
+                        @endguest
+                    </div>
                 @endif
             </div>
-        </nav>
-
-        <div class="fixed bottom-0 left-0 w-full bg-gray-900 text-white flex justify-around py-3 md:hidden shadow-lg z-50">
-            <a href="{{ route('index') }}" class="flex flex-col items-center text-xs">
-                <i class="fa-solid fa-hand-holding-dollar text-lg "></i>
-                Home
-            </a>
-
-            <a href="{{ route('expenses') }}" class="flex flex-col items-center text-xs">
-                <i class="fa-solid fa-money-bill-wave text-lg"></i>
-                Despesas
-            </a>
-
-            <a href="{{ route('revenues') }}" class="flex flex-col items-center text-xs">
-                <i class="fa-solid fa-coins text-lg"></i>
-                Receitas
-            </a>
-
-            <a href="{{ route('investments') }}" class="flex flex-col items-center text-xs">
-                <i class="fa-solid fa-chart-line text-lg"></i>
-                Invest.
-            </a>
-
-            <a href="{{ route('cash-flow') }}" class="flex flex-col items-center text-xs">
-                <i class="fa-solid fa-exchange-alt text-lg"></i>
-                Fluxo
-            </a>
         </div>
     </div>
+
+    <nav class="fixed inset-x-0 bottom-0 z-40 flex justify-around border-t border-slate-200 bg-white/95 px-1 py-2 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-950/95 lg:hidden" aria-label="Navegação móvel">
+        @foreach ($items as $item)
+            <a href="{{ route($item['route']) }}" @class([
+                'flex min-w-0 flex-col items-center gap-1 rounded-lg px-2 py-1 text-[10px] font-medium',
+                'text-indigo-600 dark:text-indigo-400' => request()->routeIs($item['route']),
+                'text-slate-500 dark:text-slate-400' => !request()->routeIs($item['route']),
+            ])><i class="fa-solid {{ $item['icon'] }} text-sm" aria-hidden="true"></i><span class="truncate">{{ str_replace('Visão geral', 'Início', $item['label']) }}</span></a>
+        @endforeach
+    </nav>
 </header>
