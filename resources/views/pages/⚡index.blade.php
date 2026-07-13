@@ -48,7 +48,7 @@ new #[Layout('layouts.app'), Title('Finance Flow')] class extends Component
     <div class="bg-white dark:bg-[#0B0618] p-10 rounded-2xl shadow-lg text-center w-[400px]">
 
         <h1 class="text-4xl font-bold text-purple-800 dark:text-white mb-4">
-            FinanceFlow 💸
+            FinanceFlow &#128184;
         </h1>
 
         <p class="text-gray-600 dark:text-gray-400 mb-6">

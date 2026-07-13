@@ -127,7 +127,7 @@ new #[Layout('layouts.app'), Title('Fluxo de Caixa')] class extends Component
 ?>
 
 <div class="p-4 md:p-6 dark:text-white min-h-screen">
-    <h1 class="text-2xl md:text-3xl font-bold text-center mb-6">📊 Balanço Financeiro</h1>
+    <h1 class="text-2xl md:text-3xl font-bold text-center mb-6">&#128202; Balanço Financeiro</h1>
 
     <div class="flex flex-col md:flex-row gap-2 justify-center mb-6">
         <input type="date" wire:model.live="startDate" class="border p-2 rounded w-full md:w-auto">
@@ -279,7 +279,7 @@ new #[Layout('layouts.app'), Title('Fluxo de Caixa')] class extends Component
     </div>
 
     <div class="mt-6 dark:bg-[#1A1233] p-4 rounded-xl shadow-lg">
-        <h2 class="text-lg md:text-xl font-bold mb-4">📅 Fluxo mensal</h2>
+        <h2 class="text-lg md:text-xl font-bold mb-4">&#128197; Fluxo mensal</h2>
 
         <div class="overflow-x-auto">
             <table class="min-w-[800px] w-full text-sm text-center">
