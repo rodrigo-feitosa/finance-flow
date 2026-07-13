@@ -10,3 +10,52 @@
 @theme {
     --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
 }
+
+@layer base {
+    :root { color-scheme: light; }
+    :root.dark { color-scheme: dark; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+        @apply bg-slate-50 text-slate-900 antialiased transition-colors duration-200 dark:bg-[#0b1020] dark:text-slate-100;
+    }
+
+    button, a, input, select, textarea { @apply transition duration-150; }
+    button, [role='button'] { @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-[#0b1020]; }
+
+    input:not([type='checkbox']):not([type='radio']):not([type='file']), select, textarea {
+        @apply rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm outline-none placeholder:text-slate-400 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:placeholder:text-slate-500;
+    }
+
+    input[type='checkbox'], input[type='radio'] { @apply accent-indigo-600; }
+}
+
+@layer components {
+    .app-shell { @apply min-h-screen bg-slate-50 dark:bg-[#0b1020]; }
+    .app-main { @apply flex-1 pb-20 md:pb-8; }
+    .page-container { @apply mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8; }
+    .page-heading { @apply text-2xl font-semibold tracking-tight text-slate-950 sm:text-3xl dark:text-white; }
+    .page-subtitle { @apply mt-2 text-sm leading-6 text-slate-500 dark:text-slate-400; }
+    .panel { @apply rounded-xl border border-slate-200/80 bg-white shadow-sm shadow-slate-950/[0.03] dark:border-slate-800 dark:bg-slate-900/80 dark:shadow-black/20; }
+    .panel-header { @apply border-b border-slate-100 px-5 py-4 dark:border-slate-800; }
+    .btn { @apply inline-flex items-center justify-center gap-2 rounded-lg px-3.5 py-2 text-sm font-medium shadow-sm transition focus:outline-none focus:ring-4 focus:ring-indigo-500/20 disabled:pointer-events-none disabled:opacity-60; }
+    .btn-primary { @apply bg-indigo-600 text-white hover:bg-indigo-500; }
+    .btn-secondary { @apply border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800; }
+    .btn-danger { @apply bg-rose-600 text-white hover:bg-rose-500; }
+    .btn-success { @apply bg-emerald-600 text-white hover:bg-emerald-500; }
+    .badge { @apply inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset; }
+    .data-table { @apply w-full text-left text-sm; }
+    .data-table thead { @apply sticky top-0 z-10 bg-slate-50 text-xs font-medium uppercase tracking-wider text-slate-500 dark:bg-slate-950/80 dark:text-slate-400; }
+    .data-table th { @apply px-4 py-3 font-medium; }
+    .data-table td { @apply border-t border-slate-100 px-4 py-3.5 dark:border-slate-800; }
+    .data-table tbody tr { @apply bg-white hover:bg-slate-50/80 dark:bg-slate-900/70 dark:hover:bg-slate-800/70; }
+    .modal-backdrop { @apply fixed inset-0 z-50 flex items-center justify-center bg-slate-950/50 p-4 backdrop-blur-sm; }
+    .modal-card { @apply max-h-[calc(100vh-2rem)] w-full max-w-md overflow-y-auto rounded-xl border border-slate-200 bg-white p-6 shadow-2xl dark:border-slate-800 dark:bg-slate-900; }
+}
+
+@layer utilities {
+    .dark .dark\:bg-\[\#0B0618\], .dark .dark\:bg-\[\#1A1233\] { background-color: rgb(15 23 42 / 0.9) !important; }
+    .dark .dark\:bg-\[\#170F2F\] { background-color: #0b1020 !important; }
+    .dark .dark\:border-white { border-color: rgb(51 65 85) !important; }
+}
