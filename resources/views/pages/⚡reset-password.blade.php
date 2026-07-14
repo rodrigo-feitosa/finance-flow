@@ -33,9 +33,9 @@ new class extends Component
 };
 ?>
 
-<div class="fixed inset-0 flex items-center justify-center bg-cover bg-center">
-    <div class="bg-white/90 backdrop-blur-md p-8 rounded-xl shadow-xl w-96">
-        <h2 class="text-2xl font-bold text-center mb-6">Recuperar Senha</h2>
+<div class="page-container flex min-h-[calc(100vh-10rem)] items-center justify-center">
+    <div class="panel w-full max-w-md p-7 sm:p-8">
+        <span class="badge bg-indigo-50 text-indigo-700 ring-indigo-600/20 dark:bg-indigo-500/10 dark:text-indigo-300">Acesso</span><h2 class="mt-4 text-2xl font-semibold tracking-tight">Recuperar senha</h2><p class="mt-1 mb-6 text-sm text-slate-500 dark:text-slate-400">Enviaremos as instruções para seu e-mail.</p>
         @if (session()->has('error'))
         <div class="bg-red-100 text-red-600 p-2 rounded mb-4 text-sm">
             {{ session('error') }}
@@ -46,7 +46,7 @@ new class extends Component
                 <label class="block text-sm font-medium mb-1">E-mail</label>
                 <input type="email" wire:model="email" class="w-full border rounded px-3 py-2" placeholder="Digite seu email">
             </div>
-            <button type="submit" class="w-full bg-indigo-600 text-white py-2 rounded hover:bg-indigo-700">
+            <button type="submit" class="btn btn-primary w-full">
                 Recuperar senha
             </button>
         </form>

@@ -24,21 +24,21 @@ new #[Layout('layouts.app'), Title('Cadastro')] class extends Component
     }
 };
 ?>
-<div class="fixed inset-0 flex items-center justify-center bg-cover bg-center dark:text-white">
-    <div class="bg-white dark:bg-[#0B0618] bg-opacity-90 p-6 rounded-lg shadow-lg w-96">
-        <h2 class="text-2xl font-bold text-center mb-6">Cadastro</h2>
+<div class="page-container flex min-h-[calc(100vh-10rem)] items-center justify-center dark:text-white">
+    <div class="panel w-full max-w-md p-7 sm:p-8">
+        <span class="badge bg-indigo-50 text-indigo-700 ring-indigo-600/20 dark:bg-indigo-500/10 dark:text-indigo-300">FinanceFlow</span><h2 class="mt-4 text-2xl font-semibold tracking-tight">Crie sua conta</h2><p class="mt-1 mb-6 text-sm text-slate-500 dark:text-slate-400">Comece a organizar sua vida financeira.</p>
 
-        <form wire:submit.prevent="register">
+        <form wire:submit.prevent="register" class="space-y-4">
             <label class="block text-sm font-medium mb-1">Nome</label>
-            <input class="w-full border rounded px-3 py-2 mb-3" type="text" wire:model="name" placeholder="Name">
+            <input class="w-full" type="text" wire:model="name" placeholder="Seu nome">
 
             <label class="block text-sm font-medium mb-1">E-mail</label>
-            <input class="w-full border rounded px-3 py-2 mb-3" type="email" wire:model="email" placeholder="Email">
+            <input class="w-full" type="email" wire:model="email" placeholder="voce@exemplo.com">
 
             <label class="block text-sm font-medium mb-1">Senha</label>
-            <input class="w-full border rounded px-3 py-2 mb-3" type="password" wire:model="password" placeholder="Password">
+            <input class="w-full" type="password" wire:model="password" placeholder="••••••••">
 
-            <button class="mt-3 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-full cursor-pointer" type="submit">Criar conta</button>
+            <button class="btn btn-primary w-full" type="submit">Criar conta</button>
         </form>
 
         <p class="text-sm text-center mt-4">

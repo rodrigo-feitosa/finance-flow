@@ -30,10 +30,10 @@ new #[Layout('layouts.app'), Title('Login')] class extends Component
 };
 ?>
 
-<div class="fixed inset-0 flex items-center justify-center bg-cover bg-center dark:text-white">
-    <div class="bg-white dark:bg-[#0B0618] backdrop-blur-md p-8 rounded-xl shadow-xl w-96">
+<div class="page-container flex min-h-[calc(100vh-10rem)] items-center justify-center dark:text-white">
+    <div class="panel w-full max-w-md p-7 sm:p-8">
 
-        <h2 class="text-2xl font-bold text-center mb-6">Login</h2>
+        <span class="badge bg-indigo-50 text-indigo-700 ring-indigo-600/20 dark:bg-indigo-500/10 dark:text-indigo-300">FinanceFlow</span><h2 class="mt-4 text-2xl font-semibold tracking-tight">Boas-vindas de volta</h2><p class="mt-1 text-sm text-slate-500 dark:text-slate-400">Entre para acessar suas finanças.</p>
 
         @if (session()->has('error'))
         <div class="bg-red-100 text-red-600 p-2 rounded mb-4 text-sm">
@@ -62,7 +62,7 @@ new #[Layout('layouts.app'), Title('Login')] class extends Component
 
             <button
                 type="submit"
-                class="w-full bg-indigo-600 text-white py-2 rounded hover:bg-indigo-700 cursor-pointer">
+                class="btn btn-primary w-full">
                 Entrar
             </button>
         </form>

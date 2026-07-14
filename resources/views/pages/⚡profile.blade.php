@@ -35,21 +35,14 @@ new #[Layout('layouts.app'), Title('Perfil')] class extends Component
     }
 };
 ?>
-<div class="fixed inset-0 flex items-center justify-center bg-cover bg-center text-white">
-    <div class="bg-[#0B0618] bg-opacity-90 p-6 rounded-lg shadow-lg w-96">
-        <h2 class="text-2xl font-bold text-center mb-6">Perfil</h2>
-
-        <form wire:submit.prevent="updateProfile">
-            <label class="block text-sm font-medium mb-1">Nome</label>
-            <input class="w-full border rounded px-3 py-2 mb-3" type="text" wire:model="name" placeholder="Name">
-
-            <label class="block text-sm font-medium mb-1">E-mail</label>
-            <input class="w-full border rounded px-3 py-2 mb-3" type="email" wire:model="email" placeholder="Email">
-
-            <label class="block text-sm font-medium mb-1">Senha</label>
-            <input class="w-full border rounded px-3 py-2 mb-3" type="password" wire:model="password" placeholder="Password">
-
-            <button type="submit" class="btn text-white p-1 rounded bg-purple-900 hover:bg-purple-600 cursor-pointer">Atualizar perfil</button>
+<div class="page-container flex min-h-[calc(100vh-12rem)] items-center justify-center">
+    <div class="panel w-full max-w-lg p-6 sm:p-8">
+        <div class="mb-7"><span class="badge bg-indigo-50 text-indigo-700 ring-indigo-600/20 dark:bg-indigo-500/10 dark:text-indigo-300">Conta</span><h2 class="mt-3 text-2xl font-semibold tracking-tight">Seu perfil</h2><p class="mt-1 text-sm text-slate-500 dark:text-slate-400">Mantenha seus dados atualizados.</p></div>
+        <form wire:submit.prevent="updateProfile" class="space-y-5">
+            <div><label class="mb-1.5 block text-sm font-medium">Nome</label><input class="w-full" type="text" wire:model="name" placeholder="Seu nome"></div>
+            <div><label class="mb-1.5 block text-sm font-medium">E-mail</label><input class="w-full" type="email" wire:model="email" placeholder="voce@exemplo.com"></div>
+            <div><label class="mb-1.5 block text-sm font-medium">Senha</label><input class="w-full" type="password" wire:model="password" placeholder="••••••••"></div>
+            <button type="submit" class="btn btn-primary w-full">Atualizar perfil</button>
         </form>
     </div>
 </div>

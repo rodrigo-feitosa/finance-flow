@@ -334,36 +334,32 @@ new #[Layout('layouts.app'), Title('Despesas')] class extends Component
 };
 ?>
 
-<div class="dark:text-white">
+<div class="page-container dark:text-white">
     @if (session()->has('message'))
     <div class="bg-green-500 text-white p-2 text-center mt-2">
         {{ session('message') }}
     </div>
     @endif
-    <h1 class="text-3xl font-bold text-center pt-10">Bem-vindo ao FinanceFlow</h1>
-    <p class="text-center mt-4 text-gray-600 dark:text-gray-300">Gerencie suas finanças pessoais de forma fácil e eficiente.</p>
+    <div class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between"><div><span class="badge bg-rose-50 text-rose-700 ring-rose-600/20 dark:bg-rose-500/10 dark:text-rose-300">Lançamentos</span><h1 class="page-heading mt-3">Despesas</h1><p class="page-subtitle">Acompanhe e organize as saídas do seu orçamento.</p></div>
 
-    <div class="text-center gap-1">
+    <div class="flex flex-wrap gap-2 sm:justify-end">
         <button
             wire:click="showAddExpense"
-            class="btn w-24 text-white bg-blue-800 rounded p-1 hover:bg-blue-600 cursor-pointer">
-            Adicionar
+            class="btn btn-primary"><i class="fa-solid fa-plus"></i>Adicionar
         </button>
         <button
             wire:click="showImport"
-            class="btn w-24 text-white bg-fuchsia-800 rounded p-1 hover:bg-fuchsia-600 cursor-pointer">
-            Importar
+            class="btn btn-secondary"><i class="fa-solid fa-file-import"></i>Importar
         </button>
         <button
             wire:click="exportExpenses"
-            class="btn w-24 text-white bg-emerald-800 rounded p-1 hover:bg-green-600 cursor-pointer">
-            Exportar
-        </button>
+            class="btn btn-success"><i class="fa-solid fa-file-export"></i>Exportar</button>
+    </div>
     </div>
 
-    <div class="mx-auto max-w-5xl px-4">
-        <div class="flex flex-wrap gap-2 mt-4 justify-center">
-            <input type="text" wire:model="filterDescription" placeholder="Filtrar por descrição" class="border p-1 rounded">
+    <div class="panel overflow-hidden">
+        <div class="flex flex-wrap gap-2 border-b border-slate-100 p-4 dark:border-slate-800">
+            <input type="text" wire:model="filterDescription" placeholder="Filtrar por descrição" class="min-w-48 flex-1">
 
             <select wire:model="filterType" class="border p-1 rounded">
                 <option class="dark:text-black" value="">Tipo</option>
@@ -389,14 +385,14 @@ new #[Layout('layouts.app'), Title('Despesas')] class extends Component
             <input type="date" wire:model="filterDateStart" class="border p-1 rounded">
             <input type="date" wire:model="filterDateEnd" class="border p-1 rounded">
 
-            <button wire:click="applyFilters" class="btn w-24 text-white bg-yellow-600 rounded p-1 hover:bg-yellow-800 cursor-pointer">Filtrar</button>
+            <button wire:click="applyFilters" class="btn btn-secondary">Filtrar</button>
         </div>
         @if ($this->expenses->isEmpty())
-        <p class="mt-6 text-gray-600">Nenhuma despesa registrada. Adicione uma nova despesa para começar a gerenciar suas finanças.</p>
+        <p class="m-4 rounded-lg border border-dashed border-slate-300 p-8 text-center text-sm text-slate-500 dark:border-slate-700 dark:text-slate-400">Nenhuma despesa registrada. Adicione uma nova despesa para começar.</p>
         @else
-        <div>
-            <table class="hidden md:table min-w-full text-sm mt-6 border dark:border-white rounded-lg overflow-hidden shadow-xl shadow-purple-600 dark:bg-[#1A1233]">
-                <thead class="bg-violet-800 dark:bg-[#0B0618] text-white">
+        <div class="overflow-x-auto">
+            <table class="data-table hidden min-w-full md:table">
+                <thead>
                     <tr>
                         <th class="border dark:border-white p-2 w-1/9">Data</th>
                         <th class="border dark:border-white p-2 w-1/3">Descrição</th>
@@ -410,8 +406,7 @@ new #[Layout('layouts.app'), Title('Despesas')] class extends Component
                 <tbody class="divide-y divide-gray-100">
                     @foreach ($this->expenses as $expense)
                     <tr wire:click="showEditModal({{ $expense->id }})"
-                        class="odd:bg-white even:bg-gray-100 hover:bg-violet-200 
-                        dark:odd:bg-[#1A1233] dark:even:bg-[#21184A] dark:hover:bg-[#2A1F5E] transition cursor-pointer">
+                        class="cursor-pointer transition">
                         <td class="border dark:border-white p-2">{{ Carbon::parse($expense->date)->format('d/m/Y') }}</td>
                         <td class="border dark:border-white p-2">{{ $expense->description }}</td>
                         <td class="border dark:border-white p-2">R$ {{ number_format($expense->value, 2, ',', '.') }}</td>
@@ -434,7 +429,7 @@ new #[Layout('layouts.app'), Title('Despesas')] class extends Component
 
             <div class="md:hidden mt-4 space-y-3">
                 @foreach ($this->expenses as $expense)
-                <div wire:click="showEditModal({{ $expense->id }})" class="dark:bg-[#0B0618] bg-white p-3 rounded shadow-xs shadow-gray-500">
+                <div wire:click="showEditModal({{ $expense->id }})" class="rounded-xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900">
                     <div class="flex justify-between mb-2">
                         <span>{{ $expense->description }}</span>
                         <span>R$ {{ number_format($expense->value, 2, ',', '.') }}</span>
@@ -460,8 +455,8 @@ new #[Layout('layouts.app'), Title('Despesas')] class extends Component
         </div>
 
         @if ($modalAdd)
-        <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-            <div class="bg-white dark:bg-[#0B0618] p-6 rounded shadow-lg w-96">
+        <div class="modal-backdrop">
+            <div class="modal-card">
                 <h2 class="font-bold pb-5">Adicionar despesa</h2>
                 <form wire:submit.prevent="addExpense" class="space-y-4">
                     <div>
@@ -518,8 +513,8 @@ new #[Layout('layouts.app'), Title('Despesas')] class extends Component
         @endif
 
         @if ($modalImport)
-        <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-            <div class="bg-white dark:bg-[#0B0618] p-6 rounded shadow-lg w-96">
+        <div class="modal-backdrop">
+            <div class="modal-card">
                 <input type="file" wire:model="file" class="file:mr-4 file:rounded-full file:border-0 file:bg-violet-500 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white hover:file:bg-violet-800 mb-2">
 
                 <button wire:click="importExpenses"
@@ -532,8 +527,8 @@ new #[Layout('layouts.app'), Title('Despesas')] class extends Component
         @endif
 
         @if ($modalEdit)
-        <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-            <div class="bg-white dark:bg-[#0B0618] p-6 rounded shadow-lg w-96">
+        <div class="modal-backdrop">
+            <div class="modal-card">
                 <h2 class="font-bold pb-5">Editar despesa</h2>
                 <form wire:submit.prevent="editExpense" class="space-y-4">
                     <div>

@@ -333,16 +333,15 @@ new #[Layout('layouts.app'), Title('Investimentos')] class extends Component
 };
 ?>
 
-<div class="dark:text-white">
+<div class="page-container dark:text-white">
     @if (session()->has('message'))
     <div class="bg-green-500 text-white p-2 text-center mt-2">
         {{ session('message') }}
     </div>
     @endif
-    <h1 class="text-3xl font-bold text-center pt-10">Bem-vindo ao FinanceFlow</h1>
-    <p class="text-center mt-4 text-gray-600 dark:text-gray-300">Gerencie suas finanças pessoais de forma fácil e eficiente.</p>
+    <div class="mb-6"><span class="badge bg-amber-50 text-amber-700 ring-amber-600/20 dark:bg-amber-500/10 dark:text-amber-300">Patrimônio</span><h1 class="page-heading mt-3">Investimentos</h1><p class="page-subtitle">Tenha uma visão clara da sua carteira.</p></div>
 
-    <div class="text-center gap-1">
+    <div class="mb-6 flex flex-wrap gap-2">
         <button
             wire:click="showAddInvestment"
             class="btn w-24 text-white bg-blue-800 rounded p-1 hover:bg-blue-600 cursor-pointer">
@@ -360,11 +359,11 @@ new #[Layout('layouts.app'), Title('Investimentos')] class extends Component
         </button>
     </div>
 
-    <div class="mx-auto max-w-6xl px-4">
+    <div class="panel overflow-hidden">
         @if ($this->investments->isEmpty())
         <p class="mt-6 text-gray-600">Nenhum investimento registrada. Adicione um novo investimento para começar a gerenciar suas finanças.</p>
         @else
-        <div class="flex flex-wrap gap-2 mt-4 justify-center">
+        <div class="flex flex-wrap gap-2 border-b border-slate-100 p-4 dark:border-slate-800">
             <input wire:model="filterDescription" type="text" placeholder="Filtrar por descrição" class="border p-1 rounded">
             <select wire:model="filterType" class="border p-1 rounded">
                 <option class="dark:text-black" value="">Tipo</option>
@@ -395,8 +394,8 @@ new #[Layout('layouts.app'), Title('Investimentos')] class extends Component
             <button wire:click="applyFilters" class="btn w-24 text-white bg-yellow-600 rounded p-1 hover:bg-yellow-800 cursor-pointer">Filtrar</button>
         </div>
 
-        <table class="hidden md:table min-w-full text-sm mt-6 border border-gray-200 rounded-lg overflow-hidden shadow-xl shadow-purple-600">
-            <thead class="bg-violet-800 dark:bg-[#0B0618] text-white">
+        <div class="overflow-x-auto"><table class="data-table hidden min-w-full md:table">
+            <thead>
                 <tr>
                     <th class="border dark:border-white p-2 w-1/9">Data</th>
                     <th class="border dark:border-white p-2 w-1/4">Descrição</th>
@@ -434,7 +433,7 @@ new #[Layout('layouts.app'), Title('Investimentos')] class extends Component
                 </tr>
                 @endforeach
             </tbody>
-        </table>
+        </table></div>
         <div class="md:hidden mt-4 space-y-3">
             @foreach ($this->investments as $investment)
             <div wire:click="showEditModal({{ $investment->id }})" class="dark:bg-[#0B0618] bg-white p-3 rounded shadow-xs shadow-gray-500">
@@ -461,8 +460,8 @@ new #[Layout('layouts.app'), Title('Investimentos')] class extends Component
     </div>
 
     @if ($modalAdd)
-    <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-        <div class="bg-white dark:bg-[#0B0618] p-6 rounded shadow-lg w-96">
+    <div class="modal-backdrop">
+        <div class="modal-card">
             <h2 class="font-bold pb-5">Adicionar investimento</h2>
             <form wire:submit.prevent="addInvestment" class="space-y-4">
                 <div>
@@ -524,8 +523,8 @@ new #[Layout('layouts.app'), Title('Investimentos')] class extends Component
     @endif
 
     @if ($modalImport)
-    <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-        <div class="bg-white dark:bg-[#0B0618] p-6 rounded shadow-lg w-96">
+    <div class="modal-backdrop">
+        <div class="modal-card">
             <input type="file" wire:model="file" class="file:mr-4 file:rounded-full file:border-0 file:bg-violet-500 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white hover:file:bg-violet-800 mb-2">
 
             <button wire:click="importInvestments"
@@ -538,8 +537,8 @@ new #[Layout('layouts.app'), Title('Investimentos')] class extends Component
     @endif
 
     @if ($modalEdit)
-    <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-        <div class="bg-white dark:bg-[#0B0618] p-6 rounded shadow-lg w-96">
+    <div class="modal-backdrop">
+        <div class="modal-card">
             <h2 class="font-bold pb-5">Editar investimento</h2>
             <form wire:submit.prevent="editInvestment" class="space-y-4">
                 <div>

@@ -126,51 +126,52 @@ new #[Layout('layouts.app'), Title('Fluxo de Caixa')] class extends Component
 };
 ?>
 
-<div class="p-4 md:p-6 dark:text-white min-h-screen">
-    <h1 class="text-2xl md:text-3xl font-bold text-center mb-6">&#128202; Balanço Financeiro</h1>
+<div class="page-container dark:text-white">
+    <div class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between"><div><span class="badge bg-indigo-50 text-indigo-700 ring-indigo-600/20 dark:bg-indigo-500/10 dark:text-indigo-300">Visão consolidada</span><h1 class="page-heading mt-3">Fluxo de caixa</h1><p class="page-subtitle">Monitore a saúde financeira do período selecionado.</p></div>
 
-    <div class="flex flex-col md:flex-row gap-2 justify-center mb-6">
-        <input type="date" wire:model.live="startDate" class="border p-2 rounded w-full md:w-auto">
-        <input type="date" wire:model.live="endDate" class="border p-2 rounded w-full md:w-auto">
+    <div class="flex flex-col gap-2 sm:flex-row">
+        <input type="date" wire:model.live="startDate" aria-label="Data inicial">
+        <input type="date" wire:model.live="endDate" aria-label="Data final">
+    </div>
     </div>
 
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-        <div class="bg-green-600 text-white p-4 rounded-xl shadow-lg text-center">
-            <p>Receitas recebidas</p>
-            <h2 class="text-xl md:text-2xl font-bold">
+        <div class="panel border-l-4 border-l-emerald-500 p-5">
+            <p class="text-sm font-medium text-slate-500 dark:text-slate-400">Receitas recebidas</p>
+            <h2 class="mt-2 text-xl font-semibold tracking-tight text-emerald-600 dark:text-emerald-400">
                 R$ {{ number_format($this->getSummary()['revenues'], 2, ',', '.') }}
             </h2>
         </div>
 
-        <div class="bg-yellow-500 text-white p-4 rounded-xl shadow-lg text-center">
-            <p>Total de investimentos</p>
-            <h2 class="text-xl md:text-2xl font-bold">
+        <div class="panel border-l-4 border-l-amber-500 p-5">
+            <p class="text-sm font-medium text-slate-500 dark:text-slate-400">Total de investimentos</p>
+            <h2 class="mt-2 text-xl font-semibold tracking-tight text-amber-600 dark:text-amber-400">
                 R$ {{ number_format($this->getSummary()['investments'], 2, ',', '.') }}
             </h2>
         </div>
 
-        <div class="bg-red-600 text-white p-4 rounded-xl shadow-lg text-center">
-            <p>Despesas pagas</p>
-            <h2 class="text-xl md:text-2xl font-bold">
+        <div class="panel border-l-4 border-l-rose-500 p-5">
+            <p class="text-sm font-medium text-slate-500 dark:text-slate-400">Despesas pagas</p>
+            <h2 class="mt-2 text-xl font-semibold tracking-tight text-rose-600 dark:text-rose-400">
                 R$ {{ number_format($this->getSummary()['expenses'], 2, ',', '.') }}
             </h2>
         </div>
 
-        <div class="{{ $this->getSummary()['balance'] >= 0 ? 'bg-blue-600' : 'bg-red-800' }} text-white p-4 rounded-xl shadow-lg text-center">
-            <p>Saldo atual</p>
-            <h2 class="text-xl md:text-2xl font-bold">
+        <div class="panel border-l-4 {{ $this->getSummary()['balance'] >= 0 ? 'border-l-indigo-500' : 'border-l-rose-500' }} p-5">
+            <p class="text-sm font-medium text-slate-500 dark:text-slate-400">Saldo atual</p>
+            <h2 class="mt-2 text-xl font-semibold tracking-tight {{ $this->getSummary()['balance'] >= 0 ? 'text-indigo-600 dark:text-indigo-400' : 'text-rose-600 dark:text-rose-400' }}">
                 R$ {{ number_format($this->getSummary()['balance'], 2, ',', '.') }}
             </h2>
         </div>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-        <div class="dark:bg-[#1A1233] p-4 rounded-xl shadow-lg">
+        <div class="panel overflow-hidden p-4">
             <h2 class="text-lg md:text-xl font-bold mb-4">Despesas variáveis</h2>
 
             <div class="overflow-x-auto">
-                <table class="w-full text-xs md:text-sm">
-                    <thead class="bg-violet-800 dark:bg-[#0B0618] text-white">
+                <table class="data-table text-xs md:text-sm">
+                    <thead>
                         <tr>
                             <th class="p-2 text-start w-1/12">Data</th>
                             <th class="p-2 text-start w-1/4">Descrição</th>
@@ -202,12 +203,12 @@ new #[Layout('layouts.app'), Title('Fluxo de Caixa')] class extends Component
             </div>
         </div>
 
-        <div class="dark:bg-[#1A1233] p-4 rounded-xl shadow-lg">
+        <div class="panel overflow-hidden p-4">
             <h2 class="text-lg md:text-xl font-bold mb-4">Despesas fixas</h2>
 
             <div class="overflow-x-auto">
-                <table class="w-full text-xs md:text-sm">
-                    <thead class="bg-violet-800 dark:bg-[#0B0618] text-white">
+                <table class="data-table text-xs md:text-sm">
+                    <thead>
                         <tr>
                             <th class="p-2 text-start w-1/12">Data</th>
                             <th class="p-2 text-start w-1/4">Descrição</th>
@@ -239,12 +240,12 @@ new #[Layout('layouts.app'), Title('Fluxo de Caixa')] class extends Component
             </div>
         </div>
 
-        <div class="dark:bg-[#1A1233] p-4 rounded-xl shadow-lg">
+        <div class="panel overflow-hidden p-4">
             <h2 class="text-lg md:text-xl font-bold mb-4">Despesas parceladas</h2>
 
             <div class="overflow-x-auto">
-                <table class="w-full text-xs md:text-sm">
-                    <thead class="bg-violet-800 dark:bg-[#0B0618] text-white">
+                <table class="data-table text-xs md:text-sm">
+                    <thead>
                         <tr>
                             <th class="p-2 text-start w-1/12">Data</th>
                             <th class="p-2 text-start w-1/4">Descrição</th>
@@ -278,12 +279,12 @@ new #[Layout('layouts.app'), Title('Fluxo de Caixa')] class extends Component
 
     </div>
 
-    <div class="mt-6 dark:bg-[#1A1233] p-4 rounded-xl shadow-lg">
+    <div class="panel mt-6 overflow-hidden p-4">
         <h2 class="text-lg md:text-xl font-bold mb-4">&#128197; Fluxo mensal</h2>
 
         <div class="overflow-x-auto">
-            <table class="min-w-[800px] w-full text-sm text-center">
-                <thead class="bg-violet-800 dark:bg-[#0B0618] text-white">
+            <table class="data-table min-w-[800px] text-sm text-center">
+                <thead>
                     <tr>
                         <th class="p-2">Mês</th>
                         <th class="p-2">Recebidas</th>
