@@ -120,12 +120,12 @@
 
             updateIcons();
 
-            // Cookies (🔥 ordem importa)
+            // Cookies
             syncConsentWithServer();
             checkCookieConsent();
         });
 
-        // Aplicação imediata do tema (evita flicker)
+        // Aplicação imediata do tema
         if (localStorage.getItem('theme') === 'dark') {
             document.documentElement.classList.add('dark');
         } else {
@@ -134,35 +134,20 @@
     </script>
 </head>
 
-<body class="flex flex-col min-h-screen bg-gray-300 dark:bg-[#0B0618]">
+<body class="app-shell flex flex-col">
     <div
         x-data="toastComponent()"
         x-init="init()"
         x-show="show"
         x-transition
-        :class="{
-            'bg-green-600': type === 'success',
-            'bg-red-600': type === 'error'
-        }"
-        class="fixed bottom-20 sm:bottom-4
-           left-1/2 -translate-x-1/2
-           sm:left-auto sm:right-5 sm:translate-x-0
-           text-white px-4 py-3
-           rounded-lg shadow-lg
-           w-[90%] sm:w-auto sm:max-w-sm
-           text-sm sm:text-base
-           z-[9999]"
+        :class="{ 'bg-emerald-600': type === 'success', 'bg-rose-600': type === 'error' }"
+        class="fixed bottom-20 left-1/2 z-[9999] w-[calc(100%-2rem)] max-w-sm -translate-x-1/2 rounded-xl px-4 py-3 text-sm font-medium text-white shadow-xl shadow-slate-950/20 sm:bottom-5 sm:left-auto sm:right-5 sm:w-auto sm:translate-x-0"
         data-toast='@json(session("toast"))'>
         <span x-text="message" class="block break-words"></span>
     </div>
 
     <div id="cookie-banner"
-        class="fixed bottom-0 left-0 w-full z-[9999]
-           bg-gray-900 text-white
-           dark:bg-[#0B0618]
-           p-4 flex flex-col sm:flex-row
-           gap-3 sm:gap-4
-           items-center justify-between">
+        class="fixed bottom-0 left-0 z-[9999] flex w-full flex-col items-center justify-between gap-3 border-t border-slate-700 bg-slate-950/95 p-4 text-white backdrop-blur-xl sm:flex-row sm:px-6">
 
         <span class="text-sm sm:text-base">
             Usamos cookies para melhorar sua experiência no sistema.
@@ -170,19 +155,19 @@
 
         <div class="flex gap-2">
             <button onclick="acceptCookies()"
-                class="bg-green-500 hover:bg-green-600 px-4 py-2 rounded text-sm">
+            class="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium hover:bg-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-300">
                 Aceitar
             </button>
 
             <button onclick="rejectCookies()"
-                class="bg-red-500 hover:bg-red-600 px-4 py-2 rounded text-sm">
+            class="rounded-lg bg-slate-800 px-4 py-2 text-sm font-medium hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-300">
                 Recusar
             </button>
         </div>
     </div>
     <livewire:header />
 
-    <main class="flex-1 bg-gray-300 dark:bg-[#170F2F]">
+    <main class="app-main">
         {{ $slot }}
     </main>
 
