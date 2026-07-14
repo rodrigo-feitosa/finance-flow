@@ -16,6 +16,15 @@
     @livewireStyles
 
     <script>
+        function updateLogo() {
+            const isDark = document.documentElement.classList.contains('dark');
+            const logo = document.querySelector('header img');
+
+            if (logo) {
+                logo.src = isDark ? '/images/logo.png' : '/images/logo2.png';
+            }
+        }
+
         function updateIcons() {
             const isDark = document.documentElement.classList.contains('dark');
 
@@ -42,6 +51,7 @@
             }
 
             updateIcons();
+            updateLogo();
         }
 
         function sendConsentToServer(consent) {
