@@ -362,30 +362,30 @@ new #[Layout('layouts.app'), Title('Despesas')] class extends Component
             <input type="text" wire:model="filterDescription" placeholder="Filtrar por descrição" class="min-w-48 flex-1">
 
             <select wire:model="filterType" class="border p-1 rounded">
-                <option class="dark:text-black" value="">Tipo</option>
-                <option class="dark:text-black" value="fixa">Fixa</option>
-                <option class="dark:text-black" value="variavel">Variável</option>
-                <option class="dark:text-black" value="parcelada">Parcelada</option>
+                <option class="dark:text-white" value="">Tipo</option>
+                <option class="dark:text-white" value="fixa">Fixa</option>
+                <option class="dark:text-white" value="variavel">Variável</option>
+                <option class="dark:text-white" value="parcelada">Parcelada</option>
             </select>
 
             <select wire:model="filterPaymentMethod" class="border p-1 rounded">
-                <option class="dark:text-black" value="">Pagamento</option>
-                <option class="dark:text-black" value="credito">Crédito</option>
-                <option class="dark:text-black" value="debito">Débito</option>
-                <option class="dark:text-black" value="pix">Pix</option>
-                <option class="dark:text-black" value="dinheiro">Dinheiro</option>
+                <option class="dark:text-white" value="">Pagamento</option>
+                <option class="dark:text-white" value="credito">Crédito</option>
+                <option class="dark:text-white" value="debito">Débito</option>
+                <option class="dark:text-white" value="pix">Pix</option>
+                <option class="dark:text-white" value="dinheiro">Dinheiro</option>
             </select>
 
             <select wire:model="filterStatus" class="border p-1 rounded">
-                <option class="dark:text-black" value="">Status</option>
-                <option class="dark:text-black" value="paga">Paga</option>
-                <option class="dark:text-black" value="a pagar">A pagar</option>
+                <option class="dark:text-white" value="">Status</option>
+                <option class="dark:text-white" value="paga">Paga</option>
+                <option class="dark:text-white" value="a pagar">A pagar</option>
             </select>
 
             <input type="date" wire:model="filterDateStart" class="border p-1 rounded">
             <input type="date" wire:model="filterDateEnd" class="border p-1 rounded">
 
-            <button wire:click="applyFilters" class="btn btn-secondary">Filtrar</button>
+            <button wire:click="applyFilters" class="btn w-24 text-white bg-yellow-600 rounded p-1 hover:bg-yellow-800 cursor-pointer">Filtrar</button>
         </div>
         @if ($this->expenses->isEmpty())
         <p class="m-4 rounded-lg border border-dashed border-slate-300 p-8 text-center text-sm text-slate-500 dark:border-slate-700 dark:text-slate-400">Nenhuma despesa registrada. Adicione uma nova despesa para começar.</p>
@@ -474,10 +474,10 @@ new #[Layout('layouts.app'), Title('Despesas')] class extends Component
                     <div>
                         <label class="block text-sm font-medium mb-1">Tipo</label>
                         <select name="type" id="type" wire:model="type" class="w-full border rounded px-2 py-2">
-                            <option class="dark:text-black" value="">Selecione o tipo</option>
-                            <option class="dark:text-black" value="fixa">Despesa Fixa</option>
-                            <option class="dark:text-black" value="variavel">Despesa Variável</option>
-                            <option class="dark:text-black" value="parcelada">Despesa Parcelada</option>
+                            <option class="dark:text-white" value="">Selecione o tipo</option>
+                            <option class="dark:text-white" value="fixa">Despesa Fixa</option>
+                            <option class="dark:text-white" value="variavel">Despesa Variável</option>
+                            <option class="dark:text-white" value="parcelada">Despesa Parcelada</option>
                         </select>
                     </div>
                     <div>
@@ -487,19 +487,19 @@ new #[Layout('layouts.app'), Title('Despesas')] class extends Component
                     <div>
                         <label class="block text-sm font-medium mb-1">Forma de pagamento</label>
                         <select name="payment_method" id="payment_method" wire:model="payment_method" class="w-full border rounded px-2 py-2">
-                            <option class="dark:text-black" value="">Selecione o método</option>
-                            <option class="dark:text-black" value="credito">Crédito</option>
-                            <option class="dark:text-black" value="debito">Débito</option>
-                            <option class="dark:text-black" value="pix">Pix</option>
-                            <option class="dark:text-black" value="dinheiro">Dinheiro</option>
+                            <option class="dark:text-white" value="">Selecione o método</option>
+                            <option class="dark:text-white" value="credito">Crédito</option>
+                            <option class="dark:text-white" value="debito">Débito</option>
+                            <option class="dark:text-white" value="pix">Pix</option>
+                            <option class="dark:text-white" value="dinheiro">Dinheiro</option>
                         </select>
                     </div>
                     <div>
                         <label class="block text-sm font-medium mb-1">Status</label>
                         <select name="status" id="status" wire:model="status" class="w-full border rounded px-2 py-2">
-                            <option class="dark:text-black" value="">Selecione um status</option>
-                            <option class="dark:text-black" value="paga">Paga</option>
-                            <option class="dark:text-black" value="a pagar">À pagar</option>
+                            <option class="dark:text-white" value="">Selecione um status</option>
+                            <option class="dark:text-white" value="paga">Paga</option>
+                            <option class="dark:text-white" value="a pagar">À pagar</option>
                         </select>
                     </div>
 
@@ -546,18 +546,18 @@ new #[Layout('layouts.app'), Title('Despesas')] class extends Component
                     <div>
                         <label class="block text-sm font-medium mb-1">Tipo</label>
                         <select type="text" wire:model="type" class="w-full border rounded px-2 py-2">
-                            <option class="dark:text-black" value="">Selecione o tipo</option>
-                            <option class="dark:text-black" value="fixa">Despesa Fixa</option>
-                            <option class="dark:text-black" value="variavel">Despesa Variável</option>
-                            <option class="dark:text-black" value="parcelada">Despesa Parcelada</option>
+                            <option class="dark:text-white" value="">Selecione o tipo</option>
+                            <option class="dark:text-white" value="fixa">Despesa Fixa</option>
+                            <option class="dark:text-white" value="variavel">Despesa Variável</option>
+                            <option class="dark:text-white" value="parcelada">Despesa Parcelada</option>
                         </select>
                     </div>
                     <div>
                         <label class="block text-sm font-medium mb-1">Status</label>
                         <select type="text" wire:model="status" class="w-full border rounded px-2 py-2">
-                            <option class="dark:text-black" value="">Selecione o status</option>
-                            <option class="dark:text-black" value="paga">Paga</option>
-                            <option class="dark:text-black" value="a pagar">A pagar</option>
+                            <option class="dark:text-white" value="">Selecione o status</option>
+                            <option class="dark:text-white" value="paga">Paga</option>
+                            <option class="dark:text-white" value="a pagar">A pagar</option>
                         </select>
                     </div>
 

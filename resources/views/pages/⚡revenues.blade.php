@@ -304,9 +304,9 @@ new #[Layout('layouts.app'), Title('Receitas')] class extends Component
                 <input type="text" wire:model="filterDescription" placeholder="Filtrar por descrição" class="border p-1 rounded">    
 
                 <select wire:model="filterStatus" class="border p-1 rounded">
-                    <option class="dark:text-black" value="">Status</option>
-                    <option class="dark:text-black" value="recebida">Recebida</option>
-                    <option class="dark:text-black" value="a receber">A receber</option>
+                    <option class="dark:text-white" value="">Status</option>
+                    <option class="dark:text-white" value="recebida">Recebida</option>
+                    <option class="dark:text-white" value="a receber">A receber</option>
                 </select>
 
                 <input type="date" wire:model="filterDateStart" class="border p-1 rounded w-1/4">
@@ -391,9 +391,9 @@ new #[Layout('layouts.app'), Title('Receitas')] class extends Component
                     <div>
                         <label class="block text-sm font-medium mb-1">Status</label>
                         <select name="status" id="status" wire:model="status" class="w-full border rounded px-2 py-2">
-                            <option class="dark:text-black" value="">Selecione um status</option>
-                            <option class="dark:text-black" value="recebida">Recebida</option>
-                            <option class="dark:text-black" value="a receber">À receber</option>
+                            <option class="dark:text-white" value="">Selecione um status</option>
+                            <option class="dark:text-white" value="recebida">Recebida</option>
+                            <option class="dark:text-white" value="a receber">À receber</option>
                         </select>
                     </div>
 
@@ -441,9 +441,9 @@ new #[Layout('layouts.app'), Title('Receitas')] class extends Component
                     <div>
                         <label class="block text-sm font-medium mb-1">Status</label>
                         <select name="status" id="status" wire:model="status" class="w-full border rounded px-2 py-2">
-                            <option class="dark:text-black" value="">Selecione um status</option>
-                            <option class="dark:text-black" value="recebida">Recebida</option>
-                            <option class="dark:text-black" value="a receber">À receber</option>
+                            <option class="dark:text-white" value="">Selecione um status</option>
+                            <option class="dark:text-white" value="recebida">Recebida</option>
+                            <option class="dark:text-white" value="a receber">À receber</option>
                         </select>
                     </div>
 

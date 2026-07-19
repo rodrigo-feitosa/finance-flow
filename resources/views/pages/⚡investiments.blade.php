@@ -366,25 +366,25 @@ new #[Layout('layouts.app'), Title('Investimentos')] class extends Component
         <div class="flex flex-wrap gap-2 border-b border-slate-100 p-4 dark:border-slate-800">
             <input wire:model="filterDescription" type="text" placeholder="Filtrar por descrição" class="border p-1 rounded">
             <select wire:model="filterType" class="border p-1 rounded">
-                <option class="dark:text-black" value="">Tipo</option>
-                <option class="dark:text-black" value="renda fixa">Renda Fixa</option>
-                <option class="dark:text-black" value="renda variavel">Renda Variável</option>
-                <option class="dark:text-black" value="cripto">Criptomoedas</option>
-                <option class="dark:text-black" value="outros">Outros</option>
+                <option class="dark:text-white" value="">Tipo</option>
+                <option class="dark:text-white" value="renda fixa">Renda Fixa</option>
+                <option class="dark:text-white" value="renda variavel">Renda Variável</option>
+                <option class="dark:text-white" value="cripto">Criptomoedas</option>
+                <option class="dark:text-white" value="outros">Outros</option>
             </select>
 
             <select wire:model="filterCategory" class="border p-1 rounded">
-                <option class="dark:text-black" value="">Categoria</option>
-                <option class="dark:text-black" value="cdb">CDB</option>
-                <option class="dark:text-black" value="ações">Ações</option>
-                <option class="dark:text-black" value="FII">FII</option>
-                <option class="dark:text-black" value="outros">Outros</option>
+                <option class="dark:text-white" value="">Categoria</option>
+                <option class="dark:text-white" value="cdb">CDB</option>
+                <option class="dark:text-white" value="ações">Ações</option>
+                <option class="dark:text-white" value="FII">FII</option>
+                <option class="dark:text-white" value="outros">Outros</option>
             </select>
 
             <select wire:model="filterInstitution" class="border p-1 rounded">
-                <option class="dark:text-black" value="">Instituição</option>
+                <option class="dark:text-white" value="">Instituição</option>
                 @foreach ($this->investments->pluck('institution')->unique() as $institution)
-                <option class="dark:text-black" value="{{ $institution }}">{{ $institution }}</option>
+                <option class="dark:text-white" value="{{ $institution }}">{{ $institution }}</option>
                 @endforeach
             </select>
 
@@ -479,22 +479,22 @@ new #[Layout('layouts.app'), Title('Investimentos')] class extends Component
                 <div>
                     <label class="block text-sm font-medium mb-1">Tipo</label>
                     <select type="text" wire:model="type" class="w-full border rounded px-2 py-2">
-                        <option class="dark:text-black" value="">Selecione um tipo</option>
-                        <option class="dark:text-black" value="renda fixa">Renda fixa</option>
-                        <option class="dark:text-black" value="renda variavel">Renda Variável</option>
-                        <option class="dark:text-black" value="cripto">Criptomoedas</option>
-                        <option class="dark:text-black" value="outros">Outros</option>
+                        <option class="dark:text-white" value="">Selecione um tipo</option>
+                        <option class="dark:text-white" value="renda fixa">Renda fixa</option>
+                        <option class="dark:text-white" value="renda variavel">Renda Variável</option>
+                        <option class="dark:text-white" value="cripto">Criptomoedas</option>
+                        <option class="dark:text-white" value="outros">Outros</option>
                     </select>
                 </div>
                 <div>
                     <label class="block text-sm font-medium mb-1">Categoria</label>
                     <select type="text" wire:model="category" class="w-full border rounded px-2 py-2">
-                        <option class="dark:text-black" value="">Selecione uma categoria</option>
-                        <option class="dark:text-black" value="tesouro">Tesouro</option>
-                        <option class="dark:text-black" value="CDB">CDB</option>
-                        <option class="dark:text-black" value="ações">Ações</option>
-                        <option class="dark:text-black" value="FII">FII</option>
-                        <option class="dark:text-black" value="outros">Outros</option>
+                        <option class="dark:text-white" value="">Selecione uma categoria</option>
+                        <option class="dark:text-white" value="tesouro">Tesouro</option>
+                        <option class="dark:text-white" value="CDB">CDB</option>
+                        <option class="dark:text-white" value="ações">Ações</option>
+                        <option class="dark:text-white" value="FII">FII</option>
+                        <option class="dark:text-white" value="outros">Outros</option>
                     </select>
                 </div>
                 <div>
@@ -504,9 +504,9 @@ new #[Layout('layouts.app'), Title('Investimentos')] class extends Component
                 <div>
                     <label class="block text-sm font-medium mb-1">Status</label>
                     <select name="status" id="status" wire:model="status" class="w-full border rounded px-2 py-2">
-                        <option class="dark:text-black" value="">Selecione um status</option>
-                        <option class="dark:text-black" value="ativo">Ativo</option>
-                        <option class="dark:text-black" value="inativo">Inativo</option>
+                        <option class="dark:text-white" value="">Selecione um status</option>
+                        <option class="dark:text-white" value="ativo">Ativo</option>
+                        <option class="dark:text-white" value="inativo">Inativo</option>
                     </select>
                 </div>
                 <div>
@@ -556,22 +556,22 @@ new #[Layout('layouts.app'), Title('Investimentos')] class extends Component
                 <div>
                     <label class="block text-sm font-medium mb-1">Tipo</label>
                     <select type="text" wire:model="type" class="w-full border rounded px-2 py-2">
-                        <option class="dark:text-black" value="">Selecione um tipo</option>
-                        <option class="dark:text-black" value="renda fixa">Renda fixa</option>
-                        <option class="dark:text-black" value="renda variavel">Renda Variável</option>
-                        <option class="dark:text-black" value="cripto">Criptomoedas</option>
-                        <option class="dark:text-black" value="outros">Outros</option>
+                        <option class="dark:text-white" value="">Selecione um tipo</option>
+                        <option class="dark:text-white" value="renda fixa">Renda fixa</option>
+                        <option class="dark:text-white" value="renda variavel">Renda Variável</option>
+                        <option class="dark:text-white" value="cripto">Criptomoedas</option>
+                        <option class="dark:text-white" value="outros">Outros</option>
                     </select>
                 </div>
                 <div>
                     <label class="block text-sm font-medium mb-1">Categoria</label>
                     <select type="text" wire:model="category" class="w-full border rounded px-2 py-2">
-                        <option class="dark:text-black" value="">Selecione uma categoria</option>
-                        <option class="dark:text-black" value="tesouro">Tesouro</option>
-                        <option class="dark:text-black" value="CDB">CDB</option>
-                        <option class="dark:text-black" value="ações">Ações</option>
-                        <option class="dark:text-black" value="FII">FII</option>
-                        <option class="dark:text-black" value="outros">Outros</option>
+                        <option class="dark:text-white" value="">Selecione uma categoria</option>
+                        <option class="dark:text-white" value="tesouro">Tesouro</option>
+                        <option class="dark:text-white" value="CDB">CDB</option>
+                        <option class="dark:text-white" value="ações">Ações</option>
+                        <option class="dark:text-white" value="FII">FII</option>
+                        <option class="dark:text-white" value="outros">Outros</option>
                     </select>
                 </div>
                 <div>
@@ -581,9 +581,9 @@ new #[Layout('layouts.app'), Title('Investimentos')] class extends Component
                 <div>
                     <label class="block text-sm font-medium mb-1">Status</label>
                     <select name="status" id="status" wire:model="status" class="w-full border rounded px-2 py-2">
-                        <option class="dark:text-black" value="">Selecione um status</option>
-                        <option class="dark:text-black" value="ativo">Ativo</option>
-                        <option class="dark:text-black" value="inativo">Inativo</option>
+                        <option class="dark:text-white" value="">Selecione um status</option>
+                        <option class="dark:text-white" value="ativo">Ativo</option>
+                        <option class="dark:text-white" value="inativo">Inativo</option>
                     </select>
                 </div>
                 <div>
