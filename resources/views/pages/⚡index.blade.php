@@ -45,19 +45,19 @@ new #[Layout('layouts.app'), Title('Finance Flow')] class extends Component
 
         Revenue::where('user', $userId)->where('status', 'recebida')->get()->each(function ($item) use ($months) {
             $key = Carbon::parse($item->date)->format('Y-m');
-            $month = $months->get($key, ['label' => Carbon::parse($item->date)->translatedFormat('M'), 'received' => 0, 'paid' => 0, 'invested' => 0]);
+            $month = $months->get($key, ['label' => Carbon::parse($item->date)->format('m/Y'), 'received' => 0, 'paid' => 0, 'invested' => 0]);
             $month['received'] += (float) $item->value;
             $months->put($key, $month);
         });
         Expense::where('user', $userId)->where('status', 'paga')->get()->each(function ($item) use ($months) {
             $key = Carbon::parse($item->date)->format('Y-m');
-            $month = $months->get($key, ['label' => Carbon::parse($item->date)->translatedFormat('M'), 'received' => 0, 'paid' => 0, 'invested' => 0]);
+            $month = $months->get($key, ['label' => Carbon::parse($item->date)->format('m/Y'), 'received' => 0, 'paid' => 0, 'invested' => 0]);
             $month['paid'] += (float) $item->value;
             $months->put($key, $month);
         });
         Investment::where('user', $userId)->get()->each(function ($item) use ($months) {
             $key = Carbon::parse($item->date)->format('Y-m');
-            $month = $months->get($key, ['label' => Carbon::parse($item->date)->translatedFormat('M'), 'received' => 0, 'paid' => 0, 'invested' => 0]);
+            $month = $months->get($key, ['label' => Carbon::parse($item->date)->format('m/Y'), 'received' => 0, 'paid' => 0, 'invested' => 0]);
             $month['invested'] += (float) $item->value;
             $months->put($key, $month);
         });
