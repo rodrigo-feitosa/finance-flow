@@ -28,7 +28,7 @@ new #[Layout('layouts.app'), Title('Despesas')] class extends Component
 
     public $filterType;
     public $filterPaymentMethod;
-    public $filterStatus;
+    public $filterStatus = 'a pagar';
     public $filterDateStart;
     public $filterDateEnd;
     public $filterDescription;

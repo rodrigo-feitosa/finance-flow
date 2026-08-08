@@ -23,7 +23,7 @@ new #[Layout('layouts.app'), Title('Receitas')] class extends Component
     public $value;
     public $status;
 
-    public $filterStatus;
+    public $filterStatus = 'a receber';
     public $filterDateStart;
     public $filterDateEnd;
     public $filterDescription;
