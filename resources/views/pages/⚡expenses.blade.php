@@ -18,6 +18,7 @@ new #[Layout('layouts.app'), Title('Despesas')] class extends Component
     public $modalAdd = false;
     public $modalImport = false;
     public $modalEdit = false;
+    public $modalBulkUpdate = false;
 
     public $date;
     public $description;
@@ -34,6 +35,9 @@ new #[Layout('layouts.app'), Title('Despesas')] class extends Component
     public $filterDescription;
 
     public $editingExpenseId;
+    public array $selectedExpenseIds = [];
+    public $bulkUpdateField = 'status';
+    public $bulkUpdateValue = 'paga';
 
     public $installments = 1;
 
@@ -331,6 +335,50 @@ new #[Layout('layouts.app'), Title('Despesas')] class extends Component
             'a pagar' => 'bg-red-300 text-red-900 shadow-sm outline-1 outline-red-400',
         };
     }
+
+    public function showBulkUpdateModal()
+    {
+        if (empty($this->selectedExpenseIds)) {
+            $this->dispatch('toast', message: 'Selecione ao menos uma despesa para atualizar.', type: 'warning');
+            return;
+        }
+
+        $this->modalBulkUpdate = true;
+    }
+
+    public function closeBulkUpdateModal()
+    {
+        $this->modalBulkUpdate = false;
+        $this->resetValidation();
+    }
+
+    public function updatedBulkUpdateField()
+    {
+        $this->bulkUpdateValue = '';
+    }
+
+    public function bulkUpdate()
+    {
+        $allowedFields = ['date', 'description', 'type', 'payment_method', 'status'];
+
+        if (empty($this->selectedExpenseIds)) {
+            $this->dispatch('toast', message: 'Selecione ao menos uma despesa para atualizar.', type: 'warning');
+            return;
+        }
+
+        if (!in_array($this->bulkUpdateField, $allowedFields, true) || $this->bulkUpdateValue === '') {
+            $this->addError('bulkUpdateValue', 'Selecione o campo e informe o novo valor.');
+            return;
+        }
+
+        Expense::whereIn('id', $this->selectedExpenseIds)
+            ->where('user', auth()->id())
+            ->update([$this->bulkUpdateField => $this->bulkUpdateValue]);
+
+        $this->selectedExpenseIds = [];
+        $this->closeBulkUpdateModal();
+        $this->dispatch('toast', message: 'Despesas atualizadas com sucesso!', type: 'success');
+    }
 };
 ?>
 
@@ -353,7 +401,11 @@ new #[Layout('layouts.app'), Title('Despesas')] class extends Component
         </button>
         <button
             wire:click="exportExpenses"
-            class="btn btn-success"><i class="fa-solid fa-file-export"></i>Exportar</button>
+            class="btn btn-success"><i class="fa-solid fa-file-export"></i>Exportar
+        </button>
+        <button
+            wire:click="showBulkUpdateModal"
+            class="btn btn-info"><i class="fa-solid fa-check"></i>Atualizar em massa
     </div>
     </div>
 
@@ -394,6 +446,9 @@ new #[Layout('layouts.app'), Title('Despesas')] class extends Component
             <table class="data-table hidden min-w-full md:table">
                 <thead>
                     <tr>
+                        <th class="border dark:border-white p-2 w-10">
+                            <span class="sr-only">Selecionar</span>
+                        </th>
                         <th class="border dark:border-white p-2 w-1/9">Data</th>
                         <th class="border dark:border-white p-2 w-1/3">Descrição</th>
                         <th class="border dark:border-white p-2 w-1/9">Valor</th>
@@ -407,6 +462,14 @@ new #[Layout('layouts.app'), Title('Despesas')] class extends Component
                     @foreach ($this->expenses as $expense)
                     <tr wire:click="showEditModal({{ $expense->id }})"
                         class="cursor-pointer transition">
+                        <td class="border dark:border-white p-2 text-center">
+                            <input
+                                type="checkbox"
+                                value="{{ $expense->id }}"
+                                wire:model="selectedExpenseIds"
+                                wire:click.stop
+                                aria-label="Selecionar despesa {{ $expense->description }}">
+                        </td>
                         <td class="border dark:border-white p-2">{{ Carbon::parse($expense->date)->format('d/m/Y') }}</td>
                         <td class="border dark:border-white p-2">{{ $expense->description }}</td>
                         <td class="border dark:border-white p-2">R$ {{ number_format($expense->value, 2, ',', '.') }}</td>
@@ -431,7 +494,15 @@ new #[Layout('layouts.app'), Title('Despesas')] class extends Component
                 @foreach ($this->expenses as $expense)
                 <div wire:click="showEditModal({{ $expense->id }})" class="rounded-xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900">
                     <div class="flex justify-between mb-2">
-                        <span>{{ $expense->description }}</span>
+                        <div class="flex items-center gap-2">
+                            <input
+                                type="checkbox"
+                                value="{{ $expense->id }}"
+                                wire:model="selectedExpenseIds"
+                                wire:click.stop
+                                aria-label="Selecionar despesa {{ $expense->description }}">
+                            <span>{{ $expense->description }}</span>
+                        </div>
                         <span>R$ {{ number_format($expense->value, 2, ',', '.') }}</span>
                     </div>
                     <div class="flex justify-between items-center text-sm text-gray-500">
@@ -564,6 +635,61 @@ new #[Layout('layouts.app'), Title('Despesas')] class extends Component
                     <div>
                         <button type="submit" class="btn text-white p-1 rounded bg-purple-900 hover:bg-purple-600 cursor-pointer">Salvar</button>
                         <button type="button" wire:click="closeEditModal" class="btn text-white p-1 rounded bg-gray-600 hover:bg-gray-400 cursor-pointer">Cancelar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        @endif
+
+        @if ($modalBulkUpdate)
+        <div class="modal-backdrop">
+            <div class="modal-card">
+                <h2 class="font-bold pb-5">Atualizar despesas</h2>
+                <form wire:submit.prevent="bulkUpdate" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Campo</label>
+                        <select wire:model.live="bulkUpdateField" class="w-full border rounded px-2 py-2">
+                            <option class="dark:text-white" value="date">Data</option>
+                            <option class="dark:text-white" value="description">Descrição</option>
+                            <option class="dark:text-white" value="type">Tipo</option>
+                            <option class="dark:text-white" value="payment_method">Forma de pagamento</option>
+                            <option class="dark:text-white" value="status">Status</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Novo valor</label>
+                        @if ($bulkUpdateField === 'type')
+                        <select wire:model="bulkUpdateValue" class="w-full border rounded px-2 py-2">
+                            <option value="">Selecione o tipo</option>
+                            <option value="fixa">Despesa fixa</option>
+                            <option value="variavel">Despesa variável</option>
+                            <option value="parcelada">Despesa parcelada</option>
+                        </select>
+                        @elseif ($bulkUpdateField === 'payment_method')
+                        <select wire:model="bulkUpdateValue" class="w-full border rounded px-2 py-2">
+                            <option value="">Selecione a forma de pagamento</option>
+                            <option value="credito">Crédito</option>
+                            <option value="debito">Débito</option>
+                            <option value="pix">Pix</option>
+                            <option value="dinheiro">Dinheiro</option>
+                        </select>
+                        @elseif ($bulkUpdateField === 'status')
+                        <select wire:model="bulkUpdateValue" class="w-full border rounded px-2 py-2">
+                            <option value="">Selecione o status</option>
+                            <option value="paga">Paga</option>
+                            <option value="a pagar">A pagar</option>
+                        </select>
+                        @else
+                        <input type="{{ $bulkUpdateField === 'date' ? 'date' : 'text' }}" wire:model="bulkUpdateValue" class="w-full border rounded px-2 py-2">
+                        @endif
+                        @error('bulkUpdateValue')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <div>
+                        <button type="submit" class="btn text-white p-1 rounded bg-purple-900 hover:bg-purple-600 cursor-pointer">Salvar</button>
+                        <button type="button" wire:click="closeBulkUpdateModal" class="btn text-white p-1 rounded bg-gray-600 hover:bg-gray-400 cursor-pointer">Cancelar</button>
                     </div>
                 </form>
             </div>
