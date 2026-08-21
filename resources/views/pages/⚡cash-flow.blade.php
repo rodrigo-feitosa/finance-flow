@@ -129,39 +129,9 @@ new #[Layout('layouts.app'), Title('Fluxo de Caixa')] class extends Component
 <div class="page-container dark:text-white">
     <div class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between"><div><span class="badge bg-indigo-50 text-indigo-700 ring-indigo-600/20 dark:bg-indigo-500/10 dark:text-indigo-300">Visão consolidada</span><h1 class="page-heading mt-3">Fluxo de caixa</h1><p class="page-subtitle">Monitore a saúde financeira do período selecionado.</p></div>
 
-    <div class="flex flex-col gap-2 sm:flex-row">
-        <input type="date" wire:model.live="startDate" aria-label="Data inicial">
-        <input type="date" wire:model.live="endDate" aria-label="Data final">
-    </div>
-    </div>
-
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-        <div class="panel border-l-4 border-l-emerald-500 p-5">
-            <p class="text-sm font-medium text-slate-500 dark:text-slate-400">Receitas recebidas</p>
-            <h2 class="mt-2 text-xl font-semibold tracking-tight text-emerald-600 dark:text-emerald-400">
-                R$ {{ number_format($this->getSummary()['revenues'], 2, ',', '.') }}
-            </h2>
-        </div>
-
-        <div class="panel border-l-4 border-l-amber-500 p-5">
-            <p class="text-sm font-medium text-slate-500 dark:text-slate-400">Total de investimentos</p>
-            <h2 class="mt-2 text-xl font-semibold tracking-tight text-amber-600 dark:text-amber-400">
-                R$ {{ number_format($this->getSummary()['investments'], 2, ',', '.') }}
-            </h2>
-        </div>
-
-        <div class="panel border-l-4 border-l-rose-500 p-5">
-            <p class="text-sm font-medium text-slate-500 dark:text-slate-400">Despesas pagas</p>
-            <h2 class="mt-2 text-xl font-semibold tracking-tight text-rose-600 dark:text-rose-400">
-                R$ {{ number_format($this->getSummary()['expenses'], 2, ',', '.') }}
-            </h2>
-        </div>
-
-        <div class="panel border-l-4 {{ $this->getSummary()['balance'] >= 0 ? 'border-l-indigo-500' : 'border-l-rose-500' }} p-5">
-            <p class="text-sm font-medium text-slate-500 dark:text-slate-400">Saldo atual</p>
-            <h2 class="mt-2 text-xl font-semibold tracking-tight {{ $this->getSummary()['balance'] >= 0 ? 'text-indigo-600 dark:text-indigo-400' : 'text-rose-600 dark:text-rose-400' }}">
-                R$ {{ number_format($this->getSummary()['balance'], 2, ',', '.') }}
-            </h2>
+        <div class="flex flex-col gap-2 sm:flex-row">
+            <input type="date" wire:model.live="startDate" aria-label="Data inicial">
+            <input type="date" wire:model.live="endDate" aria-label="Data final">
         </div>
     </div>
 
