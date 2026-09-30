@@ -7,6 +7,7 @@ use Livewire\WithPagination;
 use Carbon\Carbon;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 new #[Layout('layouts.app'), Title('Despesas')] class extends Component
@@ -78,14 +79,15 @@ new #[Layout('layouts.app'), Title('Despesas')] class extends Component
 
     public function applyFilters()
     {
-        $this->getExpensesProperty([
-            'description' => $this->filterDescription,
-            'type' => $this->filterType,
-            'payment_method' => $this->filterPaymentMethod,
-            'status' => $this->filterStatus,
-            'date_start' => $this->filterDateStart,
-            'date_end' => $this->filterDateEnd,
-        ]);
+        $this->resetPage();
+    }
+
+    // volta para a primeira página quando um filtro muda
+    public function updating(string $name)
+    {
+        if (str_starts_with($name, 'filter')) {
+            $this->resetPage();
+        }
     }
 
     public function showAddExpense()
@@ -159,17 +161,24 @@ new #[Layout('layouts.app'), Title('Despesas')] class extends Component
                 'status' => $this->status,
             ]);
         } else {
-            for ($i = 0; $i < $installments; $i++) {
-                Expense::create([
-                    'user' => auth()->id(),
-                    'date' => Carbon::parse($this->date)->addMonths($i),
-                    'description' => $this->description . ' (' . ($i + 1) . '/' . $installments . ')',
-                    'value' => $this->value,
-                    'type' => 'parcelada',
-                    'payment_method' => $this->payment_method,
-                    'status' => $this->status,
-                ]);
-            }
+            // valor digitado é o total da compra; divide entre as parcelas
+            // (a última absorve o resto para o total fechar em centavos)
+            $installmentValue = round((float) $this->value / $installments, 2);
+            $lastInstallmentValue = round((float) $this->value - $installmentValue * ($installments - 1), 2);
+
+            DB::transaction(function () use ($installments, $installmentValue, $lastInstallmentValue) {
+                for ($i = 0; $i < $installments; $i++) {
+                    Expense::create([
+                        'user' => auth()->id(),
+                        'date' => Carbon::parse($this->date)->addMonths($i),
+                        'description' => $this->description . ' (' . ($i + 1) . '/' . $installments . ')',
+                        'value' => $i === $installments - 1 ? $lastInstallmentValue : $installmentValue,
+                        'type' => 'parcelada',
+                        'payment_method' => $this->payment_method,
+                        'status' => $this->status,
+                    ]);
+                }
+            });
         }
 
         $this->reset(['installments']);
@@ -255,14 +264,13 @@ new #[Layout('layouts.app'), Title('Despesas')] class extends Component
 
     public function exportExpenses()
     {
-        $fileName = 'expenses.csv';
+        // nome único evita que exportações concorrentes baixem dados umas das outras
+        $fileName = 'expenses-' . bin2hex(random_bytes(8)) . '.csv';
         $path = storage_path('app/public/' . $fileName);
 
         $file = fopen($path, 'w');
 
         fputcsv($file, ['Data', 'Descrição', 'Valor', 'Tipo', 'Pagamento', 'Status']);
-
-        $this->reset();
 
         $expenses = Expense::where('user', auth()->id())->get();
 
@@ -278,6 +286,13 @@ new #[Layout('layouts.app'), Title('Despesas')] class extends Component
         }
 
         fclose($file);
+
+        // limpa exports antigos, com mais de 1 dia (o storage public é web-acessível)
+        $disk = Storage::disk('public');
+        collect($disk->files())
+            ->filter(fn ($f) => preg_match('/^(expenses|revenues|investments)-[a-f0-9]{16}\.csv$/', $f))
+            ->filter(fn ($f) => $disk->lastModified($f) < now()->subDay()->getTimestamp())
+            ->each(fn ($f) => $disk->delete($f));
 
         return Storage::disk('public')->download($fileName);
     }
@@ -315,6 +330,7 @@ new #[Layout('layouts.app'), Title('Despesas')] class extends Component
             'fixa' => 'bg-blue-300 text-gray-800 shadow-sm outline-1 outline-blue-400',
             'variavel' => 'bg-yellow-300 text-yellow-900 shadow-sm outline-1 outline-yellow-400',
             'parcelada' => 'bg-fuchsia-300 text-fuchsia-900 shadow-sm outline-1 outline-fuchsia-400',
+            default => 'bg-gray-300 text-gray-800 shadow-sm outline-1 outline-gray-400',
         };
     }
 
@@ -325,6 +341,7 @@ new #[Layout('layouts.app'), Title('Despesas')] class extends Component
             'debito' => 'bg-lime-300 text-lime-900 shadow-sm outline-1 outline-lime-400',
             'pix' => 'bg-teal-300 text-teal-900 shadow-sm outline-1 outline-teal-400',
             'dinheiro' => 'bg-yellow-300 text-gray-800 shadow-sm outline-1 outline-yellow-400',
+            default => 'bg-gray-300 text-gray-800 shadow-sm outline-1 outline-gray-400',
         };
     }
 
@@ -333,6 +350,7 @@ new #[Layout('layouts.app'), Title('Despesas')] class extends Component
         return match ($status) {
             'paga' => 'bg-green-300 text-green-900 shadow-sm outline-1 outline-green-400',
             'a pagar' => 'bg-red-300 text-red-900 shadow-sm outline-1 outline-red-400',
+            default => 'bg-gray-300 text-gray-800 shadow-sm outline-1 outline-gray-400',
         };
     }
 
@@ -539,7 +557,7 @@ new #[Layout('layouts.app'), Title('Despesas')] class extends Component
                         <input type="text" wire:model="description" class="w-full border rounded px-2 py-2">
                     </div>
                     <div>
-                        <label class="block text-sm font-medium mb-1">Valor</label>
+                        <label class="block text-sm font-medium mb-1">Valor total</label>
                         <input type="number" step="0.01" wire:model="value" class="w-full border rounded px-2 py-2">
                     </div>
                     <div>

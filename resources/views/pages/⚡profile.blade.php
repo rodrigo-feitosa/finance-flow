@@ -21,14 +21,35 @@ new #[Layout('layouts.app'), Title('Perfil')] class extends Component
 
     public function updateProfile()
     {
-        $user = auth()->user();
-
-        $user->update([
-            'name' => $this->name,
-            'email' => $this->email,
+        $validated = $this->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'email', 'max:255', 'unique:users,email,' . auth()->id()],
+            'password' => ['nullable', 'string', 'min:8'],
+        ], [
+            'name.required' => 'O nome é obrigatório.',
+            'email.required' => 'O e-mail é obrigatório.',
+            'email.email' => 'Informe um e-mail válido.',
+            'email.unique' => 'Este e-mail já está em uso.',
+            'password.min' => 'A senha deve ter pelo menos 8 caracteres.',
         ]);
 
-        $this->dispatch('toast', 
+        $user = auth()->user();
+
+        $data = [
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+        ];
+
+        if (filled($validated['password'])) {
+            // hash aplicado pelo cast 'hashed' do model User
+            $data['password'] = $validated['password'];
+        }
+
+        $user->update($data);
+
+        $this->password = '';
+
+        $this->dispatch('toast',
             message: 'Perfil atualizado com sucesso!',
             type: 'success'
         );
@@ -41,7 +62,8 @@ new #[Layout('layouts.app'), Title('Perfil')] class extends Component
         <form wire:submit.prevent="updateProfile" class="space-y-5">
             <div><label class="mb-1.5 block text-sm font-medium">Nome</label><input class="w-full" type="text" wire:model="name" placeholder="Seu nome"></div>
             <div><label class="mb-1.5 block text-sm font-medium">E-mail</label><input class="w-full" type="email" wire:model="email" placeholder="voce@exemplo.com"></div>
-            <div><label class="mb-1.5 block text-sm font-medium">Senha</label><input class="w-full" type="password" wire:model="password" placeholder="••••••••"></div>
+            <div><label class="mb-1.5 block text-sm font-medium">Nova senha <span class="font-normal text-slate-400">(opcional)</span></label><input class="w-full" type="password" wire:model="password" placeholder="Deixe vazio para manter a senha atual">
+                @error('password')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror</div>
             <button type="submit" class="btn btn-primary w-full">Atualizar perfil</button>
         </form>
     </div>

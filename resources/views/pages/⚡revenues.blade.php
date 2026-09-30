@@ -6,6 +6,7 @@ use Livewire\WithFileUploads;
 use Livewire\WithPagination;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
+use Illuminate\Support\Facades\Storage;
 use Carbon\Carbon;
 
 new #[Layout('layouts.app'), Title('Receitas')] class extends Component
@@ -59,12 +60,15 @@ new #[Layout('layouts.app'), Title('Receitas')] class extends Component
 
     public function applyFilters()
     {
-        $this->getRevenuesProperty([
-            'description' => $this->filterDescription,
-            'status' => $this->filterStatus,
-            'date_start' => $this->filterDateStart,
-            'date_end' => $this->filterDateEnd,
-        ]);
+        $this->resetPage();
+    }
+
+    // volta para a primeira página quando um filtro muda
+    public function updating(string $name)
+    {
+        if (str_starts_with($name, 'filter')) {
+            $this->resetPage();
+        }
     }
 
     public function showAddRevenue()
@@ -180,7 +184,7 @@ new #[Layout('layouts.app'), Title('Receitas')] class extends Component
 
         $this->closeImport();
 
-        $this->dispatch('toast', message: $count . 'receitas importadas com sucesso!', type: 'success');
+        $this->dispatch('toast', message: $count . ' receitas importadas com sucesso!', type: 'success');
     }
 
     private function parseDate($value)
@@ -212,12 +216,14 @@ new #[Layout('layouts.app'), Title('Receitas')] class extends Component
 
     public function exportRevenues()
     {
-        $fileName = 'revenues.csv';
+        // nome único evita que exportações concorrentes baixem dados umas das outras
+        $fileName = 'revenues-' . bin2hex(random_bytes(8)) . '.csv';
         $path = storage_path('app/public/' . $fileName);
 
         $file = fopen($path, 'w');
 
-        fputcsv($file, ['Data', 'Descrição', 'Valor', 'Tipo', 'Categoria', 'Status']);
+        // colunas na mesma ordem do import, para o CSV ser re-importável
+        fputcsv($file, ['Data', 'Descrição', 'Valor', 'Status']);
 
         $revenues = Revenue::where('user', auth()->id())->get();
 
@@ -231,6 +237,13 @@ new #[Layout('layouts.app'), Title('Receitas')] class extends Component
         }
 
         fclose($file);
+
+        // limpa exports antigos, com mais de 1 dia (o storage public é web-acessível)
+        $disk = Storage::disk('public');
+        collect($disk->files())
+            ->filter(fn ($f) => preg_match('/^(expenses|revenues|investments)-[a-f0-9]{16}\.csv$/', $f))
+            ->filter(fn ($f) => $disk->lastModified($f) < now()->subDay()->getTimestamp())
+            ->each(fn ($f) => $disk->delete($f));
 
         return Storage::disk('public')->download($fileName);
     }
@@ -264,6 +277,7 @@ new #[Layout('layouts.app'), Title('Receitas')] class extends Component
         return match ($status) {
             'recebida' => 'bg-green-300 text-green-900 shadow-sm outline-1 outline-green-400',
             'a receber' => 'bg-red-300 text-red-900 shadow-sm outline-1 outline-red-400',
+            default => 'bg-gray-300 text-gray-800 shadow-sm outline-1 outline-gray-400',
         };
     }
 };
@@ -327,7 +341,6 @@ new #[Layout('layouts.app'), Title('Receitas')] class extends Component
                 <tbody class="divide-y divide-gray-100">
                     @foreach ($this->revenues as $revenue)
                     <tr wire:click="showEditModal({{ $revenue->id }})"
-                        <tr wire:click="showEditModal({{ $revenue->id }})"
                         class="odd:bg-white even:bg-gray-100 hover:bg-violet-200 
                         dark:odd:bg-[#1A1233] dark:even:bg-[#21184A] dark:hover:bg-[#2A1F5E] transition cursor-pointer">
                         <td class="border dark:border-white p-2">{{ Carbon::parse($revenue->date)->format('d/m/Y') }}</td>

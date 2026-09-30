@@ -53,7 +53,7 @@ new class extends Component
 
         <div class="flex items-center gap-2">
             <label class="relative inline-flex cursor-pointer items-center" title="Alternar tema">
-                <input type="checkbox" class="peer sr-only" onchange="toggleTheme()">
+                <input id="theme-toggle" type="checkbox" class="peer sr-only" onchange="toggleTheme()">
                 <span class="flex h-8 w-14 items-center rounded-full bg-slate-200 p-1 transition peer-checked:bg-indigo-600 dark:bg-slate-700">
                     <span class="flex h-6 w-6 items-center justify-center rounded-full bg-white text-xs shadow-sm transition peer-checked:translate-x-6"><span id="theme-icon" aria-hidden="true">🌙</span></span>
                 </span>

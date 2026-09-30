@@ -6,6 +6,7 @@ use Livewire\WithPagination;
 use App\Models\Investment;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
+use Illuminate\Support\Facades\Storage;
 use Carbon\Carbon;
 
 new #[Layout('layouts.app'), Title('Investimentos')] class extends Component
@@ -25,7 +26,7 @@ new #[Layout('layouts.app'), Title('Investimentos')] class extends Component
     public $category;
     public $institution;
     public $status;
-    public $is_initial;
+    public $is_initial = false;
 
     public $filterType;
     public $filterInstitution;
@@ -37,9 +38,12 @@ new #[Layout('layouts.app'), Title('Investimentos')] class extends Component
 
     public $editingInvestmentId;
 
-    public function updated()
+    // volta para a primeira página quando um filtro muda
+    public function updating(string $name)
     {
-        $this->resetPage();
+        if (str_starts_with($name, 'filter')) {
+            $this->resetPage();
+        }
     }
 
     public function getInvestmentsProperty()
@@ -83,15 +87,7 @@ new #[Layout('layouts.app'), Title('Investimentos')] class extends Component
 
     public function applyFilters()
     {
-        $this->getInvestmentsProperty([
-            'description' => $this->filterDescription,
-            'type' => $this->filterType,
-            'institution' => $this->filterInstitution,
-            'category' => $this->filterCategory,
-            'status' => $this->filterStatus,
-            'date_start' => $this->filterDateStart,
-            'date_end' => $this->filterDateEnd,
-        ]);
+        $this->resetPage();
     }
 
     public function showAddInvestment()
@@ -216,7 +212,7 @@ new #[Layout('layouts.app'), Title('Investimentos')] class extends Component
 
         $this->closeImport();
 
-        $this->dispatch('toast', message: $count . 'investimentos importados com sucesso!', type: 'success');
+        $this->dispatch('toast', message: $count . ' investimentos importados com sucesso!', type: 'success');
     }
 
     private function parseDate($value)
@@ -248,12 +244,14 @@ new #[Layout('layouts.app'), Title('Investimentos')] class extends Component
 
     public function exportInvestments()
     {
-        $fileName = 'investments.csv';
+        // nome único evita que exportações concorrentes baixem dados umas das outras
+        $fileName = 'investments-' . bin2hex(random_bytes(8)) . '.csv';
         $path = storage_path('app/public/' . $fileName);
 
         $file = fopen($path, 'w');
 
-        fputcsv($file, ['Data', 'Descrição', 'Valor', 'Tipo', 'Categoria', 'Status']);
+        // colunas na mesma ordem do import, para o CSV ser re-importável
+        fputcsv($file, ['Data', 'Descrição', 'Valor', 'Tipo', 'Categoria', 'Instituição', 'Status']);
 
         $investments = Investment::where('user', auth()->id())->get();
 
@@ -261,15 +259,22 @@ new #[Layout('layouts.app'), Title('Investimentos')] class extends Component
             fputcsv($file, [
                 $investment->date,
                 $investment->description,
+                $investment->value,
                 $investment->type,
                 $investment->category,
-                $investment->value,
                 $investment->institution,
                 $investment->status,
             ]);
         }
 
         fclose($file);
+
+        // limpa exports antigos, com mais de 1 dia (o storage public é web-acessível)
+        $disk = Storage::disk('public');
+        collect($disk->files())
+            ->filter(fn ($f) => preg_match('/^(expenses|revenues|investments)-[a-f0-9]{16}\.csv$/', $f))
+            ->filter(fn ($f) => $disk->lastModified($f) < now()->subDay()->getTimestamp())
+            ->each(fn ($f) => $disk->delete($f));
 
         return Storage::disk('public')->download($fileName);
     }
@@ -309,6 +314,7 @@ new #[Layout('layouts.app'), Title('Investimentos')] class extends Component
             'renda variavel' => 'bg-yellow-300 text-yellow-900 shadow-sm outline-1 outline-yellow-400',
             'cripto' => 'bg-rose-300 text-rose-800 shadow-sm outline-1 outline-rose-400',
             'outros' => 'bg-gray-300 text-gray-800 shadow-sm outline-1 outline-gray-400',
+            default => 'bg-gray-300 text-gray-800 shadow-sm outline-1 outline-gray-400',
         };
     }
 
@@ -320,6 +326,7 @@ new #[Layout('layouts.app'), Title('Investimentos')] class extends Component
             'ações' => 'bg-emerald-300 text-emerald-900 shadow-sm outline-1 outline-emerald-400',
             'FII' => 'bg-yellow-300 text-gray-800 shadow-sm outline-1 outline-yellow-400',
             'outros' => 'bg-gray-300 text-gray-800 shadow-sm outline-1 outline-gray-400',
+            default => 'bg-gray-300 text-gray-800 shadow-sm outline-1 outline-gray-400',
         };
     }
 
@@ -328,6 +335,7 @@ new #[Layout('layouts.app'), Title('Investimentos')] class extends Component
         return match ($status) {
             'ativo' => 'bg-green-300 text-green-900 shadow-sm outline-1 outline-green-400',
             'inativo' => 'bg-red-300 text-red-900 shadow-sm outline-1 outline-red-400',
+            default => 'bg-gray-300 text-gray-800 shadow-sm outline-1 outline-gray-400',
         };
     }
 };
@@ -509,9 +517,13 @@ new #[Layout('layouts.app'), Title('Investimentos')] class extends Component
                         <option class="dark:text-white" value="inativo">Inativo</option>
                     </select>
                 </div>
-                <div>
-                    <input type="radio" wire:model="is_initial" value="1">
-                    <label class="text-sm font-medium mb-1">Valor pré-existente</label>
+                <div class="flex items-center gap-4">
+                    <label class="flex items-center gap-2 text-sm font-medium">
+                        <input type="radio" wire:model="is_initial" value="0"> Aporte novo
+                    </label>
+                    <label class="flex items-center gap-2 text-sm font-medium">
+                        <input type="radio" wire:model="is_initial" value="1"> Valor pré-existente
+                    </label>
                 </div>
                 <div>
                     <button type="submit" class="btn text-white p-1 rounded bg-purple-900 hover:bg-purple-600 cursor-pointer">Salvar</button>
@@ -586,9 +598,13 @@ new #[Layout('layouts.app'), Title('Investimentos')] class extends Component
                         <option class="dark:text-white" value="inativo">Inativo</option>
                     </select>
                 </div>
-                <div>
-                    <input type="radio" wire:model="is_initial" value="1">
-                    <label class="text-sm font-medium mb-1">Investimento pré-existente</label>
+                <div class="flex items-center gap-4">
+                    <label class="flex items-center gap-2 text-sm font-medium">
+                        <input type="radio" wire:model="is_initial" value="0"> Aporte novo
+                    </label>
+                    <label class="flex items-center gap-2 text-sm font-medium">
+                        <input type="radio" wire:model="is_initial" value="1"> Valor pré-existente
+                    </label>
                 </div>
 
                 <div>

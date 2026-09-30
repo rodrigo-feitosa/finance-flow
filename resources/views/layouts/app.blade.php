@@ -34,9 +34,11 @@
             if (icon) icon.textContent = isDark ? '☀️' : '🌙';
             if (iconMobile) iconMobile.textContent = isDark ? '☀️' : '🌙';
 
-            document.querySelectorAll('input[type="checkbox"]').forEach(el => {
-                el.checked = isDark;
-            });
+            const themeToggle = document.getElementById('theme-toggle');
+
+            if (themeToggle) {
+                themeToggle.checked = isDark;
+            }
         }
 
         function toggleTheme() {
@@ -150,7 +152,7 @@
         x-init="init()"
         x-show="show"
         x-transition
-        :class="{ 'bg-emerald-600': type === 'success', 'bg-rose-600': type === 'error' }"
+        :class="{ 'bg-emerald-600': type === 'success', 'bg-rose-600': type === 'error', 'bg-amber-500': type === 'warning' }"
         class="fixed bottom-20 left-1/2 z-[9999] w-[calc(100%-2rem)] max-w-sm -translate-x-1/2 rounded-xl px-4 py-3 text-sm font-medium text-white shadow-xl shadow-slate-950/20 sm:bottom-5 sm:left-auto sm:right-5 sm:w-auto sm:translate-x-0"
         data-toast='@json(session("toast"))'>
         <span x-text="message" class="block break-words"></span>

@@ -67,6 +67,7 @@ new #[Layout('layouts.app'), Title('Fluxo de Caixa')] class extends Component
         return match ($status) {
             'paga' => 'bg-green-600 text-white-900',
             'a pagar' => 'bg-red-600 text-white-900',
+            default => 'bg-gray-600 text-white-900',
         };
     }
 

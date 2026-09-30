@@ -106,7 +106,7 @@ new #[Layout('layouts.app'), Title('Nova senha')] class extends Component
                     <div class="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-red-500/10 border border-red-500/30">
                         <i class="scaletext-red-500 fa-solid fa-triangle-exclamation"></i>
                     </div>
-                    <h2 class="text-xl font-semibold" style="font-family:'Sora',sans-serif;">
+                    <h2 class="text-xl font-semibold">
                         Link inválido ou expirado
                     </h2>
                     <p class="text-sm text-gray-900 leading-relaxed">
@@ -126,7 +126,7 @@ new #[Layout('layouts.app'), Title('Nova senha')] class extends Component
                             <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
                         </svg>
                     </div>
-                    <h2 class="text-xl font-semibold text-white" style="font-family:'Sora',sans-serif;">
+                    <h2 class="text-xl font-semibold text-white">
                         Senha redefinida!
                     </h2>
                     <p class="text-sm text-gray-400 leading-relaxed">
@@ -141,7 +141,7 @@ new #[Layout('layouts.app'), Title('Nova senha')] class extends Component
             {{-- Formulário --}}
             @else
                 <div class="mb-7">
-                    <h1 class="text-2xl font-bold text-white" style="font-family:'Sora',sans-serif;">Nova senha</h1>
+                    <h1 class="text-2xl font-bold text-white">Nova senha</h1>
                     <p class="mt-1 text-sm text-gray-400">
                         Definindo senha para <span class="text-[#00c896] font-medium">{{ $email }}</span>
                     </p>
